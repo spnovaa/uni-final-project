@@ -27,6 +27,7 @@ class GatewayService
                 \App\Pipelines\Gateway\MeterUsagePipe::class,
                 \App\Pipelines\Gateway\PersistLogsPipe::class,
                 \App\Pipelines\Gateway\ChargeUsagePipe::class,
+                \App\Pipelines\Gateway\DispatchExternalLogsPipe::class,
             ])
             ->thenReturn();
 

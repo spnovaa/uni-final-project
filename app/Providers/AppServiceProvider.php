@@ -48,6 +48,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(\App\Services\Gateway\ProviderModel\ProviderModelServiceInterface::class, \App\Services\Gateway\ProviderModel\ProviderModelService::class);
         $this->app->bind(\App\Services\Reporting\ReportingServiceInterface::class, \App\Services\Reporting\ReportingService::class);
         $this->app->bind(\App\Services\Cache\CacheServiceInterface::class, \App\Services\Cache\CacheService::class);
+        $this->app->singleton(\App\Domains\Gateway\Logging\LogSinkManager::class);
 
         $this->app->resolving('db', function (DatabaseManager $db) {
             $db->extend('sqlsrv', function (array $config, ?string $name = null) {
