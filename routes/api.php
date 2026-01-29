@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\MeController;
 use App\Http\Controllers\Api\V1\PlanController;
 use App\Http\Controllers\Api\V1\ProviderController;
 use App\Http\Controllers\Api\V1\ProviderModelController;
+use App\Http\Controllers\Api\V1\ReportController;
 use App\Http\Controllers\Api\V1\SubscriptionController;
 use App\Http\Controllers\Api\V1\WalletController;
 use Illuminate\Support\Facades\Route;
@@ -43,6 +44,10 @@ Route::prefix('api/v1')->group(function () {
 
         Route::get('invoices', [InvoiceController::class, 'index']);
         Route::get('invoices/{invoice}', [InvoiceController::class, 'show']);
+
+        Route::get('reports/usage', [ReportController::class, 'usage']);
+        Route::get('reports/wallet-ledger', [ReportController::class, 'walletLedger']);
+        Route::get('reports/invoices', [ReportController::class, 'invoices']);
 
         Route::get('providers', [ProviderController::class, 'index']);
         Route::post('providers', [ProviderController::class, 'store']);
