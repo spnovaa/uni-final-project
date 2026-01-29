@@ -3,19 +3,25 @@
 namespace App\Domains\Gateway\Services;
 
 use App\Models\Provider;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
+use App\Services\Cache\CacheServiceInterface;
 
 class ProviderRegistry
 {
+    public function __construct(private readonly CacheServiceInterface $cache)
+    {
+    }
+
     public function getProviderConfig(?string $providerName = null): array
     {
         $providerName = $providerName ?: config('gateway.default_provider');
         $config = config('gateway.providers.'.$providerName, []);
 
         if (Schema::hasTable('providers')) {
-            $cacheKey = 'gateway.provider.'.$providerName;
-            $cached = Cache::remember($cacheKey, 300, function () use ($providerName, $config) {
+            $cacheKey = $this->cache->key('providers', 'config', $providerName);
+            $ttl = $this->cache->ttl('provider_config', 300);
+
+            $cached = $this->cache->remember($cacheKey, $ttl, function () use ($providerName, $config) {
                 $provider = Provider::query()
                     ->where('name', $providerName)
                     ->where('status', 'active')

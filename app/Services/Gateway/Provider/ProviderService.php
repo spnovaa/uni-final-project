@@ -4,19 +4,27 @@ namespace App\Services\Gateway\Provider;
 
 use App\Models\Provider;
 use App\Repositories\Gateway\ProviderRepositoryInterface;
+use App\Services\Cache\CacheServiceInterface;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\ValidationException;
 
 class ProviderService implements ProviderServiceInterface
 {
-    public function __construct(private readonly ProviderRepositoryInterface $providers)
+    public function __construct(
+        private readonly ProviderRepositoryInterface $providers,
+        private readonly CacheServiceInterface $cache,
+    )
     {
     }
 
     public function list(): Collection
     {
-        return $this->providers->list();
+        $ttl = $this->cache->ttl('providers', 300);
+        $key = $this->cache->key('providers', 'all');
+
+        return $this->cache->remember($key, $ttl, function () {
+            return $this->providers->list();
+        });
     }
 
     public function create(array $data): Provider
@@ -35,7 +43,8 @@ class ProviderService implements ProviderServiceInterface
             'config_encrypted' => $config ?: null,
         ]);
 
-        Cache::forget('gateway.provider.'.$provider->name);
+        $this->cache->forget($this->cache->key('providers', 'all'));
+        $this->cache->forget($this->cache->key('providers', 'config', $provider->name));
 
         return $provider;
     }

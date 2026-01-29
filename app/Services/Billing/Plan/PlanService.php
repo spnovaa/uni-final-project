@@ -4,19 +4,25 @@ namespace App\Services\Billing\Plan;
 
 use App\Models\SubscriptionPlan;
 use App\Repositories\Billing\PlanRepositoryInterface;
+use App\Services\Cache\CacheServiceInterface;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\ValidationException;
 
 class PlanService implements PlanServiceInterface
 {
-    public function __construct(private readonly PlanRepositoryInterface $plans)
+    public function __construct(
+        private readonly PlanRepositoryInterface $plans,
+        private readonly CacheServiceInterface $cache,
+    )
     {
     }
 
     public function listActive(): Collection
     {
-        return Cache::remember('plans.active', 300, function () {
+        $ttl = $this->cache->ttl('plans', 300);
+        $key = $this->cache->key('plans', 'active');
+
+        return $this->cache->remember($key, $ttl, function () {
             return $this->plans->listActive();
         });
     }
@@ -24,7 +30,7 @@ class PlanService implements PlanServiceInterface
     public function create(array $data): SubscriptionPlan
     {
         $plan = $this->plans->create($data);
-        Cache::forget('plans.active');
+        $this->cache->forget($this->cache->key('plans', 'active'));
 
         return $plan;
     }

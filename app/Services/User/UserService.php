@@ -5,21 +5,24 @@ namespace App\Services\User;
 use App\Models\User;
 use App\Repositories\User\UserRepositoryInterface;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use App\Services\Cache\CacheServiceInterface;
 
 class UserService implements UserServiceInterface
 {
-    public function __construct(private readonly UserRepositoryInterface $users)
+    public function __construct(
+        private readonly UserRepositoryInterface $users,
+        private readonly CacheServiceInterface $cache,
+    )
     {
     }
 
     public function getProfile(User $user): User
     {
-        $ttl = (int) config('cache.profile_ttl', 300);
+        $ttl = $this->cache->ttl('profile', (int) config('cache.profile_ttl', 300));
 
-        return Cache::remember(
+        return $this->cache->remember(
             $this->cacheKey($user->id),
             $ttl,
             fn () => $this->users->find($user->id) ?? $user
@@ -37,14 +40,14 @@ class UserService implements UserServiceInterface
 
         $user = $this->users->save($user);
 
-        Cache::forget($this->cacheKey($user->id));
+        $this->cache->forget($this->cacheKey($user->id));
 
         return $user;
     }
 
     private function cacheKey(int $userId): string
     {
-        return 'user:profile:'.$userId;
+        return $this->cache->key('user', 'profile', (string) $userId);
     }
 
     private function storeProfileImage(User $user, UploadedFile $profileImage): string
