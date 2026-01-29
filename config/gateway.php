@@ -14,4 +14,6 @@ return [
     'persist_logs' => env('GATEWAY_PERSIST_LOGS', true),
     'rate_limit_per_min' => (int) env('GATEWAY_RATE_LIMIT_PER_MIN', 60),
     'require_wallet' => env('GATEWAY_REQUIRE_WALLET', true),
+    'log_retention_days' => (int) env('GATEWAY_LOG_RETENTION_DAYS', 30),
+    'audit_retention_days' => (int) env('GATEWAY_AUDIT_RETENTION_DAYS', 90),
 ];
