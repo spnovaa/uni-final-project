@@ -17,4 +17,5 @@ return [
     'log_retention_days' => (int) env('GATEWAY_LOG_RETENTION_DAYS', 30),
     'audit_retention_days' => (int) env('GATEWAY_AUDIT_RETENTION_DAYS', 90),
     'tokenizer_default_encoding' => env('GATEWAY_TOKENIZER_DEFAULT_ENCODING', 'cl100k_base'),
+    'audio_bytes_per_second' => (int) env('GATEWAY_AUDIO_BYTES_PER_SECOND', 16000),
 ];

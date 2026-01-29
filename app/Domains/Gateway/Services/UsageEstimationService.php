@@ -14,6 +14,9 @@ class UsageEstimationService
         $promptTokens = 0;
         $completionTokens = 0;
         $model = $context->modelKey;
+        $images = null;
+        $audioSeconds = null;
+        $audioCharacters = null;
 
         switch ($context->endpoint) {
             case 'chat.completions':
@@ -29,11 +32,17 @@ class UsageEstimationService
                 break;
             case 'images.generations':
                 $promptTokens = $this->estimateTokens((string) ($context->payload['prompt'] ?? ''), $model);
+                $images = $this->extractImageCount($context->payload);
                 break;
             case 'audio.speech':
                 $promptTokens = $this->estimateTokens((string) ($context->payload['input'] ?? ''), $model);
+                $audioCharacters = $this->estimateCharacters((string) ($context->payload['input'] ?? ''));
                 break;
             case 'audio.transcriptions':
+                $audioSeconds = $this->estimateAudioSeconds($context);
+                $promptTokens = 0;
+                $completionTokens = 0;
+                break;
             default:
                 $promptTokens = 0;
                 $completionTokens = 0;
@@ -45,7 +54,10 @@ class UsageEstimationService
         return new UsageMetrics(
             $promptTokens ?: null,
             $completionTokens ?: null,
-            $total
+            $total,
+            $images,
+            $audioSeconds,
+            $audioCharacters,
         );
     }
 
@@ -184,5 +196,50 @@ class UsageEstimationService
         }
 
         return 0;
+    }
+
+    private function extractImageCount(array $payload): int
+    {
+        $candidates = ['n', 'num_images', 'batch_size'];
+        foreach ($candidates as $key) {
+            if (isset($payload[$key]) && is_numeric($payload[$key])) {
+                return max(1, (int) $payload[$key]);
+            }
+        }
+
+        return 1;
+    }
+
+    private function estimateCharacters(string $text): int
+    {
+        return mb_strlen($text, 'UTF-8');
+    }
+
+    private function estimateAudioSeconds(GatewayRequestContext $context): ?float
+    {
+        if (isset($context->payload['duration_seconds']) && is_numeric($context->payload['duration_seconds'])) {
+            return (float) $context->payload['duration_seconds'];
+        }
+
+        $bytes = $this->extractFileSize($context->files);
+        if ($bytes === null) {
+            return null;
+        }
+
+        $bytesPerSecond = (int) config('gateway.audio_bytes_per_second', 16000);
+        $bytesPerSecond = $bytesPerSecond > 0 ? $bytesPerSecond : 16000;
+
+        return round($bytes / $bytesPerSecond, 2);
+    }
+
+    private function extractFileSize(array $files): ?int
+    {
+        foreach ($files as $file) {
+            if ($file instanceof \Illuminate\Http\UploadedFile) {
+                return $file->getSize() ?: null;
+            }
+        }
+
+        return null;
     }
 }

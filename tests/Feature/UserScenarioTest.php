@@ -162,6 +162,48 @@ class UserScenarioTest extends TestCase
         $response->assertOk();
     }
 
+    public function test_image_generation_is_charged_per_image(): void
+    {
+        $user = User::factory()->create();
+        $client = $this->createClient($user);
+        $apiKey = app(ApiKeyService::class)->create($client)['api_key'];
+
+        $provider = $this->seedProvider();
+
+        ProviderModel::query()->create([
+            'provider_id' => $provider->id,
+            'model_key' => 'gpt-image-1',
+            'pricing_config' => [
+                'image_cost_per_unit' => 0.5,
+            ],
+            'status' => 'active',
+        ]);
+
+        app(WalletServiceInterface::class)->topup($user, 5, 'test_topup');
+
+        Http::fake([
+            'https://api.openai.com/v1/images/generations' => Http::response([
+                'created' => time(),
+                'data' => [
+                    ['url' => 'https://example.com/1.png'],
+                    ['url' => 'https://example.com/2.png'],
+                ],
+            ], 200),
+        ]);
+
+        $response = $this->withHeader('Authorization', 'Bearer '.$apiKey)
+            ->postJson('/api/v1/ai/images/generations', [
+                'model' => 'gpt-image-1',
+                'prompt' => 'A sunset',
+                'n' => 2,
+            ]);
+
+        $response->assertOk();
+
+        $user->refresh();
+        $this->assertEquals(4.0, (float) $user->wallet->balance);
+    }
+
     private function createClient(User $user): ApiClient
     {
         return ApiClient::query()->create([
@@ -171,7 +213,7 @@ class UserScenarioTest extends TestCase
         ]);
     }
 
-    private function seedProvider(): void
+    private function seedProvider(): Provider
     {
         $provider = Provider::query()->create([
             'name' => 'openai',
@@ -195,5 +237,7 @@ class UserScenarioTest extends TestCase
             ],
             'status' => 'active',
         ]);
+
+        return $provider;
     }
 }

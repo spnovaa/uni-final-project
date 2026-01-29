@@ -99,15 +99,30 @@ class OpenAiProviderAdapter implements ProviderAdapterInterface
             return null;
         }
 
+        $images = null;
+        if (isset($response->body['data']) && is_array($response->body['data'])) {
+            $images = count($response->body['data']);
+        }
+
         $usage = $response->body['usage'] ?? null;
         if (! is_array($usage)) {
-            return null;
+            if ($images === null) {
+                return null;
+            }
+
+            return new UsageMetrics(
+                null,
+                null,
+                null,
+                $images
+            );
         }
 
         return new UsageMetrics(
             $usage['prompt_tokens'] ?? null,
             $usage['completion_tokens'] ?? null,
             $usage['total_tokens'] ?? null,
+            $images
         );
     }
 

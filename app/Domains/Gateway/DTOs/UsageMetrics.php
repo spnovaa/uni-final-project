@@ -8,6 +8,9 @@ class UsageMetrics
         public ?int $promptTokens = null,
         public ?int $completionTokens = null,
         public ?int $totalTokens = null,
+        public ?int $images = null,
+        public ?float $audioSeconds = null,
+        public ?int $audioCharacters = null,
     ) {
     }
 }
