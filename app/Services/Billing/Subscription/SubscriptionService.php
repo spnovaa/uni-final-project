@@ -6,6 +6,7 @@ use App\Models\Subscription;
 use App\Models\SubscriptionPlan;
 use App\Models\User;
 use App\Repositories\Billing\SubscriptionRepositoryInterface;
+use App\Services\Audit\AuditLogServiceInterface;
 use App\Services\Billing\Wallet\WalletServiceInterface;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +16,8 @@ class SubscriptionService implements SubscriptionServiceInterface
 {
     public function __construct(
         private readonly SubscriptionRepositoryInterface $subscriptions,
-        private readonly WalletServiceInterface $wallets
+        private readonly WalletServiceInterface $wallets,
+        private readonly AuditLogServiceInterface $audit
     ) {
     }
 
@@ -43,7 +45,7 @@ class SubscriptionService implements SubscriptionServiceInterface
                 ? $now->addYear()
                 : $now->addMonth();
 
-            return $this->subscriptions->create([
+            $subscription = $this->subscriptions->create([
                 'user_id' => $user->id,
                 'plan_id' => $plan->id,
                 'status' => 'active',
@@ -51,6 +53,12 @@ class SubscriptionService implements SubscriptionServiceInterface
                 'ends_at' => $endsAt,
                 'renewal_at' => $endsAt,
             ]);
+
+            $this->audit->record($user, 'subscription.created', $subscription, [
+                'plan_id' => $plan->id,
+            ]);
+
+            return $subscription;
         });
     }
 
@@ -70,6 +78,8 @@ class SubscriptionService implements SubscriptionServiceInterface
         $subscription->status = 'canceled';
         $subscription->canceled_at = CarbonImmutable::now();
         $this->subscriptions->save($subscription);
+
+        $this->audit->record($user, 'subscription.canceled', $subscription);
 
         return $subscription;
     }

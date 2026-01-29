@@ -4,13 +4,16 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Billing\PlanResource;
+use App\Services\Audit\AuditLogServiceInterface;
 use App\Services\Billing\Plan\PlanServiceInterface;
 use Illuminate\Http\Request;
 
 class PlanController extends Controller
 {
-    public function __construct(private readonly PlanServiceInterface $plans)
-    {
+    public function __construct(
+        private readonly PlanServiceInterface $plans,
+        private readonly AuditLogServiceInterface $audit
+    ) {
     }
 
     /**
@@ -84,6 +87,8 @@ class PlanController extends Controller
             'features' => $data['features'] ?? null,
             'status' => $data['status'] ?? 'active',
         ]);
+
+        $this->audit->record($request->user(), 'plan.created', $plan);
 
         return (new PlanResource($plan))
             ->response()

@@ -5,13 +5,16 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Gateway\ProviderModelResource;
 use App\Models\Provider;
+use App\Services\Audit\AuditLogServiceInterface;
 use App\Services\Gateway\ProviderModel\ProviderModelServiceInterface;
 use Illuminate\Http\Request;
 
 class ProviderModelController extends Controller
 {
-    public function __construct(private readonly ProviderModelServiceInterface $models)
-    {
+    public function __construct(
+        private readonly ProviderModelServiceInterface $models,
+        private readonly AuditLogServiceInterface $audit
+    ) {
     }
 
     /**
@@ -87,6 +90,10 @@ class ProviderModelController extends Controller
             'capabilities' => $data['capabilities'] ?? null,
             'pricing_config' => $data['pricing_config'] ?? null,
             'status' => $data['status'] ?? 'active',
+        ]);
+
+        $this->audit->record($request->user(), 'provider_model.created', $model, [
+            'provider_id' => $provider->id,
         ]);
 
         return (new ProviderModelResource($model))

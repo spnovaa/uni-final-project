@@ -4,13 +4,16 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Gateway\ProviderResource;
+use App\Services\Audit\AuditLogServiceInterface;
 use App\Services\Gateway\Provider\ProviderServiceInterface;
 use Illuminate\Http\Request;
 
 class ProviderController extends Controller
 {
-    public function __construct(private readonly ProviderServiceInterface $providers)
-    {
+    public function __construct(
+        private readonly ProviderServiceInterface $providers,
+        private readonly AuditLogServiceInterface $audit
+    ) {
     }
 
     /**
@@ -73,6 +76,8 @@ class ProviderController extends Controller
         ]);
 
         $provider = $this->providers->create($data);
+
+        $this->audit->record($request->user(), 'provider.created', $provider);
 
         return (new ProviderResource($provider))
             ->response()

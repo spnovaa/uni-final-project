@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\ApiClientController;
 use App\Http\Controllers\Api\V1\ApiKeyController;
 use App\Http\Controllers\Api\V1\AuthOtpController;
+use App\Http\Controllers\Api\V1\AuditLogController;
 use App\Http\Controllers\Api\V1\Gateway\GatewayController;
 use App\Http\Controllers\Api\V1\MeController;
 use App\Http\Controllers\Api\V1\PlanController;
@@ -43,6 +44,10 @@ Route::prefix('api/v1')->group(function () {
         Route::post('providers', [ProviderController::class, 'store']);
         Route::get('providers/{provider}/models', [ProviderModelController::class, 'index']);
         Route::post('providers/{provider}/models', [ProviderModelController::class, 'store']);
+
+        Route::middleware('role:admin')->group(function () {
+            Route::get('audit-logs', [AuditLogController::class, 'index']);
+        });
     });
 
     Route::prefix('ai')->middleware('api.key')->group(function () {
