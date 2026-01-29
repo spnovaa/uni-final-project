@@ -36,3 +36,15 @@ The playground UI is a Vue app served at `/playground`:
 - Built with Vite: `npm run dev` (local) or `npm run build` (production)
 - Blade view loads Vite assets, but skips Vite in testing to avoid missing manifest errors
 
+## Provider Selection (Explicit)
+Gateway requests must include **both** `provider` and `model` in the payload:
+- Example: `{ "provider": "openai", "model": "gpt-4o-mini" }`
+- Provider and model are validated against `providers` + `provider_models`.
+- Requests with unknown provider/model return an OpenAI-style `invalid_request_error`.
+
+## Gemini Support (OpenAI-Compatible Gateway)
+The gateway can route to **Gemini** using the native Gemini API while keeping the
+external API **OpenAI-compatible**:
+- `chat.completions` and `responses` map to Gemini `generateContent`
+- `embeddings` maps to Gemini `embedContent` / `batchEmbedContents`
+- Gemini usage metadata is mapped to OpenAI-style `usage`

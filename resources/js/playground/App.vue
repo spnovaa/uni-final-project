@@ -19,6 +19,13 @@
                     </select>
                 </div>
                 <div class="field">
+                    <label for="provider">Provider</label>
+                    <select id="provider" v-model="provider">
+                        <option value="openai">openai</option>
+                        <option value="gemini">gemini</option>
+                    </select>
+                </div>
+                <div class="field">
                     <label for="model">Model</label>
                     <input id="model" v-model="model" type="text" placeholder="gpt-4o-mini">
                 </div>
@@ -51,17 +58,22 @@
 import { ref } from 'vue';
 
 const endpoint = ref('/api/v1/ai/chat/completions');
+const provider = ref('openai');
 const model = ref('gpt-4o-mini');
 const apiKey = ref('');
 const payload = ref('{"messages":[{"role":"user","content":"Hello"}]}');
 const responseText = ref('Waiting for request...');
 const loading = ref(false);
 
-const mergeModel = (data) => {
-    if (!data.model && model.value) {
-        return { ...data, model: model.value };
+const mergeSelection = (data) => {
+    let updated = { ...data };
+    if (!updated.provider && provider.value) {
+        updated = { ...updated, provider: provider.value };
     }
-    return data;
+    if (!updated.model && model.value) {
+        updated = { ...updated, model: model.value };
+    }
+    return updated;
 };
 
 const sendRequest = async () => {
@@ -76,7 +88,7 @@ const sendRequest = async () => {
         }
 
         const parsed = JSON.parse(payload.value);
-        const body = mergeModel(parsed);
+        const body = mergeSelection(parsed);
 
         const res = await fetch(endpoint.value, {
             method: 'POST',
