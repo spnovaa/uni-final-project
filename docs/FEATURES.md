@@ -60,3 +60,15 @@ A dedicated cache service is used to keep cache keys and TTLs consistent:
 - TTLs are configured in `config/cache.php` under `ttls`.
 - `provider_models` list cache is invalidated when models are created.
 - `providers` list and provider config caches are invalidated when providers are created.
+
+## External Log Shipping (Queue + Switchable Sinks)
+Gateway request/response payloads can be shipped to external log management services
+via a queued job, keeping the database lean for large-scale usage.
+
+Configuration:
+- `GATEWAY_LOG_SINK` = `loki` or `betterstack` (or empty to disable)
+- `GATEWAY_LOG_MAX_BYTES` controls payload truncation size
+
+Two free-tier friendly sinks are implemented:
+- **Grafana Loki** (`LOKI_PUSH_URL`, `LOKI_USERNAME`, `LOKI_API_KEY`)
+- **Better Stack Logs** (`BETTERSTACK_INGEST_HOST`, `BETTERSTACK_SOURCE_TOKEN`)

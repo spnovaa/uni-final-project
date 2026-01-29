@@ -33,4 +33,26 @@ return [
     'audit_retention_days' => (int) env('GATEWAY_AUDIT_RETENTION_DAYS', 90),
     'tokenizer_default_encoding' => env('GATEWAY_TOKENIZER_DEFAULT_ENCODING', 'cl100k_base'),
     'audio_bytes_per_second' => (int) env('GATEWAY_AUDIO_BYTES_PER_SECOND', 16000),
+
+    'log_sink' => env('GATEWAY_LOG_SINK'),
+    'log_payload_max_bytes' => (int) env('GATEWAY_LOG_MAX_BYTES', 20000),
+    'log_sinks' => [
+        'loki' => [
+            'push_url' => env('LOKI_PUSH_URL'),
+            'username' => env('LOKI_USERNAME'),
+            'api_key' => env('LOKI_API_KEY'),
+            'timeout' => (int) env('LOKI_TIMEOUT', 5),
+            'labels' => [
+                'app' => env('APP_NAME', 'gateway'),
+                'env' => env('APP_ENV', 'local'),
+            ],
+            'headers' => [],
+        ],
+        'betterstack' => [
+            'ingest_host' => env('BETTERSTACK_INGEST_HOST'),
+            'source_token' => env('BETTERSTACK_SOURCE_TOKEN'),
+            'timeout' => (int) env('BETTERSTACK_TIMEOUT', 5),
+            'headers' => [],
+        ],
+    ],
 ];
