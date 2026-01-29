@@ -125,4 +125,20 @@ return [
     */
     'profile_ttl' => (int) env('PROFILE_CACHE_TTL', 300),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Cache TTLs (seconds)
+    |--------------------------------------------------------------------------
+    |
+    | Centralized TTLs for cache-aside policies across the service layer.
+    |
+    */
+    'ttls' => [
+        'profile' => (int) env('PROFILE_CACHE_TTL', 300),
+        'plans' => (int) env('PLAN_CACHE_TTL', 300),
+        'providers' => (int) env('PROVIDER_CACHE_TTL', 300),
+        'provider_models' => (int) env('PROVIDER_MODEL_CACHE_TTL', 300),
+        'provider_config' => (int) env('PROVIDER_CONFIG_CACHE_TTL', 300),
+    ],
+
 ];
