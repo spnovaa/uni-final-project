@@ -25,6 +25,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(\App\Repositories\Billing\WalletRepositoryInterface::class, \App\Repositories\Billing\WalletRepository::class);
         $this->app->bind(\App\Repositories\Billing\PlanRepositoryInterface::class, \App\Repositories\Billing\PlanRepository::class);
         $this->app->bind(\App\Repositories\Billing\SubscriptionRepositoryInterface::class, \App\Repositories\Billing\SubscriptionRepository::class);
+        $this->app->bind(\App\Repositories\Billing\InvoiceRepositoryInterface::class, \App\Repositories\Billing\InvoiceRepository::class);
+        $this->app->bind(\App\Repositories\Billing\InvoiceItemRepositoryInterface::class, \App\Repositories\Billing\InvoiceItemRepository::class);
         $this->app->bind(\App\Repositories\Audit\AuditLogRepositoryInterface::class, \App\Repositories\Audit\AuditLogRepository::class);
         $this->app->bind(\App\Repositories\Auth\OtpChallengeRepositoryInterface::class, \App\Repositories\Auth\OtpChallengeRepository::class);
         $this->app->bind(\App\Repositories\User\UserRepositoryInterface::class, \App\Repositories\User\UserRepository::class);
@@ -38,6 +40,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(\App\Services\Billing\Wallet\WalletServiceInterface::class, \App\Services\Billing\Wallet\WalletService::class);
         $this->app->bind(\App\Services\Billing\Plan\PlanServiceInterface::class, \App\Services\Billing\Plan\PlanService::class);
         $this->app->bind(\App\Services\Billing\Subscription\SubscriptionServiceInterface::class, \App\Services\Billing\Subscription\SubscriptionService::class);
+        $this->app->bind(\App\Services\Billing\Invoice\InvoiceServiceInterface::class, \App\Services\Billing\Invoice\InvoiceService::class);
         $this->app->bind(\App\Services\Keys\ApiClientServiceInterface::class, \App\Services\Keys\ApiClientService::class);
         $this->app->bind(\App\Services\Keys\ApiKeyServiceInterface::class, \App\Services\Keys\ApiKeyService::class);
         $this->app->bind(\App\Services\User\UserServiceInterface::class, \App\Services\User\UserService::class);

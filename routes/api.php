@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\ApiKeyController;
 use App\Http\Controllers\Api\V1\AuthOtpController;
 use App\Http\Controllers\Api\V1\AuditLogController;
 use App\Http\Controllers\Api\V1\Gateway\GatewayController;
+use App\Http\Controllers\Api\V1\InvoiceController;
 use App\Http\Controllers\Api\V1\MeController;
 use App\Http\Controllers\Api\V1\PlanController;
 use App\Http\Controllers\Api\V1\ProviderController;
@@ -40,6 +41,9 @@ Route::prefix('api/v1')->group(function () {
         Route::get('subscriptions/current', [SubscriptionController::class, 'current']);
         Route::post('subscriptions/cancel', [SubscriptionController::class, 'cancel']);
 
+        Route::get('invoices', [InvoiceController::class, 'index']);
+        Route::get('invoices/{invoice}', [InvoiceController::class, 'show']);
+
         Route::get('providers', [ProviderController::class, 'index']);
         Route::post('providers', [ProviderController::class, 'store']);
         Route::get('providers/{provider}/models', [ProviderModelController::class, 'index']);
@@ -49,6 +53,10 @@ Route::prefix('api/v1')->group(function () {
             Route::get('audit-logs', [AuditLogController::class, 'index']);
         });
     });
+
+    Route::get('invoices/{invoice}/pdf', [InvoiceController::class, 'pdf'])
+        ->name('invoices.pdf')
+        ->middleware('signed');
 
     Route::prefix('ai')->middleware('api.key')->group(function () {
         Route::post('responses', [GatewayController::class, 'responses']);
