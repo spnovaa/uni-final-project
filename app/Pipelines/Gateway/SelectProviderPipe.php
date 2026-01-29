@@ -19,8 +19,8 @@ class SelectProviderPipe
     {
         $providerName = $context->providerName;
 
-        if ($context->modelKey) {
-            $providerModel = $this->router->resolveProviderModel($context->modelKey);
+        if ($context->modelKey && $providerName) {
+            $providerModel = $this->router->resolveProviderModel($providerName, $context->modelKey);
             $context->providerModel = $providerModel;
 
             if (! $providerName && $providerModel?->provider) {

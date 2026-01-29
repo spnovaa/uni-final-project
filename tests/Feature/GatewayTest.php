@@ -24,17 +24,37 @@ class GatewayTest extends TestCase
 
         config(['gateway.providers.openai.api_key' => 'test-key']);
         config(['gateway.providers.openai.base_url' => 'https://api.openai.com/v1']);
+        config(['gateway.providers.gemini.api_key' => 'gemini-key']);
+        config(['gateway.providers.gemini.base_url' => 'https://generativelanguage.googleapis.com/v1beta']);
     }
 
     public function test_missing_api_key_returns_auth_error(): void
     {
         $response = $this->postJson('/api/v1/ai/chat/completions', [
+            'provider' => 'openai',
             'model' => 'gpt-4o-mini',
             'messages' => [['role' => 'user', 'content' => 'Hi']],
         ]);
 
         $response->assertStatus(401)
             ->assertJsonPath('error.type', 'authentication_error');
+    }
+
+    public function test_missing_provider_returns_invalid_request_error(): void
+    {
+        Http::fake();
+        $apiKey = $this->createApiKey();
+
+        $response = $this->withHeader('Authorization', 'Bearer '.$apiKey)
+            ->postJson('/api/v1/ai/chat/completions', [
+                'model' => 'gpt-4o-mini',
+                'messages' => [['role' => 'user', 'content' => 'Hi']],
+            ]);
+
+        $response->assertStatus(400)
+            ->assertJsonPath('error.type', 'invalid_request_error');
+
+        Http::assertNothingSent();
     }
 
     public function test_chat_completions_with_bearer_token(): void
@@ -64,6 +84,7 @@ class GatewayTest extends TestCase
 
         $response = $this->withHeader('Authorization', 'Bearer '.$apiKey)
             ->postJson('/api/v1/ai/chat/completions', [
+                'provider' => 'openai',
                 'model' => 'gpt-4o-mini',
                 'messages' => [['role' => 'user', 'content' => 'Hi']],
             ]);
@@ -96,6 +117,7 @@ class GatewayTest extends TestCase
 
         $response = $this->withHeader('Authorization', 'Bearer '.$apiKey)
             ->postJson('/api/v1/ai/responses', [
+                'provider' => 'openai',
                 'model' => 'gpt-4o-mini',
                 'input' => 'Hello',
             ]);
@@ -129,6 +151,7 @@ class GatewayTest extends TestCase
 
         $response = $this->withHeader('X-API-Key', $apiKey)
             ->postJson('/api/v1/ai/embeddings', [
+                'provider' => 'openai',
                 'model' => 'text-embedding-3-small',
                 'input' => 'hello',
             ]);
@@ -152,6 +175,7 @@ class GatewayTest extends TestCase
 
         $response = $this->withHeader('Authorization', 'Bearer '.$apiKey)
             ->postJson('/api/v1/ai/images/generations', [
+                'provider' => 'openai',
                 'model' => 'gpt-image-1',
                 'prompt' => 'A test image',
             ]);
@@ -166,6 +190,7 @@ class GatewayTest extends TestCase
 
         $response = $this->withHeader('Authorization', 'Bearer '.$apiKey)
             ->postJson('/api/v1/ai/audio/transcriptions', [
+                'provider' => 'openai',
                 'model' => 'whisper-1',
             ]);
 
@@ -187,6 +212,7 @@ class GatewayTest extends TestCase
 
         $response = $this->withHeader('Authorization', 'Bearer '.$apiKey)
             ->post('/api/v1/ai/audio/transcriptions', [
+                'provider' => 'openai',
                 'model' => 'whisper-1',
                 'file' => $file,
             ]);
@@ -209,6 +235,7 @@ class GatewayTest extends TestCase
 
         $response = $this->withHeader('Authorization', 'Bearer '.$apiKey)
             ->postJson('/api/v1/ai/audio/speech', [
+                'provider' => 'openai',
                 'model' => 'gpt-4o-mini-tts',
                 'input' => 'Hello there',
                 'voice' => 'alloy',
@@ -244,6 +271,7 @@ class GatewayTest extends TestCase
 
         $first = $this->withHeader('Authorization', 'Bearer '.$apiKey)
             ->postJson('/api/v1/ai/chat/completions', [
+                'provider' => 'openai',
                 'model' => 'gpt-4o-mini',
                 'messages' => [['role' => 'user', 'content' => 'Hi']],
             ]);
@@ -252,12 +280,82 @@ class GatewayTest extends TestCase
 
         $second = $this->withHeader('Authorization', 'Bearer '.$apiKey)
             ->postJson('/api/v1/ai/chat/completions', [
+                'provider' => 'openai',
                 'model' => 'gpt-4o-mini',
                 'messages' => [['role' => 'user', 'content' => 'Hi again']],
             ]);
 
         $second->assertStatus(429)
             ->assertJsonPath('error.type', 'rate_limit_error');
+    }
+
+    public function test_gemini_chat_completions_are_normalized(): void
+    {
+        Http::fake([
+            'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent' => Http::response([
+                'responseId' => 'gemini_resp',
+                'candidates' => [
+                    [
+                        'content' => [
+                            'parts' => [
+                                ['text' => 'Hello from Gemini'],
+                            ],
+                        ],
+                        'finishReason' => 'STOP',
+                    ],
+                ],
+                'usageMetadata' => [
+                    'promptTokenCount' => 5,
+                    'candidatesTokenCount' => 7,
+                    'totalTokenCount' => 12,
+                ],
+            ], 200),
+        ]);
+
+        $apiKey = $this->createApiKey();
+        $this->seedGeminiProvider();
+
+        $response = $this->withHeader('Authorization', 'Bearer '.$apiKey)
+            ->postJson('/api/v1/ai/chat/completions', [
+                'provider' => 'gemini',
+                'model' => 'gemini-1.5-flash',
+                'messages' => [['role' => 'user', 'content' => 'Hello']],
+            ]);
+
+        $response->assertOk()
+            ->assertJsonPath('object', 'chat.completion')
+            ->assertJsonPath('choices.0.message.content', 'Hello from Gemini')
+            ->assertJsonPath('usage.prompt_tokens', 5);
+    }
+
+    public function test_gemini_embeddings_are_normalized(): void
+    {
+        Http::fake([
+            'https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent' => Http::response([
+                'embedding' => [
+                    'values' => [0.1, 0.2],
+                ],
+                'usageMetadata' => [
+                    'promptTokenCount' => 4,
+                    'totalTokenCount' => 4,
+                ],
+            ], 200),
+        ]);
+
+        $apiKey = $this->createApiKey();
+        $this->seedGeminiProvider();
+
+        $response = $this->withHeader('Authorization', 'Bearer '.$apiKey)
+            ->postJson('/api/v1/ai/embeddings', [
+                'provider' => 'gemini',
+                'model' => 'text-embedding-004',
+                'input' => 'hello',
+            ]);
+
+        $response->assertOk()
+            ->assertJsonPath('object', 'list')
+            ->assertJsonPath('data.0.embedding.0', 0.1)
+            ->assertJsonPath('usage.prompt_tokens', 4);
     }
 
     private function createApiKey(): string
@@ -291,11 +389,82 @@ class GatewayTest extends TestCase
             ],
             'status' => 'active',
         ]);
+        ProviderModel::query()->create([
+            'provider_id' => $provider->id,
+            'model_key' => 'text-embedding-3-small',
+            'pricing_config' => [
+                'input_cost_per_1k' => 0.1,
+                'output_cost_per_1k' => 0.0,
+            ],
+            'status' => 'active',
+        ]);
+        ProviderModel::query()->create([
+            'provider_id' => $provider->id,
+            'model_key' => 'gpt-image-1',
+            'pricing_config' => [
+                'image_cost_per_unit' => 0.5,
+            ],
+            'status' => 'active',
+        ]);
+        ProviderModel::query()->create([
+            'provider_id' => $provider->id,
+            'model_key' => 'whisper-1',
+            'pricing_config' => [
+                'audio_cost_per_second' => 0.01,
+            ],
+            'status' => 'active',
+        ]);
+        ProviderModel::query()->create([
+            'provider_id' => $provider->id,
+            'model_key' => 'gpt-4o-mini-tts',
+            'pricing_config' => [
+                'audio_cost_per_char' => 0.0001,
+            ],
+            'status' => 'active',
+        ]);
 
         app(WalletServiceInterface::class)->topup($user, 10, 'test_topup');
 
         $result = app(ApiKeyService::class)->create($client);
 
         return $result['api_key'];
+    }
+
+    private function seedGeminiProvider(): Provider
+    {
+        $provider = Provider::query()->create([
+            'name' => 'gemini',
+            'type' => 'gemini',
+            'base_url' => 'https://generativelanguage.googleapis.com/v1beta',
+            'status' => 'active',
+            'priority' => 0,
+            'config_encrypted' => [
+                'api_key' => 'gemini-key',
+                'base_url' => 'https://generativelanguage.googleapis.com/v1beta',
+                'timeout' => 60,
+            ],
+        ]);
+
+        ProviderModel::query()->create([
+            'provider_id' => $provider->id,
+            'model_key' => 'gemini-1.5-flash',
+            'pricing_config' => [
+                'input_cost_per_1k' => 0.5,
+                'output_cost_per_1k' => 1.0,
+            ],
+            'status' => 'active',
+        ]);
+
+        ProviderModel::query()->create([
+            'provider_id' => $provider->id,
+            'model_key' => 'text-embedding-004',
+            'pricing_config' => [
+                'input_cost_per_1k' => 0.1,
+                'output_cost_per_1k' => 0.0,
+            ],
+            'status' => 'active',
+        ]);
+
+        return $provider;
     }
 }

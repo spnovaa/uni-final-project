@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Schema;
 
 class ProviderRouter
 {
-    public function resolveProviderModel(?string $modelKey): ?ProviderModel
+    public function resolveProviderModel(?string $providerName, ?string $modelKey): ?ProviderModel
     {
-        if (empty($modelKey) || ! Schema::hasTable('provider_models')) {
+        if (empty($providerName) || empty($modelKey) || ! Schema::hasTable('provider_models')) {
             return null;
         }
 
@@ -18,6 +18,9 @@ class ProviderRouter
             ->with('provider')
             ->where('model_key', $modelKey)
             ->where('status', 'active')
+            ->whereHas('provider', function ($query) use ($providerName) {
+                $query->where('name', $providerName)->where('status', 'active');
+            })
             ->first();
     }
 

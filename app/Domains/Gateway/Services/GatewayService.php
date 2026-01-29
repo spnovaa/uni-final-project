@@ -19,6 +19,7 @@ class GatewayService
                 \App\Pipelines\Gateway\ValidateGatewayPayloadPipe::class,
                 \App\Pipelines\Gateway\RateLimitPipe::class,
                 \App\Pipelines\Gateway\SelectProviderPipe::class,
+                \App\Pipelines\Gateway\ValidateProviderSelectionPipe::class,
                 \App\Pipelines\Gateway\EstimateUsagePipe::class,
                 \App\Pipelines\Gateway\CheckSubscriptionOrWalletPipe::class,
                 \App\Pipelines\Gateway\DispatchProviderRequestPipe::class,

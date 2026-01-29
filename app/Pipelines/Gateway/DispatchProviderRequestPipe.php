@@ -7,6 +7,8 @@ use App\Domains\Gateway\DTOs\GatewayRequestDto;
 use App\Domains\Gateway\Support\OpenAiErrorResponder;
 use App\Domains\Providers\ProviderAdapterResolver;
 use Closure;
+use Illuminate\Support\Arr;
+use RuntimeException;
 use Throwable;
 
 class DispatchProviderRequestPipe
@@ -21,9 +23,11 @@ class DispatchProviderRequestPipe
             $adapter = $this->resolver->resolve($context->providerName, $context->endpoint, $context->modelKey);
             $context->adapter = $adapter;
 
+            $payload = Arr::except($context->payload, ['provider']);
+
             $dto = new GatewayRequestDto(
                 $context->endpoint,
-                $context->payload,
+                $payload,
                 $context->files,
                 $context->providerName,
                 $context->modelKey,
@@ -32,6 +36,14 @@ class DispatchProviderRequestPipe
 
             $context->providerResponse = $adapter->send($dto);
             $context->status = $context->providerResponse->status;
+        } catch (RuntimeException $exception) {
+            $context->normalizedResponse = OpenAiErrorResponder::invalidRequest(
+                'Provider does not support this endpoint.',
+                'provider'
+            )->getData(true);
+            $context->status = 400;
+
+            return $context;
         } catch (Throwable $exception) {
             $context->normalizedResponse = OpenAiErrorResponder::serverError('Upstream provider error.')->getData(true);
             $context->status = 502;

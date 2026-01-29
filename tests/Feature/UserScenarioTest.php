@@ -50,6 +50,7 @@ class UserScenarioTest extends TestCase
 
         $response = $this->withHeader('Authorization', 'Bearer '.$apiKey)
             ->postJson('/api/v1/ai/chat/completions', [
+                'provider' => 'openai',
                 'model' => 'gpt-4o-mini',
                 'messages' => [['role' => 'user', 'content' => 'Hello']],
             ]);
@@ -72,6 +73,7 @@ class UserScenarioTest extends TestCase
 
         $response = $this->withHeader('Authorization', 'Bearer '.$apiKey)
             ->postJson('/api/v1/ai/chat/completions', [
+                'provider' => 'openai',
                 'model' => 'gpt-4o-mini',
                 'messages' => [[
                     'role' => 'user',
@@ -131,6 +133,7 @@ class UserScenarioTest extends TestCase
 
         $response = $this->withHeader('Authorization', 'Bearer '.$apiKey)
             ->postJson('/api/v1/ai/chat/completions', [
+                'provider' => 'openai',
                 'model' => 'gpt-4o-mini',
                 'messages' => [['role' => 'user', 'content' => 'Hello']],
             ]);
@@ -149,6 +152,7 @@ class UserScenarioTest extends TestCase
 
         $response = $this->withHeader('Authorization', 'Bearer '.$apiKey)
             ->postJson('/api/v1/ai/chat/completions', [
+                'provider' => 'openai',
                 'model' => 'gpt-4o-mini',
             ]);
 
@@ -193,6 +197,7 @@ class UserScenarioTest extends TestCase
 
         $response = $this->withHeader('Authorization', 'Bearer '.$apiKey)
             ->postJson('/api/v1/ai/images/generations', [
+                'provider' => 'openai',
                 'model' => 'gpt-image-1',
                 'prompt' => 'A sunset',
                 'n' => 2,

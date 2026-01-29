@@ -22,6 +22,7 @@ class UsageEstimationServiceTest extends TestCase
             Request::create('/api/v1/ai/chat/completions', 'POST'),
             'chat.completions',
             [
+                'provider' => 'openai',
                 'model' => 'gpt-4o-mini',
                 'messages' => [
                     ['role' => 'user', 'content' => 'abcd'],
@@ -46,6 +47,7 @@ class UsageEstimationServiceTest extends TestCase
             Request::create('/api/v1/ai/embeddings', 'POST'),
             'embeddings',
             [
+                'provider' => 'openai',
                 'model' => 'gpt-4o-mini',
                 'input' => ['abcd', 'efgh'],
             ],

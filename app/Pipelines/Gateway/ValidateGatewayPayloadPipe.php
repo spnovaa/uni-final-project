@@ -39,8 +39,14 @@ class ValidateGatewayPayloadPipe
 
     private function rulesForEndpoint(string $endpoint): array
     {
-        return match ($endpoint) {
-            'responses' => [],
+        $baseRules = [
+            'provider' => ['required', 'string'],
+        ];
+
+        $endpointRules = match ($endpoint) {
+            'responses' => [
+                'model' => ['required', 'string'],
+            ],
             'chat.completions' => [
                 'model' => ['required', 'string'],
                 'messages' => ['required', 'array'],
@@ -50,6 +56,7 @@ class ValidateGatewayPayloadPipe
                 'input' => ['required'],
             ],
             'images.generations' => [
+                'model' => ['required', 'string'],
                 'prompt' => ['required', 'string'],
             ],
             'audio.transcriptions' => [
@@ -62,5 +69,7 @@ class ValidateGatewayPayloadPipe
             ],
             default => [],
         };
+
+        return array_merge($baseRules, $endpointRules);
     }
 }

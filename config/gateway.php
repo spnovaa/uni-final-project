@@ -9,6 +9,11 @@ return [
             'api_key' => env('OPENAI_API_KEY'),
             'timeout' => (int) env('OPENAI_TIMEOUT', 60),
         ],
+        'gemini' => [
+            'base_url' => env('GEMINI_BASE_URL', 'https://generativelanguage.googleapis.com/v1beta'),
+            'api_key' => env('GEMINI_API_KEY'),
+            'timeout' => (int) env('GEMINI_TIMEOUT', 60),
+        ],
     ],
 
     'persist_logs' => env('GATEWAY_PERSIST_LOGS', true),

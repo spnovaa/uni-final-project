@@ -13,10 +13,16 @@ class ProviderAdapterResolver
     {
         $adapters = [
             'openai' => OpenAiProviderAdapter::class,
+            'gemini' => GeminiProviderAdapter::class,
         ];
 
         if (isset($adapters[$providerName])) {
-            return app($adapters[$providerName]);
+            $adapter = app($adapters[$providerName]);
+            if ($adapter->supports($endpoint, $model)) {
+                return $adapter;
+            }
+
+            throw new RuntimeException('Provider does not support this endpoint.');
         }
 
         foreach ($adapters as $adapterClass) {
