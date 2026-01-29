@@ -8,7 +8,7 @@
 
 ## Non-Token Billing
 The gateway supports non-token usage metrics alongside tokens. The pricing is driven by
-`provider_models.pricing_config`:
+`provider_models.pricing_config` (stored in SQL Server and cached):
 - `image_cost_per_unit`: cost per generated image
 - `audio_cost_per_second`: cost per audio second (transcription or TTS)
 - `audio_cost_per_char`: cost per input character for TTS
@@ -48,3 +48,10 @@ external API **OpenAI-compatible**:
 - `chat.completions` and `responses` map to Gemini `generateContent`
 - `embeddings` maps to Gemini `embedContent` / `batchEmbedContents`
 - Gemini usage metadata is mapped to OpenAI-style `usage`
+
+## Cache Service (Centralized)
+A dedicated cache service is used to keep cache keys and TTLs consistent:
+- Cache-aside for read-heavy resources: plans, providers, provider models, profile.
+- TTLs are configured in `config/cache.php` under `ttls`.
+- `provider_models` list cache is invalidated when models are created.
+- `providers` list and provider config caches are invalidated when providers are created.
