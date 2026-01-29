@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Domains\Keys\Services\ApiKeyService;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Keys\ApiKeyResource;
 use App\Models\ApiClient;
 use App\Models\ApiKey;
+use App\Services\Keys\ApiKeyServiceInterface;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 
 class ApiKeyController extends Controller
 {
-    public function __construct(private readonly ApiKeyService $service)
+    public function __construct(private readonly ApiKeyServiceInterface $service)
     {
     }
 
@@ -19,20 +20,9 @@ class ApiKeyController extends Controller
     {
         $this->authorizeClient($request, $apiClient);
 
-        $keys = $apiClient->keys()->get()->map(function (ApiKey $key) {
-            return [
-                'id' => $key->id,
-                'key_prefix' => $key->key_prefix,
-                'scopes' => $key->scopes,
-                'rate_limit_per_min' => $key->rate_limit_per_min,
-                'allowed_ips' => $key->allowed_ips,
-                'expires_at' => $key->expires_at,
-                'revoked_at' => $key->revoked_at,
-                'created_at' => $key->created_at,
-            ];
-        });
+        $keys = $this->service->list($apiClient);
 
-        return response()->json($keys);
+        return response()->json(ApiKeyResource::collection($keys));
     }
 
     public function store(Request $request, ApiClient $apiClient)
@@ -62,6 +52,7 @@ class ApiKeyController extends Controller
             'api_key' => $result['api_key'],
             'key_prefix' => $result['model']->key_prefix,
             'expires_at' => $result['model']->expires_at,
+            'resource' => ApiKeyResource::make($result['model']),
         ], 201);
     }
 
@@ -86,6 +77,7 @@ class ApiKeyController extends Controller
             'api_key' => $result['api_key'],
             'key_prefix' => $result['model']->key_prefix,
             'expires_at' => $result['model']->expires_at,
+            'resource' => ApiKeyResource::make($result['model']),
         ]);
     }
 

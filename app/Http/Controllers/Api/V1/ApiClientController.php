@@ -3,18 +3,21 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Models\ApiClient;
+use App\Http\Resources\Keys\ApiClientResource;
+use App\Services\Keys\ApiClientServiceInterface;
 use Illuminate\Http\Request;
 
 class ApiClientController extends Controller
 {
+    public function __construct(private readonly ApiClientServiceInterface $clients)
+    {
+    }
+
     public function index(Request $request)
     {
-        $clients = ApiClient::query()
-            ->where('user_id', $request->user()->id)
-            ->get();
+        $clients = $this->clients->list($request->user());
 
-        return response()->json($clients);
+        return response()->json(ApiClientResource::collection($clients));
     }
 
     public function store(Request $request)
@@ -23,12 +26,8 @@ class ApiClientController extends Controller
             'name' => ['required', 'string', 'max:255'],
         ]);
 
-        $client = ApiClient::query()->create([
-            'user_id' => $request->user()->id,
-            'name' => $data['name'],
-            'status' => 'active',
-        ]);
+        $client = $this->clients->create($request->user(), $data['name']);
 
-        return response()->json($client, 201);
+        return response()->json(ApiClientResource::make($client), 201);
     }
 }

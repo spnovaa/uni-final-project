@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Domains\Auth\Services\OtpService;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Auth\UserResource;
+use App\Services\Auth\OtpServiceInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 class AuthOtpController extends Controller
 {
-    public function __construct(private readonly OtpService $otpService)
+    public function __construct(private readonly OtpServiceInterface $otpService)
     {
     }
 
@@ -81,7 +82,7 @@ class AuthOtpController extends Controller
         return response()->json([
             'token' => $token,
             'token_type' => 'Bearer',
-            'user' => $user,
+            'user' => UserResource::make($user),
         ]);
     }
 }

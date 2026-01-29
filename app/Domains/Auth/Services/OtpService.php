@@ -3,13 +3,21 @@
 namespace App\Domains\Auth\Services;
 
 use App\Domains\Auth\DTOs\OtpContext;
-use App\Models\OtpChallenge;
 use App\Models\User;
+use App\Repositories\Auth\OtpChallengeRepositoryInterface;
+use App\Repositories\User\UserRepositoryInterface;
+use App\Services\Auth\OtpServiceInterface;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\Hash;
 
-class OtpService
+class OtpService implements OtpServiceInterface
 {
+    public function __construct(
+        private readonly OtpChallengeRepositoryInterface $challenges,
+        private readonly UserRepositoryInterface $users,
+    ) {
+    }
+
     public function start(string $destination, string $channel, ?string $ip = null): OtpContext
     {
         $context = new OtpContext($destination, $channel, $ip);
@@ -26,15 +34,7 @@ class OtpService
 
     public function verify(string $destination, string $code, ?string $channel = null): array
     {
-        $query = OtpChallenge::query()
-            ->where('destination', $destination)
-            ->orderByDesc('id');
-
-        if ($channel) {
-            $query->where('channel', $channel);
-        }
-
-        $challenge = $query->first();
+        $challenge = $this->challenges->latestForDestination($destination, $channel);
 
         if (! $challenge) {
             return [
@@ -61,7 +61,7 @@ class OtpService
         }
 
         if (! Hash::check($code, $challenge->code_hash)) {
-            $challenge->increment('attempts');
+            $this->challenges->incrementAttempts($challenge);
 
             return [
                 'ok' => false,
@@ -71,7 +71,7 @@ class OtpService
         }
 
         $user = $challenge->user_id
-            ? User::query()->find($challenge->user_id)
+            ? $this->users->find($challenge->user_id)
             : $this->resolveUser($destination, $challenge->channel);
 
         if (! $user) {
@@ -88,11 +88,11 @@ class OtpService
     private function resolveUser(string $destination, string $channel): ?User
     {
         if ($channel === 'email') {
-            return User::query()->where('email', $destination)->first();
+            return $this->users->findByEmail($destination);
         }
 
         if ($channel === 'sms') {
-            return User::query()->where('phone', $destination)->first();
+            return $this->users->findByPhone($destination);
         }
 
         return null;
@@ -113,6 +113,6 @@ class OtpService
             $data['email'] = sprintf('user_%s@example.local', str()->random(10));
         }
 
-        return User::query()->create($data);
+        return $this->users->create($data);
     }
 }

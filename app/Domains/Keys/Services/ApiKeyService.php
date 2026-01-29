@@ -4,17 +4,22 @@ namespace App\Domains\Keys\Services;
 
 use App\Models\ApiClient;
 use App\Models\ApiKey;
+use App\Repositories\Keys\ApiKeyRepositoryInterface;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Str;
 
 class ApiKeyService
 {
+    public function __construct(private readonly ApiKeyRepositoryInterface $keys)
+    {
+    }
+
     public function create(ApiClient $client, array $scopes = [], ?int $rateLimit = null, ?array $allowedIps = null, ?CarbonImmutable $expiresAt = null): array
     {
         $rawKey = $this->generateRawKey();
         $prefix = $this->extractPrefix($rawKey);
 
-        $apiKey = ApiKey::query()->create([
+        $apiKey = $this->keys->create([
             'api_client_id' => $client->id,
             'key_prefix' => $prefix,
             'key_hash' => $this->hashToken($rawKey),
@@ -34,7 +39,8 @@ class ApiKeyService
     {
         $apiKey->forceFill([
             'revoked_at' => now(),
-        ])->save();
+        ]);
+        $this->keys->save($apiKey);
 
         return $apiKey;
     }

@@ -3,13 +3,19 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Auth\UserResource;
+use App\Services\User\UserServiceInterface;
 use Illuminate\Http\Request;
 
 class MeController extends Controller
 {
+    public function __construct(private readonly UserServiceInterface $users)
+    {
+    }
+
     public function show(Request $request)
     {
-        return response()->json($request->user());
+        return response()->json(UserResource::make($request->user()));
     }
 
     public function update(Request $request)
@@ -20,10 +26,8 @@ class MeController extends Controller
             'phone' => ['sometimes', 'string', 'max:50'],
         ]);
 
-        $user = $request->user();
-        $user->fill($data);
-        $user->save();
+        $user = $this->users->updateProfile($request->user(), $data);
 
-        return response()->json($user);
+        return response()->json(UserResource::make($user));
     }
 }

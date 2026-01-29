@@ -25,12 +25,20 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(\App\Repositories\Billing\WalletRepositoryInterface::class, \App\Repositories\Billing\WalletRepository::class);
         $this->app->bind(\App\Repositories\Billing\PlanRepositoryInterface::class, \App\Repositories\Billing\PlanRepository::class);
         $this->app->bind(\App\Repositories\Billing\SubscriptionRepositoryInterface::class, \App\Repositories\Billing\SubscriptionRepository::class);
+        $this->app->bind(\App\Repositories\Auth\OtpChallengeRepositoryInterface::class, \App\Repositories\Auth\OtpChallengeRepository::class);
+        $this->app->bind(\App\Repositories\User\UserRepositoryInterface::class, \App\Repositories\User\UserRepository::class);
+        $this->app->bind(\App\Repositories\Keys\ApiClientRepositoryInterface::class, \App\Repositories\Keys\ApiClientRepository::class);
+        $this->app->bind(\App\Repositories\Keys\ApiKeyRepositoryInterface::class, \App\Repositories\Keys\ApiKeyRepository::class);
         $this->app->bind(\App\Repositories\Gateway\ProviderRepositoryInterface::class, \App\Repositories\Gateway\ProviderRepository::class);
         $this->app->bind(\App\Repositories\Gateway\ProviderModelRepositoryInterface::class, \App\Repositories\Gateway\ProviderModelRepository::class);
 
+        $this->app->bind(\App\Services\Auth\OtpServiceInterface::class, \App\Domains\Auth\Services\OtpService::class);
         $this->app->bind(\App\Services\Billing\Wallet\WalletServiceInterface::class, \App\Services\Billing\Wallet\WalletService::class);
         $this->app->bind(\App\Services\Billing\Plan\PlanServiceInterface::class, \App\Services\Billing\Plan\PlanService::class);
         $this->app->bind(\App\Services\Billing\Subscription\SubscriptionServiceInterface::class, \App\Services\Billing\Subscription\SubscriptionService::class);
+        $this->app->bind(\App\Services\Keys\ApiClientServiceInterface::class, \App\Services\Keys\ApiClientService::class);
+        $this->app->bind(\App\Services\Keys\ApiKeyServiceInterface::class, \App\Services\Keys\ApiKeyService::class);
+        $this->app->bind(\App\Services\User\UserServiceInterface::class, \App\Services\User\UserService::class);
         $this->app->bind(\App\Services\Gateway\Provider\ProviderServiceInterface::class, \App\Services\Gateway\Provider\ProviderService::class);
         $this->app->bind(\App\Services\Gateway\ProviderModel\ProviderModelServiceInterface::class, \App\Services\Gateway\ProviderModel\ProviderModelService::class);
 
