@@ -26,6 +26,8 @@ class GatewayTest extends TestCase
         config(['gateway.providers.openai.base_url' => 'https://api.openai.com/v1']);
         config(['gateway.providers.gemini.api_key' => 'gemini-key']);
         config(['gateway.providers.gemini.base_url' => 'https://generativelanguage.googleapis.com/v1beta']);
+        config(['gateway.providers.groq.api_key' => 'groq-key']);
+        config(['gateway.providers.groq.base_url' => 'https://api.groq.com/openai/v1']);
     }
 
     public function test_missing_api_key_returns_auth_error(): void
@@ -358,6 +360,44 @@ class GatewayTest extends TestCase
             ->assertJsonPath('usage.prompt_tokens', 4);
     }
 
+    public function test_groq_chat_completions_are_forwarded(): void
+    {
+        Http::fake([
+            'https://api.groq.com/openai/v1/chat/completions' => Http::response([
+                'id' => 'chatcmpl_groq',
+                'object' => 'chat.completion',
+                'created' => time(),
+                'model' => 'llama-3.3-70b-versatile',
+                'choices' => [
+                    [
+                        'index' => 0,
+                        'message' => ['role' => 'assistant', 'content' => 'Hello from Groq'],
+                        'finish_reason' => 'stop',
+                    ],
+                ],
+                'usage' => [
+                    'prompt_tokens' => 5,
+                    'completion_tokens' => 7,
+                    'total_tokens' => 12,
+                ],
+            ], 200),
+        ]);
+
+        $apiKey = $this->createApiKey();
+        $this->seedGroqProvider();
+
+        $response = $this->withHeader('Authorization', 'Bearer '.$apiKey)
+            ->postJson('/api/v1/ai/chat/completions', [
+                'provider' => 'groq',
+                'model' => 'llama-3.3-70b-versatile',
+                'messages' => [['role' => 'user', 'content' => 'Hello']],
+            ]);
+
+        $response->assertOk()
+            ->assertJsonPath('id', 'chatcmpl_groq')
+            ->assertJsonPath('choices.0.message.content', 'Hello from Groq');
+    }
+
     private function createApiKey(): string
     {
         $user = User::factory()->create();
@@ -460,6 +500,34 @@ class GatewayTest extends TestCase
             'model_key' => 'text-embedding-004',
             'pricing_config' => [
                 'input_cost_per_1k' => 0.1,
+                'output_cost_per_1k' => 0.0,
+            ],
+            'status' => 'active',
+        ]);
+
+        return $provider;
+    }
+
+    private function seedGroqProvider(): Provider
+    {
+        $provider = Provider::query()->create([
+            'name' => 'groq',
+            'type' => 'openai_compatible',
+            'base_url' => 'https://api.groq.com/openai/v1',
+            'status' => 'active',
+            'priority' => 0,
+            'config_encrypted' => [
+                'api_key' => 'groq-key',
+                'base_url' => 'https://api.groq.com/openai/v1',
+                'timeout' => 60,
+            ],
+        ]);
+
+        ProviderModel::query()->create([
+            'provider_id' => $provider->id,
+            'model_key' => 'llama-3.3-70b-versatile',
+            'pricing_config' => [
+                'input_cost_per_1k' => 0.0,
                 'output_cost_per_1k' => 0.0,
             ],
             'status' => 'active',

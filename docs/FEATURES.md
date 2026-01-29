@@ -49,6 +49,11 @@ external API **OpenAI-compatible**:
 - `embeddings` maps to Gemini `embedContent` / `batchEmbedContents`
 - Gemini usage metadata is mapped to OpenAI-style `usage`
 
+## OpenAI-Compatible Providers (Groq / OpenRouter)
+The gateway can route to additional OpenAI-compatible providers by setting
+`provider` to `groq` or `openrouter` and using the provider's model key.
+Configure their base URLs and API keys in `.env` (see `.env.example`).
+
 ## Cache Service (Centralized)
 A dedicated cache service is used to keep cache keys and TTLs consistent:
 - Cache-aside for read-heavy resources: plans, providers, provider models, profile.
