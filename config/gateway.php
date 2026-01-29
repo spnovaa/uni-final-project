@@ -14,6 +14,16 @@ return [
             'api_key' => env('GEMINI_API_KEY'),
             'timeout' => (int) env('GEMINI_TIMEOUT', 60),
         ],
+        'groq' => [
+            'base_url' => env('GROQ_BASE_URL', 'https://api.groq.com/openai/v1'),
+            'api_key' => env('GROQ_API_KEY'),
+            'timeout' => (int) env('GROQ_TIMEOUT', 60),
+        ],
+        'openrouter' => [
+            'base_url' => env('OPENROUTER_BASE_URL', 'https://openrouter.ai/api/v1'),
+            'api_key' => env('OPENROUTER_API_KEY'),
+            'timeout' => (int) env('OPENROUTER_TIMEOUT', 60),
+        ],
     ],
 
     'persist_logs' => env('GATEWAY_PERSIST_LOGS', true),

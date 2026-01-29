@@ -14,6 +14,8 @@ class ProviderAdapterResolver
         $adapters = [
             'openai' => OpenAiProviderAdapter::class,
             'gemini' => GeminiProviderAdapter::class,
+            'groq' => OpenAiProviderAdapter::class,
+            'openrouter' => OpenAiProviderAdapter::class,
         ];
 
         if (isset($adapters[$providerName])) {
