@@ -16,6 +16,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     @OA\Property(property="email", type="string", example="jane@example.com"),
  *     @OA\Property(property="phone", type="string", example="+1234567890"),
  *     @OA\Property(property="status", type="string", example="active"),
+ *     @OA\Property(property="profile_image_url", type="string", nullable=true, example="https://example.com/storage/profile_images/user.png"),
  *     @OA\Property(property="created_at", type="string", format="date-time"),
  *     @OA\Property(property="updated_at", type="string", format="date-time")
  * )
@@ -30,6 +31,7 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'phone' => $this->phone,
             'status' => $this->status,
+            'profile_image_url' => $this->profileImageUrl(),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

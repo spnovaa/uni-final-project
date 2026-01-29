@@ -15,7 +15,9 @@ class MeController extends Controller
 
     public function show(Request $request)
     {
-        return response()->json(UserResource::make($request->user()));
+        $user = $this->users->getProfile($request->user());
+
+        return response()->json(UserResource::make($user));
     }
 
     public function update(Request $request)
@@ -24,9 +26,12 @@ class MeController extends Controller
             'name' => ['sometimes', 'string', 'max:255'],
             'email' => ['sometimes', 'email', 'max:255'],
             'phone' => ['sometimes', 'string', 'max:50'],
+            'profile_image' => ['sometimes', 'file', 'image', 'max:2048'],
         ]);
 
-        $user = $this->users->updateProfile($request->user(), $data);
+        $profileImage = $request->file('profile_image');
+
+        $user = $this->users->updateProfile($request->user(), $data, $profileImage);
 
         return response()->json(UserResource::make($user));
     }

@@ -114,4 +114,15 @@ return [
 
     'prefix' => env('CACHE_PREFIX', Str::slug((string) env('APP_NAME', 'laravel')).'-cache-'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Profile Cache TTL (seconds)
+    |--------------------------------------------------------------------------
+    |
+    | This TTL controls how long user profile data is cached for read-heavy
+    | scenarios. The cache is invalidated on profile updates (cache-aside).
+    |
+    */
+    'profile_ttl' => (int) env('PROFILE_CACHE_TTL', 300),
+
 ];
