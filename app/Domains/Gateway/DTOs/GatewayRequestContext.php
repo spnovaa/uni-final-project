@@ -4,6 +4,7 @@ namespace App\Domains\Gateway\DTOs;
 
 use App\Models\ApiKey;
 use App\Models\ProviderModel;
+use App\Models\Subscription;
 use App\Domains\Providers\ProviderAdapterInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -24,6 +25,7 @@ class GatewayRequestContext
     public ?UsageMetrics $usage = null;
     public array $usageRecords = [];
     public int $status = 200;
+    public ?Subscription $subscription = null;
 
     public function __construct(
         public Request $request,

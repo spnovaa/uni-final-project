@@ -53,4 +53,28 @@ class OpenAiErrorResponder
             ],
         ], $status);
     }
+
+    public static function rateLimitError(string $message, ?string $code = 'rate_limit_exceeded'): JsonResponse
+    {
+        return response()->json([
+            'error' => [
+                'message' => $message,
+                'type' => 'rate_limit_error',
+                'param' => null,
+                'code' => $code,
+            ],
+        ], 429);
+    }
+
+    public static function paymentRequired(string $message, ?string $code = 'insufficient_quota'): JsonResponse
+    {
+        return response()->json([
+            'error' => [
+                'message' => $message,
+                'type' => 'insufficient_quota',
+                'param' => null,
+                'code' => $code,
+            ],
+        ], 402);
+    }
 }

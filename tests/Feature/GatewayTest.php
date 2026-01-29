@@ -4,7 +4,11 @@ namespace Tests\Feature;
 
 use App\Domains\Keys\Services\ApiKeyService;
 use App\Models\ApiClient;
+use App\Models\ApiKey;
+use App\Models\Provider;
+use App\Models\ProviderModel;
 use App\Models\User;
+use App\Services\Billing\Wallet\WalletServiceInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
@@ -215,6 +219,47 @@ class GatewayTest extends TestCase
         $this->assertSame('binary-audio', $response->getContent());
     }
 
+    public function test_rate_limit_is_enforced(): void
+    {
+        Http::fake([
+            'https://api.openai.com/v1/chat/completions' => Http::response([
+                'id' => 'chatcmpl_test',
+                'object' => 'chat.completion',
+                'created' => time(),
+                'model' => 'gpt-4o-mini',
+                'choices' => [
+                    [
+                        'index' => 0,
+                        'message' => ['role' => 'assistant', 'content' => 'Hello'],
+                        'finish_reason' => 'stop',
+                    ],
+                ],
+            ], 200),
+        ]);
+
+        $apiKey = $this->createApiKey();
+        $model = ApiKey::query()->firstOrFail();
+        $model->rate_limit_per_min = 1;
+        $model->save();
+
+        $first = $this->withHeader('Authorization', 'Bearer '.$apiKey)
+            ->postJson('/api/v1/ai/chat/completions', [
+                'model' => 'gpt-4o-mini',
+                'messages' => [['role' => 'user', 'content' => 'Hi']],
+            ]);
+
+        $first->assertOk();
+
+        $second = $this->withHeader('Authorization', 'Bearer '.$apiKey)
+            ->postJson('/api/v1/ai/chat/completions', [
+                'model' => 'gpt-4o-mini',
+                'messages' => [['role' => 'user', 'content' => 'Hi again']],
+            ]);
+
+        $second->assertStatus(429)
+            ->assertJsonPath('error.type', 'rate_limit_error');
+    }
+
     private function createApiKey(): string
     {
         $user = User::factory()->create();
@@ -223,6 +268,31 @@ class GatewayTest extends TestCase
             'name' => 'Gateway Client',
             'status' => 'active',
         ]);
+
+        $provider = Provider::query()->create([
+            'name' => 'openai',
+            'type' => 'openai_compatible',
+            'base_url' => 'https://api.openai.com/v1',
+            'status' => 'active',
+            'priority' => 0,
+            'config_encrypted' => [
+                'api_key' => 'test-key',
+                'base_url' => 'https://api.openai.com/v1',
+                'timeout' => 60,
+            ],
+        ]);
+
+        ProviderModel::query()->create([
+            'provider_id' => $provider->id,
+            'model_key' => 'gpt-4o-mini',
+            'pricing_config' => [
+                'input_cost_per_1k' => 0.5,
+                'output_cost_per_1k' => 1.0,
+            ],
+            'status' => 'active',
+        ]);
+
+        app(WalletServiceInterface::class)->topup($user, 10, 'test_topup');
 
         $result = app(ApiKeyService::class)->create($client);
 

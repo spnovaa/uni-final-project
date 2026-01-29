@@ -12,4 +12,6 @@ return [
     ],
 
     'persist_logs' => env('GATEWAY_PERSIST_LOGS', true),
+    'rate_limit_per_min' => (int) env('GATEWAY_RATE_LIMIT_PER_MIN', 60),
+    'require_wallet' => env('GATEWAY_REQUIRE_WALLET', true),
 ];

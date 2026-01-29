@@ -15,12 +15,16 @@ class GatewayService
             ->send($context)
             ->through([
                 \App\Pipelines\Gateway\ResolveApiKeyPipe::class,
+                \App\Pipelines\Gateway\EnforceIpAllowlistPipe::class,
                 \App\Pipelines\Gateway\ValidateGatewayPayloadPipe::class,
+                \App\Pipelines\Gateway\RateLimitPipe::class,
+                \App\Pipelines\Gateway\CheckSubscriptionOrWalletPipe::class,
                 \App\Pipelines\Gateway\SelectProviderPipe::class,
                 \App\Pipelines\Gateway\DispatchProviderRequestPipe::class,
                 \App\Pipelines\Gateway\NormalizeProviderResponsePipe::class,
                 \App\Pipelines\Gateway\MeterUsagePipe::class,
                 \App\Pipelines\Gateway\PersistLogsPipe::class,
+                \App\Pipelines\Gateway\ChargeUsagePipe::class,
             ])
             ->thenReturn();
 
