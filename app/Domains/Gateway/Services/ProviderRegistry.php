@@ -1,0 +1,53 @@
+<?php
+
+namespace App\Domains\Gateway\Services;
+
+use App\Models\Provider;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schema;
+
+class ProviderRegistry
+{
+    public function getProviderConfig(?string $providerName = null): array
+    {
+        $providerName = $providerName ?: config('gateway.default_provider');
+        $config = config('gateway.providers.'.$providerName, []);
+
+        if (Schema::hasTable('providers')) {
+            $cacheKey = 'gateway.provider.'.$providerName;
+            $cached = Cache::remember($cacheKey, 300, function () use ($providerName, $config) {
+                $provider = Provider::query()
+                    ->where('name', $providerName)
+                    ->where('status', 'active')
+                    ->first();
+
+                if (! $provider) {
+                    return null;
+                }
+
+                $encrypted = $provider->config_encrypted ?? [];
+
+                return [
+                    'name' => $provider->name,
+                    'type' => $provider->type,
+                    'base_url' => $provider->base_url ?: ($encrypted['base_url'] ?? ($config['base_url'] ?? null)),
+                    'api_key' => $encrypted['api_key'] ?? ($config['api_key'] ?? null),
+                    'timeout' => $encrypted['timeout'] ?? ($config['timeout'] ?? 60),
+                    'provider_id' => $provider->id,
+                ];
+            });
+
+            if ($cached) {
+                return $cached;
+            }
+        }
+
+        return array_merge(
+            [
+                'name' => $providerName,
+                'provider_id' => null,
+            ],
+            $config,
+        );
+    }
+}
