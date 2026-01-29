@@ -118,10 +118,14 @@ class OpenAiProviderAdapter implements ProviderAdapterInterface
             );
         }
 
+        $promptTokens = $usage['prompt_tokens'] ?? $usage['input_tokens'] ?? null;
+        $completionTokens = $usage['completion_tokens'] ?? $usage['output_tokens'] ?? null;
+        $totalTokens = $usage['total_tokens'] ?? null;
+
         return new UsageMetrics(
-            $usage['prompt_tokens'] ?? null,
-            $usage['completion_tokens'] ?? null,
-            $usage['total_tokens'] ?? null,
+            $promptTokens,
+            $completionTokens,
+            $totalTokens,
             $images
         );
     }
