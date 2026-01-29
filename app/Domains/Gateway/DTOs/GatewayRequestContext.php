@@ -26,6 +26,9 @@ class GatewayRequestContext
     public array $usageRecords = [];
     public int $status = 200;
     public ?Subscription $subscription = null;
+    public ?UsageMetrics $estimatedUsage = null;
+    public array $estimatedUsageRecords = [];
+    public float $estimatedTotalCost = 0.0;
 
     public function __construct(
         public Request $request,

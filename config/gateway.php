@@ -16,4 +16,5 @@ return [
     'require_wallet' => env('GATEWAY_REQUIRE_WALLET', true),
     'log_retention_days' => (int) env('GATEWAY_LOG_RETENTION_DAYS', 30),
     'audit_retention_days' => (int) env('GATEWAY_AUDIT_RETENTION_DAYS', 90),
+    'token_chars_per_token' => (int) env('GATEWAY_TOKEN_CHARS_PER_TOKEN', 4),
 ];

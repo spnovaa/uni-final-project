@@ -35,12 +35,31 @@ class CheckSubscriptionOrWalletPipe
         if ($subscription && $subscription->status === 'active' && $subscription->ends_at?->isFuture()) {
             $context->subscription = $subscription;
 
-            return $next($context);
+            $included = (float) ($subscription->plan?->included_credits ?? 0);
+            if ($included > 0) {
+                return $next($context);
+            }
         }
 
         $wallet = $this->wallets->findByUserId($userId);
 
-        if (! $wallet || (float) $wallet->balance <= 0) {
+        if (! $wallet) {
+            $context->normalizedResponse = OpenAiErrorResponder::paymentRequired('Insufficient wallet balance.')->getData(true);
+            $context->status = 402;
+
+            return $context;
+        }
+
+        $balance = (float) $wallet->balance;
+
+        if ($context->estimatedTotalCost > 0 && $balance < $context->estimatedTotalCost) {
+            $context->normalizedResponse = OpenAiErrorResponder::paymentRequired('Insufficient wallet balance.')->getData(true);
+            $context->status = 402;
+
+            return $context;
+        }
+
+        if ($balance <= 0) {
             $context->normalizedResponse = OpenAiErrorResponder::paymentRequired('Insufficient wallet balance.')->getData(true);
             $context->status = 402;
 
