@@ -4,6 +4,8 @@ namespace App\Domains\Gateway\Services;
 
 use App\Domains\Gateway\DTOs\GatewayRequestContext;
 use App\Domains\Gateway\DTOs\UsageMetrics;
+use Danny50610\BpeTokeniser\EncodingFactory;
+use InvalidArgumentException;
 
 class UsageEstimationService
 {
@@ -11,24 +13,25 @@ class UsageEstimationService
     {
         $promptTokens = 0;
         $completionTokens = 0;
+        $model = $context->modelKey;
 
         switch ($context->endpoint) {
             case 'chat.completions':
-                $promptTokens = $this->estimateTokens($this->extractChatText($context->payload));
+                $promptTokens = $this->estimateTokens($this->extractChatText($context->payload), $model);
                 $completionTokens = $this->extractMaxOutputTokens($context->payload);
                 break;
             case 'responses':
-                $promptTokens = $this->estimateTokens($this->extractResponsesText($context->payload));
+                $promptTokens = $this->estimateTokens($this->extractResponsesText($context->payload), $model);
                 $completionTokens = $this->extractMaxOutputTokens($context->payload);
                 break;
             case 'embeddings':
-                $promptTokens = $this->estimateTokens($this->extractEmbeddingsText($context->payload));
+                $promptTokens = $this->estimateTokens($this->extractEmbeddingsText($context->payload), $model);
                 break;
             case 'images.generations':
-                $promptTokens = $this->estimateTokens((string) ($context->payload['prompt'] ?? ''));
+                $promptTokens = $this->estimateTokens((string) ($context->payload['prompt'] ?? ''), $model);
                 break;
             case 'audio.speech':
-                $promptTokens = $this->estimateTokens((string) ($context->payload['input'] ?? ''));
+                $promptTokens = $this->estimateTokens((string) ($context->payload['input'] ?? ''), $model);
                 break;
             case 'audio.transcriptions':
             default:
@@ -46,14 +49,30 @@ class UsageEstimationService
         );
     }
 
-    private function estimateTokens(string $text): int
+    private function estimateTokens(string $text, ?string $model = null): int
     {
-        $charsPerToken = (int) config('gateway.token_chars_per_token', 4);
-        $charsPerToken = $charsPerToken > 0 ? $charsPerToken : 4;
+        if ($text === '') {
+            return 0;
+        }
 
-        $length = mb_strlen($text, 'UTF-8');
+        $encoding = $this->resolveEncoding($model);
 
-        return (int) max(0, (int) ceil($length / $charsPerToken));
+        return count($encoding->encode($text));
+    }
+
+    private function resolveEncoding(?string $model = null)
+    {
+        $defaultEncoding = config('gateway.tokenizer_default_encoding', 'cl100k_base');
+
+        try {
+            if ($model) {
+                return EncodingFactory::createByModelName($model);
+            }
+        } catch (InvalidArgumentException $exception) {
+            // Fall back to default encoding if model mapping is unknown.
+        }
+
+        return EncodingFactory::createByEncodingName($defaultEncoding);
     }
 
     private function extractChatText(array $payload): string
