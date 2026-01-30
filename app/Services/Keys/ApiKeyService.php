@@ -11,7 +11,10 @@ use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
 
 /**
- * Service layer for api key.
+ * Manage API keys used to authenticate gateway requests.
+ *
+ * This service delegates secret generation/hashing to the domain generator service, persists
+ * key metadata via repositories, and records audit events for security tracking.
  */
 class ApiKeyService implements ApiKeyServiceInterface
 {
@@ -30,7 +33,7 @@ class ApiKeyService implements ApiKeyServiceInterface
     }
 
     /**
-     * List API keys.
+     * List API keys for a given client (metadata only; secrets are not returned).
      * @param ApiClient $client
      * @return Collection
      */
@@ -40,7 +43,9 @@ class ApiKeyService implements ApiKeyServiceInterface
     }
 
     /**
-     * Create API key.
+     * Create a new API key and return the plaintext secret once.
+     *
+     * Persists only a hashed secret in the database and records an audit log entry.
      * @param ApiClient $client
      * @param array $scopes
      * @param ?int $rateLimit
@@ -65,7 +70,9 @@ class ApiKeyService implements ApiKeyServiceInterface
     }
 
     /**
-     * Revoke API key.
+     * Revoke an API key so it can no longer authenticate requests.
+     *
+     * Records an audit event for traceability.
      * @param ApiKey $apiKey
      * @return ApiKey
      */
@@ -82,6 +89,9 @@ class ApiKeyService implements ApiKeyServiceInterface
 
     /**
      * Rotate API key and return a new secret.
+     *
+     * Rotation invalidates the previous secret and returns a new plaintext secret once.
+     * Records an audit event with both old and new key references.
      * @param ApiKey $apiKey
      * @return array
      */

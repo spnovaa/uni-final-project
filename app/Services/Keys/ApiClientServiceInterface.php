@@ -7,19 +7,21 @@ use App\Models\User;
 use Illuminate\Support\Collection;
 
 /**
- * Service layer for api client.
+ * API client service contract.
+ *
+ * API clients are user-owned containers for issuing and managing multiple API keys.
  */
 interface ApiClientServiceInterface
 {
     /**
-     * List API clients.
+     * List API clients owned by a user.
      * @param User $user
      * @return Collection
      */
     public function list(User $user): Collection;
 
     /**
-     * Create API client.
+     * Create a new API client for a user.
      * @param User $user
      * @param string $name
      * @return ApiClient

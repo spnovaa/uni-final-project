@@ -11,7 +11,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 /**
- * Service layer for wallet.
+ * Wallet billing service.
+ *
+ * Provides atomic wallet operations (top-up, debit) and transaction history used by the
+ * gateway billing pipeline and reporting.
  */
 class WalletService implements WalletServiceInterface
 {
@@ -25,7 +28,7 @@ class WalletService implements WalletServiceInterface
     }
 
     /**
-     * Get or create.
+     * Get the user's wallet or create one on first access.
      * @param User $user
      * @param ?string $currency
      * @return Wallet
@@ -46,6 +49,9 @@ class WalletService implements WalletServiceInterface
 
     /**
      * Top up wallet balance.
+     *
+     * Validates the amount, updates the wallet balance inside a DB transaction,
+     * and records a credit transaction.
      * @param User $user
      * @param float $amount
      * @param ?string $reason
@@ -79,6 +85,9 @@ class WalletService implements WalletServiceInterface
 
     /**
      * Debit wallet balance.
+     *
+     * Validates the amount, checks available balance (unless `allowNegative`), updates the wallet
+     * inside a DB transaction, and records a debit transaction.
      * @param User $user
      * @param float $amount
      * @param string $reason
@@ -126,6 +135,8 @@ class WalletService implements WalletServiceInterface
 
     /**
      * List wallet transactions.
+     *
+     * Ensures the wallet exists and returns the most recent transactions up to the limit.
      * @param User $user
      * @param int $limit
      * @return Collection

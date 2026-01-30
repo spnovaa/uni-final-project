@@ -8,19 +8,22 @@ use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
 
 /**
- * Service layer for api key.
+ * API key service contract.
+ *
+ * API keys authenticate gateway requests and are stored hashed. Implementations may record
+ * audit events and enforce additional policies.
  */
 interface ApiKeyServiceInterface
 {
     /**
-     * List API keys.
+     * List API keys for a client (metadata only).
      * @param ApiClient $client
      * @return Collection
      */
     public function list(ApiClient $client): Collection;
 
     /**
-     * Create API key.
+     * Create a new API key and return the plaintext secret once.
      * @param ApiClient $client
      * @param array $scopes
      * @param ?int $rateLimit
@@ -37,7 +40,7 @@ interface ApiKeyServiceInterface
     ): array;
 
     /**
-     * Revoke API key.
+     * Revoke an API key so it can no longer authenticate requests.
      * @param ApiKey $apiKey
      * @return ApiKey
      */

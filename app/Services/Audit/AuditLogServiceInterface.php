@@ -8,12 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 /**
- * Service layer for audit log.
+ * Audit logging service contract.
+ *
+ * Implementations should persist structured audit events and support filtered listing.
  */
 interface AuditLogServiceInterface
 {
     /**
-     * Record Audit log.
+     * Record an audit log entry for an action (optionally against a target model).
      * @param ?User $actor
      * @param string $action
      * @param ?Model $target
@@ -28,7 +30,7 @@ interface AuditLogServiceInterface
     ): AuditLog;
 
     /**
-     * List Audit logs.
+     * List audit logs with optional filters and a maximum limit.
      * @param array $filters
      * @param int $limit
      * @return Collection

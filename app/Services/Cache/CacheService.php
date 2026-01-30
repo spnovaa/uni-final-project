@@ -6,7 +6,10 @@ use Closure;
 use Illuminate\Support\Facades\Cache;
 
 /**
- * Service layer for cache.
+ * Cache abstraction used by application services (cache-aside strategy).
+ *
+ * This wrapper centralizes cache key conventions and TTL configuration so services can cache
+ * hot reads (e.g. profile, plans, providers) and invalidate them consistently on writes.
  */
 class CacheService implements CacheServiceInterface
 {

@@ -8,12 +8,14 @@ use App\Models\WalletTransaction;
 use Illuminate\Support\Collection;
 
 /**
- * Service layer for wallet.
+ * Wallet service contract.
+ *
+ * Implementations must update balances atomically and record ledger entries for reporting.
  */
 interface WalletServiceInterface
 {
     /**
-     * Get or create.
+     * Get the user's wallet or create one on first access.
      * @param User $user
      * @param ?string $currency
      * @return Wallet
@@ -22,6 +24,8 @@ interface WalletServiceInterface
 
     /**
      * Top up wallet balance.
+     *
+     * Implementations should validate the amount and create a credit transaction.
      * @param User $user
      * @param float $amount
      * @param ?string $reason
@@ -32,6 +36,9 @@ interface WalletServiceInterface
 
     /**
      * Debit wallet balance.
+     *
+     * Implementations should validate the amount, enforce balance constraints (unless allowed),
+     * and create a debit transaction.
      * @param User $user
      * @param float $amount
      * @param string $reason

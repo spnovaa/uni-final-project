@@ -6,19 +6,21 @@ use App\Models\ProviderModel;
 use Illuminate\Support\Collection;
 
 /**
- * Service layer for provider model.
+ * Provider model service contract.
+ *
+ * Provider models store pricing/capabilities for a provider's billable model key.
  */
 interface ProviderModelServiceInterface
 {
     /**
-     * List by provider.
+     * List models for a provider (implementations may use caching).
      * @param int $providerId
      * @return Collection
      */
     public function listByProvider(int $providerId): Collection;
 
     /**
-     * Create Provider model.
+     * Create a provider model configuration.
      * @param array $data
      * @return ProviderModel
      */

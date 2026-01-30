@@ -13,7 +13,10 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 /**
- * Service layer for invoice.
+ * Invoice service for creating, listing, and generating PDF invoices.
+ *
+ * Invoices are used for reporting and billing transparency. PDF generation is handled via Dompdf
+ * and stored on the local disk.
  */
 class InvoiceService implements InvoiceServiceInterface
 {
@@ -30,7 +33,7 @@ class InvoiceService implements InvoiceServiceInterface
     }
 
     /**
-     * List Invoices.
+     * List invoices for a user with a limit (most recent first).
      * @param User $user
      * @param int $limit
      * @return Collection
@@ -41,7 +44,7 @@ class InvoiceService implements InvoiceServiceInterface
     }
 
     /**
-     * Get.
+     * Get an invoice owned by a user or throw when not found.
      * @param User $user
      * @param int $invoiceId
      * @return Invoice
@@ -60,7 +63,10 @@ class InvoiceService implements InvoiceServiceInterface
     }
 
     /**
-     * Create draft.
+     * Create a draft invoice with line items and computed totals.
+     *
+     * Prepares line items, computes subtotal/tax/total, and persists invoice + items in a single
+     * DB transaction.
      * @param User $user
      * @param array $items
      * @param ?string $currency
@@ -91,7 +97,7 @@ class InvoiceService implements InvoiceServiceInterface
     }
 
     /**
-     * Issue.
+     * Mark a draft invoice as issued and set its issued timestamp.
      * @param Invoice $invoice
      * @return Invoice
      */
@@ -104,7 +110,7 @@ class InvoiceService implements InvoiceServiceInterface
     }
 
     /**
-     * Mark paid.
+     * Mark an invoice as paid and set its paid timestamp.
      * @param Invoice $invoice
      * @return Invoice
      */
@@ -117,7 +123,10 @@ class InvoiceService implements InvoiceServiceInterface
     }
 
     /**
-     * Generate pdf.
+     * Render and store a PDF for the given invoice, returning the stored path.
+     *
+     * Loads invoice relations needed by the view, renders `invoices.pdf`, generates the PDF,
+     * and saves it to the `local` disk.
      * @param Invoice $invoice
      * @return string
      */
@@ -140,7 +149,7 @@ class InvoiceService implements InvoiceServiceInterface
     }
 
     /**
-     * Pdf path.
+     * Compute the deterministic storage path for an invoice PDF file.
      * @param Invoice $invoice
      * @return string
      */
@@ -150,7 +159,7 @@ class InvoiceService implements InvoiceServiceInterface
     }
 
     /**
-     * Prepare items.
+     * Normalize raw invoice item input into stored invoice item attributes.
      * @param array $items
      * @return array
      */
@@ -172,7 +181,7 @@ class InvoiceService implements InvoiceServiceInterface
     }
 
     /**
-     * Sum subtotal.
+     * Sum invoice line totals for a computed subtotal.
      * @param array $items
      * @return float
      */
@@ -182,7 +191,7 @@ class InvoiceService implements InvoiceServiceInterface
     }
 
     /**
-     * Generate number.
+     * Generate a unique invoice number with a date prefix (INV-YYYYMMDD-####).
      * @return string
      */
     private function generateNumber(): string

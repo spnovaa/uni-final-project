@@ -13,7 +13,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 /**
- * Service layer for subscription.
+ * Subscription billing service.
+ *
+ * Handles subscribing/canceling users to plans and integrates with wallet debiting and audit logs.
  */
 class SubscriptionService implements SubscriptionServiceInterface
 {
@@ -33,6 +35,11 @@ class SubscriptionService implements SubscriptionServiceInterface
 
     /**
      * Subscribe a user to a plan.
+     *
+     * - Prevents multiple simultaneous active subscriptions.
+     * - Debits the wallet for paid plans inside a DB transaction.
+     * - Creates an active subscription window based on the plan period.
+     * - Records an audit event.
      * @param User $user
      * @param SubscriptionPlan $plan
      * @return Subscription
@@ -79,7 +86,7 @@ class SubscriptionService implements SubscriptionServiceInterface
     }
 
     /**
-     * Current.
+     * Get the current active subscription for a user (if any).
      * @param User $user
      * @return ?Subscription
      */
@@ -90,6 +97,9 @@ class SubscriptionService implements SubscriptionServiceInterface
 
     /**
      * Cancel a subscription.
+     *
+     * Marks the subscription as canceled and records an audit event. This method does not
+     * perform refunds; refunds (if any) must be handled externally.
      * @param User $user
      * @return ?Subscription
      */
