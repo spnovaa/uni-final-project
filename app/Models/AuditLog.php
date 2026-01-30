@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Class AuditLog.
+ * Eloquent model for audit log entries.
+ *
+ * Records security-relevant actions performed by users (actor) against targets with metadata.
  */
 class AuditLog extends Model
 {

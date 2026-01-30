@@ -6,7 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Class ProviderModel.
+ * Eloquent model representing a provider model configuration.
+ *
+ * Stores a provider's `model_key` along with billable pricing config and capabilities used by
+ * the gateway for routing and cost calculation.
  */
 class ProviderModel extends Model
 {

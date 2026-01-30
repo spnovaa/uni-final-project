@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Class Subscription.
+ * Eloquent model representing a user's subscription to a plan.
+ *
+ * Tracks subscription status and active time window (starts/ends/renewal/cancel timestamps).
  */
 class Subscription extends Model
 {

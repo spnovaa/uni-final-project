@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Class InvoiceItem.
+ * Eloquent model representing a single invoice line item.
+ *
+ * Stores quantity/unit price totals and optional metadata for the billed component.
  */
 class InvoiceItem extends Model
 {

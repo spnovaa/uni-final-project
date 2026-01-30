@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * Class GatewayRequest.
+ * Eloquent model representing a gateway request log entry.
+ *
+ * Stores request metadata (endpoint/provider/model/status/latency) used for reporting and audits.
  */
 class GatewayRequest extends Model
 {
@@ -23,7 +25,7 @@ class GatewayRequest extends Model
     ];
 
     /**
-     * Api key.
+     * Get the API key relationship.
      * @return BelongsTo
      */
     public function apiKey(): BelongsTo
@@ -50,7 +52,7 @@ class GatewayRequest extends Model
     }
 
     /**
-     * Provider model.
+     * Get the provider model relationship.
      * @return BelongsTo
      */
     public function providerModel(): BelongsTo
@@ -59,7 +61,7 @@ class GatewayRequest extends Model
     }
 
     /**
-     * Usage records.
+     * Get billable usage records associated with this request.
      * @return HasMany
      */
     public function usageRecords(): HasMany

@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Class DailyUsageRollup.
+ * Eloquent model representing aggregated daily usage.
+ *
+ * Rollups are computed from `usage_records` to speed up reporting and invoice generation.
  */
 class DailyUsageRollup extends Model
 {
@@ -40,7 +42,7 @@ class DailyUsageRollup extends Model
     }
 
     /**
-     * Api key.
+     * Get the API key relationship.
      * @return BelongsTo
      */
     public function apiKey(): BelongsTo
@@ -58,7 +60,7 @@ class DailyUsageRollup extends Model
     }
 
     /**
-     * Provider model.
+     * Get the provider model relationship.
      * @return BelongsTo
      */
     public function providerModel(): BelongsTo
