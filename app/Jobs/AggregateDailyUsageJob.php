@@ -11,14 +11,26 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * Queued job for aggregate daily usage.
+ */
 class AggregateDailyUsageJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    /**
+     * Create a new instance.
+     * @param ?string $date
+     * @return void
+     */
     public function __construct(public ?string $date = null)
     {
     }
 
+    /**
+     * Handle the queued job.
+     * @return void
+     */
     public function handle(): void
     {
         $targetDate = CarbonImmutable::parse($this->date ?? now()->subDay()->toDateString());
