@@ -10,12 +10,26 @@ use App\Services\Keys\ApiKeyServiceInterface;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 
+/**
+ * API controller for api key endpoints.
+ */
 class ApiKeyController extends Controller
 {
+    /**
+     * Create a new instance.
+     * @param ApiKeyServiceInterface $service
+     * @return void
+     */
     public function __construct(private readonly ApiKeyServiceInterface $service)
     {
     }
 
+    /**
+     * Index.
+     * @param Request $request
+     * @param ApiClient $apiClient
+     * @return mixed
+     */
     public function index(Request $request, ApiClient $apiClient)
     {
         $this->authorizeClient($request, $apiClient);
@@ -25,6 +39,12 @@ class ApiKeyController extends Controller
         return response()->json(ApiKeyResource::collection($keys));
     }
 
+    /**
+     * Store.
+     * @param Request $request
+     * @param ApiClient $apiClient
+     * @return mixed
+     */
     public function store(Request $request, ApiClient $apiClient)
     {
         $this->authorizeClient($request, $apiClient);
@@ -56,6 +76,12 @@ class ApiKeyController extends Controller
         ], 201);
     }
 
+    /**
+     * Revoke.
+     * @param Request $request
+     * @param ApiKey $apiKey
+     * @return mixed
+     */
     public function revoke(Request $request, ApiKey $apiKey)
     {
         $this->authorizeKey($request, $apiKey);
@@ -67,6 +93,12 @@ class ApiKeyController extends Controller
         ]);
     }
 
+    /**
+     * Rotate.
+     * @param Request $request
+     * @param ApiKey $apiKey
+     * @return mixed
+     */
     public function rotate(Request $request, ApiKey $apiKey)
     {
         $this->authorizeKey($request, $apiKey);
@@ -81,6 +113,12 @@ class ApiKeyController extends Controller
         ]);
     }
 
+    /**
+     * Authorize client.
+     * @param Request $request
+     * @param ApiClient $apiClient
+     * @return void
+     */
     private function authorizeClient(Request $request, ApiClient $apiClient): void
     {
         if ((int) $apiClient->user_id !== (int) $request->user()->id) {
@@ -88,6 +126,12 @@ class ApiKeyController extends Controller
         }
     }
 
+    /**
+     * Authorize key.
+     * @param Request $request
+     * @param ApiKey $apiKey
+     * @return void
+     */
     private function authorizeKey(Request $request, ApiKey $apiKey): void
     {
         if ((int) ($apiKey->client?->user_id ?? 0) !== (int) $request->user()->id) {

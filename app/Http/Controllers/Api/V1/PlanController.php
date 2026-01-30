@@ -8,8 +8,17 @@ use App\Services\Audit\AuditLogServiceInterface;
 use App\Services\Billing\Plan\PlanServiceInterface;
 use Illuminate\Http\Request;
 
+/**
+ * API controller for plan endpoints.
+ */
 class PlanController extends Controller
 {
+    /**
+     * Create a new instance.
+     * @param PlanServiceInterface $plans
+     * @param AuditLogServiceInterface $audit
+     * @return void
+     */
     public function __construct(
         private readonly PlanServiceInterface $plans,
         private readonly AuditLogServiceInterface $audit

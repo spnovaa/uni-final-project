@@ -7,12 +7,26 @@ use App\Domains\Gateway\DTOs\UsageMetrics;
 use App\Domains\Gateway\Services\UsageMeteringService;
 use Closure;
 
+/**
+ * Gateway pipeline step for meter usage.
+ */
 class MeterUsagePipe
 {
+    /**
+     * Create a new instance.
+     * @param UsageMeteringService $usageService
+     * @return void
+     */
     public function __construct(private readonly UsageMeteringService $usageService)
     {
     }
 
+    /**
+     * Process the gateway context and continue the pipeline.
+     * @param GatewayRequestContext $context
+     * @param Closure $next
+     * @return mixed
+     */
     public function handle(GatewayRequestContext $context, Closure $next)
     {
         $actual = null;
@@ -30,6 +44,12 @@ class MeterUsagePipe
         return $next($context);
     }
 
+    /**
+     * Merge usage.
+     * @param ?UsageMetrics $actual
+     * @param ?UsageMetrics $estimated
+     * @return ?UsageMetrics
+     */
     private function mergeUsage(?UsageMetrics $actual, ?UsageMetrics $estimated): ?UsageMetrics
     {
         if (! $actual && ! $estimated) {

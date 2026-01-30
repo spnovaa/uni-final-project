@@ -5,6 +5,9 @@ namespace App\Domains\Auth\DTOs;
 use App\Models\OtpChallenge;
 use App\Models\User;
 
+/**
+ * DTO for otp context.
+ */
 class OtpContext
 {
     public ?string $code = null;
@@ -13,6 +16,13 @@ class OtpContext
     public array $errors = [];
     public int $status = 200;
 
+    /**
+     * Create a new instance.
+     * @param string $destination
+     * @param string $channel
+     * @param ?string $ip
+     * @return void
+     */
     public function __construct(
         public string $destination,
         public string $channel,
@@ -20,6 +30,12 @@ class OtpContext
     ) {
     }
 
+    /**
+     * Fail.
+     * @param string $message
+     * @param int $status
+     * @return self
+     */
     public function fail(string $message, int $status = 400): self
     {
         $this->errors[] = $message;
@@ -28,6 +44,10 @@ class OtpContext
         return $this;
     }
 
+    /**
+     * Ok.
+     * @return bool
+     */
     public function ok(): bool
     {
         return empty($this->errors);

@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Class InvoiceItem.
+ */
 class InvoiceItem extends Model
 {
     use HasFactory;
@@ -27,6 +30,10 @@ class InvoiceItem extends Model
         'meta' => 'array',
     ];
 
+    /**
+     * Invoice.
+     * @return BelongsTo
+     */
     public function invoice(): BelongsTo
     {
         return $this->belongsTo(Invoice::class);

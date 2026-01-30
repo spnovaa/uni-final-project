@@ -9,8 +9,17 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
+/**
+ * Class AuthenticateApiKey.
+ */
 class AuthenticateApiKey
 {
+    /**
+     * Handle the request.
+     * @param Request $request
+     * @param Closure $next
+     * @return mixed
+     */
     public function handle(Request $request, Closure $next)
     {
         $token = $this->extractToken($request);
@@ -62,6 +71,11 @@ class AuthenticateApiKey
         return $next($request);
     }
 
+    /**
+     * Extract token.
+     * @param Request $request
+     * @return ?string
+     */
     private function extractToken(Request $request): ?string
     {
         $header = $request->header('Authorization');
@@ -77,6 +91,11 @@ class AuthenticateApiKey
         return null;
     }
 
+    /**
+     * Extract prefix.
+     * @param string $token
+     * @return string
+     */
     private function extractPrefix(string $token): string
     {
         $token = Str::startsWith($token, 'gk_') ? substr($token, 3) : $token;
@@ -84,6 +103,11 @@ class AuthenticateApiKey
         return substr($token, 0, 8);
     }
 
+    /**
+     * Hash token.
+     * @param string $token
+     * @return string
+     */
     private function hashToken(string $token): string
     {
         return hash_hmac('sha256', $token, config('app.key'));

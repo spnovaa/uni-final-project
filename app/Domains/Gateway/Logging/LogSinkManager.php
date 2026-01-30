@@ -4,8 +4,16 @@ namespace App\Domains\Gateway\Logging;
 
 use InvalidArgumentException;
 
+/**
+ * Class LogSinkManager.
+ */
 class LogSinkManager
 {
+    /**
+     * Resolve.
+     * @param ?string $name
+     * @return LogSinkInterface
+     */
     public function resolve(?string $name = null): LogSinkInterface
     {
         $name = $name ?: config('gateway.log_sink');

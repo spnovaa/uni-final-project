@@ -9,6 +9,9 @@ use App\Domains\Providers\ProviderAdapterInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
+/**
+ * DTO for gateway request context.
+ */
 class GatewayRequestContext
 {
     public string $requestId;
@@ -30,6 +33,14 @@ class GatewayRequestContext
     public array $estimatedUsageRecords = [];
     public float $estimatedTotalCost = 0.0;
 
+    /**
+     * Create a new instance.
+     * @param Request $request
+     * @param string $endpoint
+     * @param array $payload
+     * @param array $files
+     * @return void
+     */
     public function __construct(
         public Request $request,
         public string $endpoint,
@@ -42,6 +53,10 @@ class GatewayRequestContext
         $this->modelKey = $payload['model'] ?? null;
     }
 
+    /**
+     * Latency ms.
+     * @return int
+     */
     public function latencyMs(): int
     {
         return (int) round((microtime(true) - $this->startTime) * 1000);

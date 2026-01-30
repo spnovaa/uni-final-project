@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Class OtpChallenge.
+ */
 class OtpChallenge extends Model
 {
     protected $fillable = [

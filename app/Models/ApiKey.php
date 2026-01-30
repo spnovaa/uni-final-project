@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Class ApiKey.
+ */
 class ApiKey extends Model
 {
     protected $fillable = [
@@ -25,6 +28,10 @@ class ApiKey extends Model
         'revoked_at' => 'datetime',
     ];
 
+    /**
+     * Client.
+     * @return BelongsTo
+     */
     public function client(): BelongsTo
     {
         return $this->belongsTo(ApiClient::class, 'api_client_id');

@@ -8,12 +8,26 @@ use Closure;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
+/**
+ * Auth pipeline step for generate otp.
+ */
 class GenerateOtpPipe
 {
+    /**
+     * Create a new instance.
+     * @param OtpChallengeRepositoryInterface $challenges
+     * @return void
+     */
     public function __construct(private readonly OtpChallengeRepositoryInterface $challenges)
     {
     }
 
+    /**
+     * Process the OTP context and continue the pipeline.
+     * @param OtpContext $context
+     * @param Closure $next
+     * @return mixed
+     */
     public function handle(OtpContext $context, Closure $next)
     {
         $length = (int) config('otp.code_length', 6);
@@ -34,6 +48,11 @@ class GenerateOtpPipe
         return $next($context);
     }
 
+    /**
+     * Generate code.
+     * @param int $length
+     * @return string
+     */
     private function generateCode(int $length): string
     {
         $digits = '';

@@ -14,14 +14,27 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
 use Throwable;
 
+/**
+ * Queued job for provider health check.
+ */
 class ProviderHealthCheckJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    /**
+     * Create a new instance.
+     * @param ?int $providerId
+     * @return void
+     */
     public function __construct(public ?int $providerId = null)
     {
     }
 
+    /**
+     * Handle the queued job.
+     * @param ProviderRegistry $registry
+     * @return void
+     */
     public function handle(ProviderRegistry $registry): void
     {
         $providers = Provider::query()
@@ -71,6 +84,14 @@ class ProviderHealthCheckJob implements ShouldQueue
         }
     }
 
+    /**
+     * Record.
+     * @param Provider $provider
+     * @param string $status
+     * @param ?int $latency
+     * @param array $meta
+     * @return void
+     */
     private function record(Provider $provider, string $status, ?int $latency, array $meta): void
     {
         ProviderHealthCheck::query()->create([

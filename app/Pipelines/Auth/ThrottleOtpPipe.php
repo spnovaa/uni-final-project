@@ -6,8 +6,17 @@ use App\Domains\Auth\DTOs\OtpContext;
 use Closure;
 use Illuminate\Support\Facades\RateLimiter;
 
+/**
+ * Auth pipeline step for throttle otp.
+ */
 class ThrottleOtpPipe
 {
+    /**
+     * Process the OTP context and continue the pipeline.
+     * @param OtpContext $context
+     * @param Closure $next
+     * @return mixed
+     */
     public function handle(OtpContext $context, Closure $next)
     {
         $key = $this->rateLimitKey($context);
@@ -22,6 +31,11 @@ class ThrottleOtpPipe
         return $next($context);
     }
 
+    /**
+     * Rate limit key.
+     * @param OtpContext $context
+     * @return string
+     */
     private function rateLimitKey(OtpContext $context): string
     {
         $ip = $context->ip ?: 'unknown';

@@ -5,13 +5,27 @@ namespace App\Repositories\Audit;
 use App\Models\AuditLog;
 use Illuminate\Support\Collection;
 
+/**
+ * Persistence layer for audit log.
+ */
 class AuditLogRepository implements AuditLogRepositoryInterface
 {
+    /**
+     * Create.
+     * @param array $data
+     * @return AuditLog
+     */
     public function create(array $data): AuditLog
     {
         return AuditLog::query()->create($data);
     }
 
+    /**
+     * List.
+     * @param array $filters
+     * @param int $limit
+     * @return Collection
+     */
     public function list(array $filters = [], int $limit = 50): Collection
     {
         $query = AuditLog::query()->orderByDesc('id');

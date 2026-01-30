@@ -7,12 +7,26 @@ use App\Models\RoutingRule;
 use App\Services\Cache\CacheServiceInterface;
 use Illuminate\Support\Facades\Schema;
 
+/**
+ * Class ProviderRouter.
+ */
 class ProviderRouter
 {
+    /**
+     * Create a new instance.
+     * @param CacheServiceInterface $cache
+     * @return void
+     */
     public function __construct(private readonly CacheServiceInterface $cache)
     {
     }
 
+    /**
+     * Resolve provider model.
+     * @param ?string $providerName
+     * @param ?string $modelKey
+     * @return ?ProviderModel
+     */
     public function resolveProviderModel(?string $providerName, ?string $modelKey): ?ProviderModel
     {
         if (empty($providerName) || empty($modelKey) || ! Schema::hasTable('provider_models')) {
@@ -41,6 +55,11 @@ class ProviderRouter
         return $model;
     }
 
+    /**
+     * Resolve routing rule.
+     * @param ?string $modelKey
+     * @return ?RoutingRule
+     */
     public function resolveRoutingRule(?string $modelKey): ?RoutingRule
     {
         if (! Schema::hasTable('routing_rules')) {

@@ -9,8 +9,17 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Services\Cache\CacheServiceInterface;
 
+/**
+ * Service layer for user.
+ */
 class UserService implements UserServiceInterface
 {
+    /**
+     * Create a new instance.
+     * @param UserRepositoryInterface $users
+     * @param CacheServiceInterface $cache
+     * @return void
+     */
     public function __construct(
         private readonly UserRepositoryInterface $users,
         private readonly CacheServiceInterface $cache,
@@ -18,6 +27,11 @@ class UserService implements UserServiceInterface
     {
     }
 
+    /**
+     * Get profile.
+     * @param User $user
+     * @return User
+     */
     public function getProfile(User $user): User
     {
         $ttl = $this->cache->ttl('profile', (int) config('cache.profile_ttl', 300));
@@ -29,6 +43,13 @@ class UserService implements UserServiceInterface
         );
     }
 
+    /**
+     * Update profile.
+     * @param User $user
+     * @param array $data
+     * @param ?UploadedFile $profileImage
+     * @return User
+     */
     public function updateProfile(User $user, array $data, ?UploadedFile $profileImage = null): User
     {
         $user->fill($data);
@@ -45,11 +66,22 @@ class UserService implements UserServiceInterface
         return $user;
     }
 
+    /**
+     * Cache key.
+     * @param int $userId
+     * @return string
+     */
     private function cacheKey(int $userId): string
     {
         return $this->cache->key('user', 'profile', (string) $userId);
     }
 
+    /**
+     * Store profile image.
+     * @param User $user
+     * @param UploadedFile $profileImage
+     * @return string
+     */
     private function storeProfileImage(User $user, UploadedFile $profileImage): string
     {
         if ($user->profile_image_path) {

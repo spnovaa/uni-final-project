@@ -7,12 +7,25 @@ use App\Http\Resources\Auth\UserResource;
 use App\Services\User\UserServiceInterface;
 use Illuminate\Http\Request;
 
+/**
+ * API controller for me endpoints.
+ */
 class MeController extends Controller
 {
+    /**
+     * Create a new instance.
+     * @param UserServiceInterface $users
+     * @return void
+     */
     public function __construct(private readonly UserServiceInterface $users)
     {
     }
 
+    /**
+     * Show.
+     * @param Request $request
+     * @return mixed
+     */
     public function show(Request $request)
     {
         $user = $this->users->getProfile($request->user());
@@ -20,6 +33,11 @@ class MeController extends Controller
         return response()->json(UserResource::make($user));
     }
 
+    /**
+     * Update.
+     * @param Request $request
+     * @return mixed
+     */
     public function update(Request $request)
     {
         $data = $request->validate([

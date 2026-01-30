@@ -7,8 +7,17 @@ use App\Repositories\Gateway\ProviderModelRepositoryInterface;
 use App\Services\Cache\CacheServiceInterface;
 use Illuminate\Support\Collection;
 
+/**
+ * Service layer for provider model.
+ */
 class ProviderModelService implements ProviderModelServiceInterface
 {
+    /**
+     * Create a new instance.
+     * @param ProviderModelRepositoryInterface $models
+     * @param CacheServiceInterface $cache
+     * @return void
+     */
     public function __construct(
         private readonly ProviderModelRepositoryInterface $models,
         private readonly CacheServiceInterface $cache,
@@ -16,6 +25,11 @@ class ProviderModelService implements ProviderModelServiceInterface
     {
     }
 
+    /**
+     * List by provider.
+     * @param int $providerId
+     * @return Collection
+     */
     public function listByProvider(int $providerId): Collection
     {
         $ttl = $this->cache->ttl('provider_models', 300);
@@ -26,6 +40,11 @@ class ProviderModelService implements ProviderModelServiceInterface
         });
     }
 
+    /**
+     * Create.
+     * @param array $data
+     * @return ProviderModel
+     */
     public function create(array $data): ProviderModel
     {
         $model = $this->models->create($data);

@@ -10,14 +10,30 @@ use App\Services\Auth\OtpServiceInterface;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\Hash;
 
+/**
+ * Service layer for otp.
+ */
 class OtpService implements OtpServiceInterface
 {
+    /**
+     * Create a new instance.
+     * @param OtpChallengeRepositoryInterface $challenges
+     * @param UserRepositoryInterface $users
+     * @return void
+     */
     public function __construct(
         private readonly OtpChallengeRepositoryInterface $challenges,
         private readonly UserRepositoryInterface $users,
     ) {
     }
 
+    /**
+     * Start.
+     * @param string $destination
+     * @param string $channel
+     * @param ?string $ip
+     * @return OtpContext
+     */
     public function start(string $destination, string $channel, ?string $ip = null): OtpContext
     {
         $context = new OtpContext($destination, $channel, $ip);
@@ -32,6 +48,13 @@ class OtpService implements OtpServiceInterface
             ->thenReturn();
     }
 
+    /**
+     * Verify.
+     * @param string $destination
+     * @param string $code
+     * @param ?string $channel
+     * @return array
+     */
     public function verify(string $destination, string $code, ?string $channel = null): array
     {
         $challenge = $this->challenges->latestForDestination($destination, $channel);
@@ -85,6 +108,12 @@ class OtpService implements OtpServiceInterface
         ];
     }
 
+    /**
+     * Resolve user.
+     * @param string $destination
+     * @param string $channel
+     * @return ?User
+     */
     private function resolveUser(string $destination, string $channel): ?User
     {
         if ($channel === 'email') {
@@ -98,6 +127,12 @@ class OtpService implements OtpServiceInterface
         return null;
     }
 
+    /**
+     * Create user.
+     * @param string $destination
+     * @param string $channel
+     * @return User
+     */
     private function createUser(string $destination, string $channel): User
     {
         $data = [

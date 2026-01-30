@@ -7,14 +7,29 @@ use App\Domains\Gateway\Services\ProviderRegistry;
 use App\Domains\Gateway\Services\ProviderRouter;
 use Closure;
 
+/**
+ * Gateway pipeline step for select provider.
+ */
 class SelectProviderPipe
 {
+    /**
+     * Create a new instance.
+     * @param ProviderRegistry $registry
+     * @param ProviderRouter $router
+     * @return void
+     */
     public function __construct(
         private readonly ProviderRegistry $registry,
         private readonly ProviderRouter $router,
     ) {
     }
 
+    /**
+     * Process the gateway context and continue the pipeline.
+     * @param GatewayRequestContext $context
+     * @param Closure $next
+     * @return mixed
+     */
     public function handle(GatewayRequestContext $context, Closure $next)
     {
         $providerName = $context->providerName;

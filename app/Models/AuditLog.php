@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Class AuditLog.
+ */
 class AuditLog extends Model
 {
     use HasFactory;
@@ -26,6 +29,10 @@ class AuditLog extends Model
         'created_at' => 'datetime',
     ];
 
+    /**
+     * Actor.
+     * @return BelongsTo
+     */
     public function actor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'actor_user_id');

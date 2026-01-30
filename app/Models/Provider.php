@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * Class Provider.
+ */
 class Provider extends Model
 {
     protected $fillable = [
@@ -20,6 +23,10 @@ class Provider extends Model
         'config_encrypted' => 'encrypted:array',
     ];
 
+    /**
+     * Models.
+     * @return HasMany
+     */
     public function models(): HasMany
     {
         return $this->hasMany(ProviderModel::class);

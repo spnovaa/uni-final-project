@@ -12,6 +12,9 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * Class User.
+ */
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -54,26 +57,48 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * Wallet.
+     * @return HasOne
+     */
     public function wallet(): HasOne
     {
         return $this->hasOne(Wallet::class);
     }
 
+    /**
+     * Subscriptions.
+     * @return HasMany
+     */
     public function subscriptions(): HasMany
     {
         return $this->hasMany(Subscription::class);
     }
 
+    /**
+     * Roles.
+     * @return BelongsToMany
+     */
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class);
     }
 
+    /**
+     * Has role.
+     * @param string $name
+     * @return bool
+     */
     public function hasRole(string $name): bool
     {
         return $this->roles()->where('name', $name)->exists();
     }
 
+    /**
+     * Has permission.
+     * @param string $permission
+     * @return bool
+     */
     public function hasPermission(string $permission): bool
     {
         return Permission::query()
@@ -84,6 +109,10 @@ class User extends Authenticatable
             ->exists();
     }
 
+    /**
+     * Profile image url.
+     * @return ?string
+     */
     public function profileImageUrl(): ?string
     {
         if (! $this->profile_image_path) {

@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Class UsageRecord.
+ */
 class UsageRecord extends Model
 {
     protected $fillable = [
@@ -21,6 +24,10 @@ class UsageRecord extends Model
         'total_cost' => 'float',
     ];
 
+    /**
+     * Gateway request.
+     * @return BelongsTo
+     */
     public function gatewayRequest(): BelongsTo
     {
         return $this->belongsTo(GatewayRequest::class);

@@ -6,8 +6,17 @@ use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use Illuminate\Support\Collection;
 
+/**
+ * Persistence layer for invoice item.
+ */
 class InvoiceItemRepository implements InvoiceItemRepositoryInterface
 {
+    /**
+     * Create many.
+     * @param Invoice $invoice
+     * @param array $items
+     * @return Collection
+     */
     public function createMany(Invoice $invoice, array $items): Collection
     {
         $created = collect();

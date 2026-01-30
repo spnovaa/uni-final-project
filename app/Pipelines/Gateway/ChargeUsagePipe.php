@@ -8,12 +8,26 @@ use App\Services\Billing\Wallet\WalletServiceInterface;
 use Closure;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Gateway pipeline step for charge usage.
+ */
 class ChargeUsagePipe
 {
+    /**
+     * Create a new instance.
+     * @param WalletServiceInterface $wallets
+     * @return void
+     */
     public function __construct(private readonly WalletServiceInterface $wallets)
     {
     }
 
+    /**
+     * Process the gateway context and continue the pipeline.
+     * @param GatewayRequestContext $context
+     * @param Closure $next
+     * @return mixed
+     */
     public function handle(GatewayRequestContext $context, Closure $next)
     {
         $user = $context->apiKey?->client?->user;

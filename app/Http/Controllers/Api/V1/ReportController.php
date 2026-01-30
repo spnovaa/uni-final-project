@@ -10,8 +10,16 @@ use App\Services\Reporting\ReportingServiceInterface;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
+/**
+ * API controller for report endpoints.
+ */
 class ReportController extends Controller
 {
+    /**
+     * Create a new instance.
+     * @param ReportingServiceInterface $reports
+     * @return void
+     */
     public function __construct(private readonly ReportingServiceInterface $reports)
     {
     }

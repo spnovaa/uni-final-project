@@ -29,6 +29,11 @@ use Illuminate\Support\Facades\URL;
  */
 class InvoiceResource extends JsonResource
 {
+    /**
+     * Transform the resource into an array.
+     * @param Request $request
+     * @return array
+     */
     public function toArray(Request $request): array
     {
         return [
@@ -48,6 +53,10 @@ class InvoiceResource extends JsonResource
         ];
     }
 
+    /**
+     * Signed pdf url.
+     * @return string
+     */
     private function signedPdfUrl(): string
     {
         return URL::temporarySignedRoute(

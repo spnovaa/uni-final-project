@@ -11,10 +11,17 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
+/**
+ * Queued job for prune gateway logs.
+ */
 class PruneGatewayLogsJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    /**
+     * Handle the queued job.
+     * @return void
+     */
     public function handle(): void
     {
         $gatewayRetention = (int) config('gateway.log_retention_days', 30);

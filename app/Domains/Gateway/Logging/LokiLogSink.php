@@ -4,8 +4,16 @@ namespace App\Domains\Gateway\Logging;
 
 use Illuminate\Support\Facades\Http;
 
+/**
+ * Class LokiLogSink.
+ */
 class LokiLogSink implements LogSinkInterface
 {
+    /**
+     * Send.
+     * @param array $payload
+     * @return void
+     */
     public function send(array $payload): void
     {
         $config = config('gateway.log_sinks.loki', []);
@@ -50,6 +58,10 @@ class LokiLogSink implements LogSinkInterface
         $client->post($pushUrl, $body);
     }
 
+    /**
+     * Now nano.
+     * @return string
+     */
     private function nowNano(): string
     {
         $seconds = microtime(true);

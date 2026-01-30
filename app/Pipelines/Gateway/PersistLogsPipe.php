@@ -7,8 +7,17 @@ use App\Models\GatewayRequest;
 use App\Models\UsageRecord;
 use Closure;
 
+/**
+ * Gateway pipeline step for persist logs.
+ */
 class PersistLogsPipe
 {
+    /**
+     * Process the gateway context and continue the pipeline.
+     * @param GatewayRequestContext $context
+     * @param Closure $next
+     * @return mixed
+     */
     public function handle(GatewayRequestContext $context, Closure $next)
     {
         if (! config('gateway.persist_logs')) {

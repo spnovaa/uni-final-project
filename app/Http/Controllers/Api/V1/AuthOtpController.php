@@ -9,12 +9,25 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
+/**
+ * API controller for auth otp endpoints.
+ */
 class AuthOtpController extends Controller
 {
+    /**
+     * Create a new instance.
+     * @param OtpServiceInterface $otpService
+     * @return void
+     */
     public function __construct(private readonly OtpServiceInterface $otpService)
     {
     }
 
+    /**
+     * Start.
+     * @param Request $request
+     * @return mixed
+     */
     public function start(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -50,6 +63,11 @@ class AuthOtpController extends Controller
         ]);
     }
 
+    /**
+     * Verify.
+     * @param Request $request
+     * @return mixed
+     */
     public function verify(Request $request)
     {
         $validator = Validator::make($request->all(), [

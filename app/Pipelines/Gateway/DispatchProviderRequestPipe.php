@@ -11,12 +11,26 @@ use Illuminate\Support\Arr;
 use RuntimeException;
 use Throwable;
 
+/**
+ * Gateway pipeline step for dispatch provider request.
+ */
 class DispatchProviderRequestPipe
 {
+    /**
+     * Create a new instance.
+     * @param ProviderAdapterResolver $resolver
+     * @return void
+     */
     public function __construct(private readonly ProviderAdapterResolver $resolver)
     {
     }
 
+    /**
+     * Process the gateway context and continue the pipeline.
+     * @param GatewayRequestContext $context
+     * @param Closure $next
+     * @return mixed
+     */
     public function handle(GatewayRequestContext $context, Closure $next)
     {
         try {

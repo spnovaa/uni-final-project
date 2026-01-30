@@ -12,19 +12,40 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Service layer for invoice.
+ */
 class InvoiceService implements InvoiceServiceInterface
 {
+    /**
+     * Create a new instance.
+     * @param InvoiceRepositoryInterface $invoices
+     * @param InvoiceItemRepositoryInterface $items
+     * @return void
+     */
     public function __construct(
         private readonly InvoiceRepositoryInterface $invoices,
         private readonly InvoiceItemRepositoryInterface $items
     ) {
     }
 
+    /**
+     * List.
+     * @param User $user
+     * @param int $limit
+     * @return Collection
+     */
     public function list(User $user, int $limit = 50): Collection
     {
         return $this->invoices->listByUser($user->id, $limit);
     }
 
+    /**
+     * Get.
+     * @param User $user
+     * @param int $invoiceId
+     * @return Invoice
+     */
     public function get(User $user, int $invoiceId): Invoice
     {
         $invoice = $this->invoices->findForUser($user->id, $invoiceId);
@@ -38,6 +59,14 @@ class InvoiceService implements InvoiceServiceInterface
         return $invoice;
     }
 
+    /**
+     * Create draft.
+     * @param User $user
+     * @param array $items
+     * @param ?string $currency
+     * @param float $tax
+     * @return Invoice
+     */
     public function createDraft(User $user, array $items, ?string $currency = null, float $tax = 0): Invoice
     {
         $preparedItems = $this->prepareItems($items);
@@ -61,6 +90,11 @@ class InvoiceService implements InvoiceServiceInterface
         });
     }
 
+    /**
+     * Issue.
+     * @param Invoice $invoice
+     * @return Invoice
+     */
     public function issue(Invoice $invoice): Invoice
     {
         $invoice->status = 'issued';
@@ -69,6 +103,11 @@ class InvoiceService implements InvoiceServiceInterface
         return $this->invoices->save($invoice);
     }
 
+    /**
+     * Mark paid.
+     * @param Invoice $invoice
+     * @return Invoice
+     */
     public function markPaid(Invoice $invoice): Invoice
     {
         $invoice->status = 'paid';
@@ -77,6 +116,11 @@ class InvoiceService implements InvoiceServiceInterface
         return $this->invoices->save($invoice);
     }
 
+    /**
+     * Generate pdf.
+     * @param Invoice $invoice
+     * @return string
+     */
     public function generatePdf(Invoice $invoice): string
     {
         $invoice->loadMissing(['items', 'user']);
@@ -95,11 +139,21 @@ class InvoiceService implements InvoiceServiceInterface
         return $path;
     }
 
+    /**
+     * Pdf path.
+     * @param Invoice $invoice
+     * @return string
+     */
     public function pdfPath(Invoice $invoice): string
     {
         return 'invoices/invoice_'.$invoice->id.'.pdf';
     }
 
+    /**
+     * Prepare items.
+     * @param array $items
+     * @return array
+     */
     private function prepareItems(array $items): array
     {
         return collect($items)->map(function ($item) {
@@ -117,11 +171,20 @@ class InvoiceService implements InvoiceServiceInterface
         })->all();
     }
 
+    /**
+     * Sum subtotal.
+     * @param array $items
+     * @return float
+     */
     private function sumSubtotal(array $items): float
     {
         return (float) collect($items)->sum('line_total');
     }
 
+    /**
+     * Generate number.
+     * @return string
+     */
     private function generateNumber(): string
     {
         do {

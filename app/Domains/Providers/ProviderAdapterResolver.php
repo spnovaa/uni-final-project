@@ -4,6 +4,9 @@ namespace App\Domains\Providers;
 
 use RuntimeException;
 
+/**
+ * Class ProviderAdapterResolver.
+ */
 class ProviderAdapterResolver
 {
     /**

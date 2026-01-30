@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Class ProviderHealthCheck.
+ */
 class ProviderHealthCheck extends Model
 {
     use HasFactory;
@@ -24,6 +27,10 @@ class ProviderHealthCheck extends Model
         'meta' => 'array',
     ];
 
+    /**
+     * Provider.
+     * @return BelongsTo
+     */
     public function provider(): BelongsTo
     {
         return $this->belongsTo(Provider::class);
