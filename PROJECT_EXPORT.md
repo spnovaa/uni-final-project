@@ -1,4 +1,4 @@
-# Unified AI Gateway — Full Project Context Export
+# Unified AI Gateway -- Full Project Context Export
 Date: 2026-01-29
 Location: project root
 
@@ -11,7 +11,7 @@ These are the combined requirements from `project_plan.md`, the signed proposal 
 
 ### Core Functional Requirements
 - **Unified AI gateway** that standardizes access to multiple AI providers.
-- **OpenAI‑compatible API surface** (same endpoints/shape).
+- **OpenAI-compatible API surface** (same endpoints/shape).
 - **Versioned REST API** under `/api/v1/...`.
 - **Explicit provider + model selection** in every request (client chooses provider+model).
 - **Provider switching** by just changing `provider` and `model` fields.
@@ -21,26 +21,26 @@ These are the combined requirements from `project_plan.md`, the signed proposal 
 - **OTP auth** for user access.
 - **Profile management** (update profile, update profile image).
 - **Real tokenizer** for token estimation and billing.
-- **Non‑token billing** (images/audio).
-- **Redis cache** for performance (cache‑aside).
-- **Swagger / OpenAPI docs** using L5‑Swagger.
-- **No front‑end except Playground** (a test UI is allowed).
+- **Non-token billing** (images/audio).
+- **Redis cache** for performance (cache-aside).
+- **Swagger / OpenAPI docs** using L5-Swagger.
+- **No front-end except Playground** (a test UI is allowed).
 - **Windows compatible**.
 - **Service, Repository, Resource layers**.
 - **Feature + unit tests for every endpoint**.
 
 ### Operational Requirements
-- **Queue‑based background jobs** (Redis).
+- **Queue-based background jobs** (Redis).
 - **External log shipping** (not only DB) for scale.
 - Switch between **multiple log services** with a single config change.
-- **Free services supported** for non‑financial usage.
+- **Free services supported** for non-financial usage.
 
 ---
 
-## 2) Current Feature Coverage — Status Matrix
+## 2) Current Feature Coverage -- Status Matrix
 
-### ✅ Implemented
-- OpenAI‑compatible gateway endpoints:
+### [OK] Implemented
+- OpenAI-compatible gateway endpoints:
   - `/api/v1/ai/chat/completions`
   - `/api/v1/ai/responses`
   - `/api/v1/ai/embeddings`
@@ -49,26 +49,26 @@ These are the combined requirements from `project_plan.md`, the signed proposal 
   - `/api/v1/ai/audio/speech`
 - Explicit **provider + model** validation (required).
 - Provider adapters:
-  - **OpenAI** (OpenAI‑compatible)
+  - **OpenAI** (OpenAI-compatible)
   - **Gemini** (native Gemini API mapped to OpenAI response format)
-  - **Groq** (OpenAI‑compatible)
-  - **OpenRouter** (OpenAI‑compatible)
+  - **Groq** (OpenAI-compatible)
+  - **OpenRouter** (OpenAI-compatible)
 - Billing: wallet, subscriptions, invoices, usage metering & charging.
 - Reports: usage, wallet ledger, invoices.
 - API keys + clients with audit logs.
 - OTP flow (throttle + challenge + verification).
 - Profile management + image upload.
 - Real tokenizer (BPE) with fallback encoding.
-- Non‑token billing (images, audio seconds, audio chars).
-- Cache‑aside for profile, plans, providers, provider models.
+- Non-token billing (images, audio seconds, audio chars).
+- Cache-aside for profile, plans, providers, provider models.
 - External log shipping via queue (Loki + Better Stack).
 - Vue playground at `/playground`.
-- L5‑Swagger docs configured and generated.
+- L5-Swagger docs configured and generated.
 - Unit + feature tests across modules.
 
-### ⚠️ Not Implemented (Known)
+### [WARN] Not Implemented (Known)
 - OTP delivery uses **log stub** (no real SMS/email provider).
-- No real payment gateway integration (wallet top‑up is manual).
+- No real payment gateway integration (wallet top-up is manual).
 - External log sink credentials are not configured by default.
 
 ---
@@ -82,25 +82,25 @@ These are the combined requirements from `project_plan.md`, the signed proposal 
 - **Pipeline Pattern**: Gateway request flow (Laravel Pipeline).
 
 ### Gateway Pipeline (Order)
-`ResolveApiKey` → `EnforceIpAllowlist` → `ValidateGatewayPayload` → `RateLimit`
-→ `SelectProvider` → `ValidateProviderSelection` → `EstimateUsage`
-→ `CheckSubscriptionOrWallet` → `DispatchProviderRequest`
-→ `NormalizeProviderResponse` → `MeterUsage` → `PersistLogs`
-→ `ChargeUsage` → `DispatchExternalLogs`
+`ResolveApiKey` -> `EnforceIpAllowlist` -> `ValidateGatewayPayload` -> `RateLimit`
+-> `SelectProvider` -> `ValidateProviderSelection` -> `EstimateUsage`
+-> `CheckSubscriptionOrWallet` -> `DispatchProviderRequest`
+-> `NormalizeProviderResponse` -> `MeterUsage` -> `PersistLogs`
+-> `ChargeUsage` -> `DispatchExternalLogs`
 
 ---
 
 ## 4) Directory Structure (Key Paths)
-- `app/Domains/Gateway` — gateway DTOs, services, logging
-- `app/Domains/Providers` — provider adapters (OpenAI, Gemini, etc.)
-- `app/Pipelines/Gateway` — pipeline pipes
-- `app/Services/*` — service layer
-- `app/Repositories/*` — repository layer
-- `app/Http/Resources/*` — API resources
-- `app/Jobs/*` — async jobs
-- `routes/api.php` — API routes
-- `resources/js/playground` + `resources/views/playground.blade.php` — Playground
-- `docs/FEATURES.md` — feature notes and cache/log settings
+- `app/Domains/Gateway` -- gateway DTOs, services, logging
+- `app/Domains/Providers` -- provider adapters (OpenAI, Gemini, etc.)
+- `app/Pipelines/Gateway` -- pipeline pipes
+- `app/Services/*` -- service layer
+- `app/Repositories/*` -- repository layer
+- `app/Http/Resources/*` -- API resources
+- `app/Jobs/*` -- async jobs
+- `routes/api.php` -- API routes
+- `resources/js/playground` + `resources/views/playground.blade.php` -- Playground
+- `docs/FEATURES.md` -- feature notes and cache/log settings
 
 ---
 
@@ -144,9 +144,9 @@ Every AI request must include:
 
 ### Supported Providers
 - **OpenAI**: direct OpenAI API
-- **Gemini**: mapped into OpenAI‑style responses (chat/responses/embeddings only)
-- **Groq**: OpenAI‑compatible
-- **OpenRouter**: OpenAI‑compatible
+- **Gemini**: mapped into OpenAI-style responses (chat/responses/embeddings only)
+- **Groq**: OpenAI-compatible
+- **OpenRouter**: OpenAI-compatible
 
 ### Example Gateway Call
 ```
@@ -164,7 +164,7 @@ POST /api/v1/ai/chat/completions
 - Pricing comes from **DB** (`provider_models.pricing_config`) and is cached.
 - Token usage is estimated before call to enforce wallet balance.
 - Actual usage from provider response is billed after response.
-- Non‑token metrics supported:
+- Non-token metrics supported:
   - `image_cost_per_unit`
   - `audio_cost_per_second`
   - `audio_cost_per_char`
@@ -172,7 +172,7 @@ POST /api/v1/ai/chat/completions
 ---
 
 ## 8) Cache Strategy
-Cache‑aside for read‑heavy data:
+Cache-aside for read-heavy data:
 - Plans (`plans:active`)
 - Providers (`providers:all`)
 - Provider configs (`providers:config:{name}`)
@@ -188,7 +188,7 @@ TTL configured in `config/cache.php` via env vars:
 - Logs are shipped asynchronously by `DispatchGatewayLogJob`.
 - Enable by setting:
   - `GATEWAY_LOG_SINK=loki` **or** `GATEWAY_LOG_SINK=betterstack`
-- Two free‑tier friendly sinks are implemented:
+- Two free-tier friendly sinks are implemented:
   - **Grafana Loki** (`LOKI_PUSH_URL`, `LOKI_USERNAME`, `LOKI_API_KEY`)
   - **Better Stack Logs** (`BETTERSTACK_INGEST_HOST`, `BETTERSTACK_SOURCE_TOKEN`)
 - Payloads are redacted + truncated (`GATEWAY_LOG_MAX_BYTES`).
@@ -196,7 +196,7 @@ TTL configured in `config/cache.php` via env vars:
 ---
 
 ## 10) Swagger / OpenAPI
-- L5‑Swagger is configured with schemas under `app/Http/Resources/*`.
+- L5-Swagger is configured with schemas under `app/Http/Resources/*`.
 - Generate docs:
 ```
 php artisan l5-swagger:generate
@@ -249,7 +249,7 @@ php artisan queue:work
 
 ## 14) Known Caveats
 - OTP sending is stubbed (logs only). No real SMS/email provider.
-- SQL Server issue was fixed by commenting `PDO::ATTR_STRINGIFY_FETCHES` in `vendor/laravel/framework/.../SqlServerConnector.php`. This is **not committed** and must be re‑applied after fresh install.
+- SQL Server issue was fixed by commenting `PDO::ATTR_STRINGIFY_FETCHES` in `vendor/laravel/framework/.../SqlServerConnector.php`. This is **not committed** and must be re-applied after fresh install.
 - `.env` may contain real provider keys; review before sharing.
 
 ---
@@ -275,7 +275,7 @@ php artisan queue:work
 
 ## 16) Git / Branch History (Key Merges)
 - core services, models, billing, audit logs, invoices, reporting, gateway billing
-- playground, tokenizer, non‑token pricing, profile caching
+- playground, tokenizer, non-token pricing, profile caching
 - provider explicit selection + Gemini adapter
 - cache service + policies
 - Groq/OpenRouter support
