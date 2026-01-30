@@ -11,13 +11,13 @@ use Illuminate\Support\Collection;
 interface ProviderServiceInterface
 {
     /**
-     * List.
+     * List Providers.
      * @return Collection
      */
     public function list(): Collection;
 
     /**
-     * Create.
+     * Create Provider.
      * @param array $data
      * @return Provider
      */

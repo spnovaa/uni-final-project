@@ -25,7 +25,7 @@ class ApiKeyController extends Controller
     }
 
     /**
-     * Index.
+     * List API keys.
      * @param Request $request
      * @param ApiClient $apiClient
      * @return mixed
@@ -40,7 +40,7 @@ class ApiKeyController extends Controller
     }
 
     /**
-     * Store.
+     * Create a new API key.
      * @param Request $request
      * @param ApiClient $apiClient
      * @return mixed
@@ -77,7 +77,7 @@ class ApiKeyController extends Controller
     }
 
     /**
-     * Revoke.
+     * Revoke API key.
      * @param Request $request
      * @param ApiKey $apiKey
      * @return mixed
@@ -94,7 +94,7 @@ class ApiKeyController extends Controller
     }
 
     /**
-     * Rotate.
+     * Rotate API key and return a new secret.
      * @param Request $request
      * @param ApiKey $apiKey
      * @return mixed

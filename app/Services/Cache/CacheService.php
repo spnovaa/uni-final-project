@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Cache;
 class CacheService implements CacheServiceInterface
 {
     /**
-     * Get.
+     * Get a value from cache.
      * @param string $key
      * @param mixed $default
      * @return mixed
@@ -22,7 +22,7 @@ class CacheService implements CacheServiceInterface
     }
 
     /**
-     * Has.
+     * Determine whether a cache key exists.
      * @param string $key
      * @return bool
      */
@@ -32,7 +32,7 @@ class CacheService implements CacheServiceInterface
     }
 
     /**
-     * Put.
+     * Store a value in cache.
      * @param string $key
      * @param mixed $value
      * @param int $ttl
@@ -44,7 +44,7 @@ class CacheService implements CacheServiceInterface
     }
 
     /**
-     * Remember.
+     * Retrieve from cache or compute and store.
      * @param string $key
      * @param int $ttl
      * @param Closure $callback
@@ -56,7 +56,7 @@ class CacheService implements CacheServiceInterface
     }
 
     /**
-     * Forget.
+     * Remove a cache key.
      * @param string $key
      * @return void
      */
@@ -66,7 +66,7 @@ class CacheService implements CacheServiceInterface
     }
 
     /**
-     * Key.
+     * Build a namespaced cache key.
      * @param string $parts
      * @return string
      */
@@ -76,7 +76,7 @@ class CacheService implements CacheServiceInterface
     }
 
     /**
-     * Ttl.
+     * Resolve cache TTL from config.
      * @param string $name
      * @param int $fallback
      * @return int

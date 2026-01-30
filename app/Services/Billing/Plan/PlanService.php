@@ -41,7 +41,7 @@ class PlanService implements PlanServiceInterface
     }
 
     /**
-     * Create.
+     * Create Plan.
      * @param array $data
      * @return SubscriptionPlan
      */

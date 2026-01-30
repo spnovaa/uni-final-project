@@ -10,7 +10,7 @@ use Closure;
 interface CacheServiceInterface
 {
     /**
-     * Get.
+     * Get a value from cache.
      * @param string $key
      * @param mixed $default
      * @return mixed
@@ -18,14 +18,14 @@ interface CacheServiceInterface
     public function get(string $key, mixed $default = null): mixed;
 
     /**
-     * Has.
+     * Determine whether a cache key exists.
      * @param string $key
      * @return bool
      */
     public function has(string $key): bool;
 
     /**
-     * Put.
+     * Store a value in cache.
      * @param string $key
      * @param mixed $value
      * @param int $ttl
@@ -34,7 +34,7 @@ interface CacheServiceInterface
     public function put(string $key, mixed $value, int $ttl): void;
 
     /**
-     * Remember.
+     * Retrieve from cache or compute and store.
      * @param string $key
      * @param int $ttl
      * @param Closure $callback
@@ -43,21 +43,21 @@ interface CacheServiceInterface
     public function remember(string $key, int $ttl, Closure $callback): mixed;
 
     /**
-     * Forget.
+     * Remove a cache key.
      * @param string $key
      * @return void
      */
     public function forget(string $key): void;
 
     /**
-     * Key.
+     * Build a namespaced cache key.
      * @param string $parts
      * @return string
      */
     public function key(string ...$parts): string;
 
     /**
-     * Ttl.
+     * Resolve cache TTL from config.
      * @param string $name
      * @param int $fallback
      * @return int

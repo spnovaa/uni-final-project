@@ -35,7 +35,7 @@ class Invoice extends Model
     ];
 
     /**
-     * User.
+     * Get the user relationship.
      * @return BelongsTo
      */
     public function user(): BelongsTo
@@ -44,7 +44,7 @@ class Invoice extends Model
     }
 
     /**
-     * Items.
+     * Get the items relationship.
      * @return HasMany
      */
     public function items(): HasMany

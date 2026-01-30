@@ -21,7 +21,7 @@ interface WalletServiceInterface
     public function getOrCreate(User $user, ?string $currency = null): Wallet;
 
     /**
-     * Topup.
+     * Top up wallet balance.
      * @param User $user
      * @param float $amount
      * @param ?string $reason
@@ -31,7 +31,7 @@ interface WalletServiceInterface
     public function topup(User $user, float $amount, ?string $reason = null, ?array $meta = null): WalletTransaction;
 
     /**
-     * Debit.
+     * Debit wallet balance.
      * @param User $user
      * @param float $amount
      * @param string $reason
@@ -48,7 +48,7 @@ interface WalletServiceInterface
     ): WalletTransaction;
 
     /**
-     * Transactions.
+     * List wallet transactions.
      * @param User $user
      * @param int $limit
      * @return Collection

@@ -24,7 +24,7 @@ class Provider extends Model
     ];
 
     /**
-     * Models.
+     * Get the models relationship.
      * @return HasMany
      */
     public function models(): HasMany

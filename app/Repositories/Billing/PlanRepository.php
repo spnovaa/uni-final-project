@@ -23,7 +23,7 @@ class PlanRepository implements PlanRepositoryInterface
     }
 
     /**
-     * Create.
+     * Create Plan.
      * @param array $data
      * @return SubscriptionPlan
      */

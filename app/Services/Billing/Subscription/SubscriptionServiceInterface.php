@@ -12,7 +12,7 @@ use App\Models\User;
 interface SubscriptionServiceInterface
 {
     /**
-     * Subscribe.
+     * Subscribe a user to a plan.
      * @param User $user
      * @param SubscriptionPlan $plan
      * @return Subscription
@@ -27,7 +27,7 @@ interface SubscriptionServiceInterface
     public function current(User $user): ?Subscription;
 
     /**
-     * Cancel.
+     * Cancel a subscription.
      * @param User $user
      * @return ?Subscription
      */

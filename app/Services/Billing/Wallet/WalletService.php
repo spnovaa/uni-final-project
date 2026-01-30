@@ -45,7 +45,7 @@ class WalletService implements WalletServiceInterface
     }
 
     /**
-     * Topup.
+     * Top up wallet balance.
      * @param User $user
      * @param float $amount
      * @param ?string $reason
@@ -78,7 +78,7 @@ class WalletService implements WalletServiceInterface
     }
 
     /**
-     * Debit.
+     * Debit wallet balance.
      * @param User $user
      * @param float $amount
      * @param string $reason
@@ -125,7 +125,7 @@ class WalletService implements WalletServiceInterface
     }
 
     /**
-     * Transactions.
+     * List wallet transactions.
      * @param User $user
      * @param int $limit
      * @return Collection

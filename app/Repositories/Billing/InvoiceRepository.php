@@ -41,7 +41,7 @@ class InvoiceRepository implements InvoiceRepositoryInterface
     }
 
     /**
-     * Create.
+     * Create Invoice.
      * @param array $data
      * @return Invoice
      */

@@ -13,7 +13,7 @@ use Illuminate\Support\Collection;
 interface AuditLogServiceInterface
 {
     /**
-     * Record.
+     * Record Audit log.
      * @param ?User $actor
      * @param string $action
      * @param ?Model $target
@@ -28,7 +28,7 @@ interface AuditLogServiceInterface
     ): AuditLog;
 
     /**
-     * List.
+     * List Audit logs.
      * @param array $filters
      * @param int $limit
      * @return Collection

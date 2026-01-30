@@ -22,7 +22,7 @@ class ApiClientController extends Controller
     }
 
     /**
-     * Index.
+     * List API clients.
      * @param Request $request
      * @return mixed
      */
@@ -34,7 +34,7 @@ class ApiClientController extends Controller
     }
 
     /**
-     * Store.
+     * Create a new API client.
      * @param Request $request
      * @return mixed
      */

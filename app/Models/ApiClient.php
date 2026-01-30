@@ -18,7 +18,7 @@ class ApiClient extends Model
     ];
 
     /**
-     * User.
+     * Get the user relationship.
      * @return BelongsTo
      */
     public function user(): BelongsTo
@@ -27,7 +27,7 @@ class ApiClient extends Model
     }
 
     /**
-     * Keys.
+     * Get the keys relationship.
      * @return HasMany
      */
     public function keys(): HasMany

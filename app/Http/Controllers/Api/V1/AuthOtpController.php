@@ -24,7 +24,7 @@ class AuthOtpController extends Controller
     }
 
     /**
-     * Start.
+     * Start an OTP challenge.
      * @param Request $request
      * @return mixed
      */
@@ -64,7 +64,7 @@ class AuthOtpController extends Controller
     }
 
     /**
-     * Verify.
+     * Verify an OTP challenge and issue an access token.
      * @param Request $request
      * @return mixed
      */

@@ -27,7 +27,7 @@ class ProviderService implements ProviderServiceInterface
     }
 
     /**
-     * List.
+     * List Providers.
      * @return Collection
      */
     public function list(): Collection
@@ -41,7 +41,7 @@ class ProviderService implements ProviderServiceInterface
     }
 
     /**
-     * Create.
+     * Create Provider.
      * @param array $data
      * @return Provider
      */

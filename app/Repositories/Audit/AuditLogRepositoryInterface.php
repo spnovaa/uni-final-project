@@ -11,14 +11,14 @@ use Illuminate\Support\Collection;
 interface AuditLogRepositoryInterface
 {
     /**
-     * Create.
+     * Create Audit log.
      * @param array $data
      * @return AuditLog
      */
     public function create(array $data): AuditLog;
 
     /**
-     * List.
+     * List Audit logs.
      * @param array $filters
      * @param int $limit
      * @return Collection

@@ -18,7 +18,7 @@ interface ApiKeyRepositoryInterface
     public function listByClient(int $clientId): Collection;
 
     /**
-     * Create.
+     * Create API key.
      * @param array $data
      * @return ApiKey
      */

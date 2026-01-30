@@ -23,7 +23,7 @@ class ApiKeyService
     }
 
     /**
-     * Create.
+     * Create API key.
      * @param ApiClient $client
      * @param array $scopes
      * @param ?int $rateLimit
@@ -53,7 +53,7 @@ class ApiKeyService
     }
 
     /**
-     * Revoke.
+     * Revoke API key.
      * @param ApiKey $apiKey
      * @return ApiKey
      */
@@ -68,7 +68,7 @@ class ApiKeyService
     }
 
     /**
-     * Rotate.
+     * Rotate API key and return a new secret.
      * @param ApiKey $apiKey
      * @return array
      */

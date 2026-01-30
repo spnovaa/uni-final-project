@@ -24,7 +24,7 @@ class ApiClientRepository implements ApiClientRepositoryInterface
     }
 
     /**
-     * Create.
+     * Create API client.
      * @param array $data
      * @return ApiClient
      */

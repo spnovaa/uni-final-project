@@ -22,7 +22,7 @@ class MeController extends Controller
     }
 
     /**
-     * Show.
+     * Get the authenticated user profile.
      * @param Request $request
      * @return mixed
      */
@@ -34,7 +34,7 @@ class MeController extends Controller
     }
 
     /**
-     * Update.
+     * Update the authenticated user profile.
      * @param Request $request
      * @return mixed
      */

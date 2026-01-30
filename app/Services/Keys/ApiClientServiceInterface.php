@@ -12,14 +12,14 @@ use Illuminate\Support\Collection;
 interface ApiClientServiceInterface
 {
     /**
-     * List.
+     * List API clients.
      * @param User $user
      * @return Collection
      */
     public function list(User $user): Collection;
 
     /**
-     * Create.
+     * Create API client.
      * @param User $user
      * @param string $name
      * @return ApiClient

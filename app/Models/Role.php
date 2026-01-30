@@ -19,7 +19,7 @@ class Role extends Model
     ];
 
     /**
-     * Users.
+     * Get the users relationship.
      * @return BelongsToMany
      */
     public function users(): BelongsToMany
@@ -28,7 +28,7 @@ class Role extends Model
     }
 
     /**
-     * Permissions.
+     * Get the permissions relationship.
      * @return BelongsToMany
      */
     public function permissions(): BelongsToMany

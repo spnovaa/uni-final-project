@@ -26,7 +26,7 @@ class ApiClientService implements ApiClientServiceInterface
     }
 
     /**
-     * List.
+     * List API clients.
      * @param User $user
      * @return Collection
      */
@@ -36,7 +36,7 @@ class ApiClientService implements ApiClientServiceInterface
     }
 
     /**
-     * Create.
+     * Create API client.
      * @param User $user
      * @param string $name
      * @return ApiClient

@@ -18,7 +18,7 @@ interface ProviderModelRepositoryInterface
     public function listByProvider(int $providerId): Collection;
 
     /**
-     * Create.
+     * Create Provider model.
      * @param array $data
      * @return ProviderModel
      */

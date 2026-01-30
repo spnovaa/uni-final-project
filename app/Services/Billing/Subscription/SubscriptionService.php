@@ -32,7 +32,7 @@ class SubscriptionService implements SubscriptionServiceInterface
     }
 
     /**
-     * Subscribe.
+     * Subscribe a user to a plan.
      * @param User $user
      * @param SubscriptionPlan $plan
      * @return Subscription
@@ -89,7 +89,7 @@ class SubscriptionService implements SubscriptionServiceInterface
     }
 
     /**
-     * Cancel.
+     * Cancel a subscription.
      * @param User $user
      * @return ?Subscription
      */

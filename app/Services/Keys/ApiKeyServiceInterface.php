@@ -13,14 +13,14 @@ use Illuminate\Support\Collection;
 interface ApiKeyServiceInterface
 {
     /**
-     * List.
+     * List API keys.
      * @param ApiClient $client
      * @return Collection
      */
     public function list(ApiClient $client): Collection;
 
     /**
-     * Create.
+     * Create API key.
      * @param ApiClient $client
      * @param array $scopes
      * @param ?int $rateLimit
@@ -37,14 +37,14 @@ interface ApiKeyServiceInterface
     ): array;
 
     /**
-     * Revoke.
+     * Revoke API key.
      * @param ApiKey $apiKey
      * @return ApiKey
      */
     public function revoke(ApiKey $apiKey): ApiKey;
 
     /**
-     * Rotate.
+     * Rotate API key and return a new secret.
      * @param ApiKey $apiKey
      * @return array
      */

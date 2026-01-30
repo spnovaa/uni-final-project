@@ -11,7 +11,7 @@ use Illuminate\Support\Collection;
 class AuditLogRepository implements AuditLogRepositoryInterface
 {
     /**
-     * Create.
+     * Create Audit log.
      * @param array $data
      * @return AuditLog
      */
@@ -21,7 +21,7 @@ class AuditLogRepository implements AuditLogRepositoryInterface
     }
 
     /**
-     * List.
+     * List Audit logs.
      * @param array $filters
      * @param int $limit
      * @return Collection
