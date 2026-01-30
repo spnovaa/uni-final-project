@@ -28,7 +28,7 @@ class ProviderHealthCheck extends Model
     ];
 
     /**
-     * Provider.
+     * Get the provider relationship.
      * @return BelongsTo
      */
     public function provider(): BelongsTo

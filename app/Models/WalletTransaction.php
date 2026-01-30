@@ -29,7 +29,7 @@ class WalletTransaction extends Model
     ];
 
     /**
-     * Wallet.
+     * Get the wallet relationship.
      * @return BelongsTo
      */
     public function wallet(): BelongsTo

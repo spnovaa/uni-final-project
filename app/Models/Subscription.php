@@ -31,7 +31,7 @@ class Subscription extends Model
     ];
 
     /**
-     * User.
+     * Get the user relationship.
      * @return BelongsTo
      */
     public function user(): BelongsTo
@@ -40,7 +40,7 @@ class Subscription extends Model
     }
 
     /**
-     * Plan.
+     * Get the plan relationship.
      * @return BelongsTo
      */
     public function plan(): BelongsTo

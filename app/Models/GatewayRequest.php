@@ -32,7 +32,7 @@ class GatewayRequest extends Model
     }
 
     /**
-     * User.
+     * Get the user relationship.
      * @return BelongsTo
      */
     public function user(): BelongsTo
@@ -41,7 +41,7 @@ class GatewayRequest extends Model
     }
 
     /**
-     * Provider.
+     * Get the provider relationship.
      * @return BelongsTo
      */
     public function provider(): BelongsTo

@@ -29,7 +29,7 @@ class ApiKey extends Model
     ];
 
     /**
-     * Client.
+     * Get the client relationship.
      * @return BelongsTo
      */
     public function client(): BelongsTo

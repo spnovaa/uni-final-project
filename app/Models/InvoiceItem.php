@@ -31,7 +31,7 @@ class InvoiceItem extends Model
     ];
 
     /**
-     * Invoice.
+     * Get the invoice relationship.
      * @return BelongsTo
      */
     public function invoice(): BelongsTo

@@ -58,7 +58,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Wallet.
+     * Get the wallet relationship.
      * @return HasOne
      */
     public function wallet(): HasOne
@@ -67,7 +67,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Subscriptions.
+     * Get the subscriptions relationship.
      * @return HasMany
      */
     public function subscriptions(): HasMany
@@ -76,7 +76,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Roles.
+     * Get the roles relationship.
      * @return BelongsToMany
      */
     public function roles(): BelongsToMany

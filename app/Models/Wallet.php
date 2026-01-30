@@ -25,7 +25,7 @@ class Wallet extends Model
     ];
 
     /**
-     * User.
+     * Get the user relationship.
      * @return BelongsTo
      */
     public function user(): BelongsTo
@@ -34,7 +34,7 @@ class Wallet extends Model
     }
 
     /**
-     * Transactions.
+     * Get the transactions relationship.
      * @return HasMany
      */
     public function transactions(): HasMany

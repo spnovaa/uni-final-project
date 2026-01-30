@@ -30,7 +30,7 @@ class AuditLog extends Model
     ];
 
     /**
-     * Actor.
+     * Get the actor relationship.
      * @return BelongsTo
      */
     public function actor(): BelongsTo

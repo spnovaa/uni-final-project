@@ -32,7 +32,7 @@ class SubscriptionPlan extends Model
     ];
 
     /**
-     * Subscriptions.
+     * Get the subscriptions relationship.
      * @return HasMany
      */
     public function subscriptions(): HasMany
