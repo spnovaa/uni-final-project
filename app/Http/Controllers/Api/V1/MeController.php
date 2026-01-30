@@ -23,6 +23,8 @@ class MeController extends Controller
 
     /**
      * Get the authenticated user profile.
+     *
+     * Delegates to the user service, which may serve this request from cache.
      * @param Request $request
      * @return mixed
      */
@@ -35,6 +37,9 @@ class MeController extends Controller
 
     /**
      * Update the authenticated user profile.
+     *
+     * Validates input, persists profile changes (including optional profile image upload),
+     * and invalidates any cached profile data.
      * @param Request $request
      * @return mixed
      */

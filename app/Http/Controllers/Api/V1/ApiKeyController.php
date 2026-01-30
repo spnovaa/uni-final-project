@@ -25,7 +25,9 @@ class ApiKeyController extends Controller
     }
 
     /**
-     * List API keys.
+     * List API keys for a given API client owned by the authenticated user.
+     *
+     * The API key secret is never returned here; only metadata is exposed.
      * @param Request $request
      * @param ApiClient $apiClient
      * @return mixed
@@ -40,7 +42,10 @@ class ApiKeyController extends Controller
     }
 
     /**
-     * Create a new API key.
+     * Create a new API key for the given client and return the plaintext secret once.
+     *
+     * Validates optional settings (scopes, rate limit, IP allowlist, expiry) and returns
+     * both the created key metadata and the generated secret value.
      * @param Request $request
      * @param ApiClient $apiClient
      * @return mixed
@@ -77,7 +82,9 @@ class ApiKeyController extends Controller
     }
 
     /**
-     * Revoke API key.
+     * Revoke an API key owned by the authenticated user.
+     *
+     * Revoked keys can no longer authenticate gateway requests.
      * @param Request $request
      * @param ApiKey $apiKey
      * @return mixed
@@ -94,7 +101,9 @@ class ApiKeyController extends Controller
     }
 
     /**
-     * Rotate API key and return a new secret.
+     * Rotate an API key (invalidate the old secret and return a new one).
+     *
+     * Rotation keeps the same logical key record but replaces its stored secret hash.
      * @param Request $request
      * @param ApiKey $apiKey
      * @return mixed
@@ -114,7 +123,9 @@ class ApiKeyController extends Controller
     }
 
     /**
-     * Authorize client.
+     * Ensure the API client belongs to the authenticated user.
+     *
+     * Uses 404 instead of 403 to avoid leaking the existence of other users' clients.
      * @param Request $request
      * @param ApiClient $apiClient
      * @return void
@@ -127,7 +138,9 @@ class ApiKeyController extends Controller
     }
 
     /**
-     * Authorize key.
+     * Ensure the API key belongs to the authenticated user.
+     *
+     * Uses 404 instead of 403 to avoid leaking the existence of other users' keys.
      * @param Request $request
      * @param ApiKey $apiKey
      * @return void

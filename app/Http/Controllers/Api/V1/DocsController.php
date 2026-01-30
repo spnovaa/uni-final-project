@@ -5,6 +5,11 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 
 /**
+ * OpenAPI metadata holder for L5-Swagger generation.
+ *
+ * This controller intentionally contains no actions; it exists so L5-Swagger can discover
+ * global OpenAPI annotations for the project.
+ *
  * @OA\Info(
  *     version="1.0.0",
  *     title="Unified AI Gateway",

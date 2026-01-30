@@ -22,6 +22,10 @@ class AuditLogController extends Controller
     }
 
     /**
+     * List audit log entries.
+     *
+     * Applies optional filters and enforces a maximum page size for performance.
+     *
      * @OA\Get(
      *     path="/api/v1/audit-logs",
      *     operationId="listAuditLogs",

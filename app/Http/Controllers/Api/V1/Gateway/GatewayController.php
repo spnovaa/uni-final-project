@@ -22,7 +22,9 @@ class GatewayController extends Controller
     }
 
     /**
-     * Chat completions.
+     * Handle OpenAI-compatible chat completions requests.
+     *
+     * The request must include explicit `provider` and `model` fields to select the upstream.
      * @param Request $request
      * @return mixed
      */
@@ -52,7 +54,7 @@ class GatewayController extends Controller
     }
 
     /**
-     * Images generations.
+     * Handle OpenAI-compatible image generation requests.
      * @param Request $request
      * @return mixed
      */
@@ -62,7 +64,9 @@ class GatewayController extends Controller
     }
 
     /**
-     * Audio transcriptions.
+     * Handle OpenAI-compatible audio transcription requests.
+     *
+     * Requires a multipart `file` upload.
      * @param Request $request
      * @return mixed
      */
@@ -72,7 +76,9 @@ class GatewayController extends Controller
     }
 
     /**
-     * Audio speech.
+     * Handle OpenAI-compatible text-to-speech requests.
+     *
+     * This endpoint may return a binary audio response.
      * @param Request $request
      * @return mixed
      */
@@ -82,7 +88,10 @@ class GatewayController extends Controller
     }
 
     /**
-     * Handle an OpenAI-compatible gateway request.
+     * Build a gateway request context and delegate to the gateway service.
+     *
+     * The gateway service runs validation, routing, provider dispatch, normalization, billing,
+     * logging, and response shaping via a pipeline.
      * @param Request $request
      * @param string $endpoint
      * @return mixed

@@ -25,6 +25,11 @@ class ReportController extends Controller
     }
 
     /**
+     * Return a usage report for the authenticated user.
+     *
+     * Validates filters, applies default date range (last 30 days), and delegates aggregation to
+     * the reporting service.
+     *
      * @OA\Get(
      *     path="/api/v1/reports/usage",
      *     summary="Usage report",
@@ -58,6 +63,10 @@ class ReportController extends Controller
     }
 
     /**
+     * Return wallet ledger entries for the authenticated user.
+     *
+     * Defaults to the last 30 days when no date range is provided.
+     *
      * @OA\Get(
      *     path="/api/v1/reports/wallet-ledger",
      *     summary="Wallet ledger report",
@@ -88,6 +97,10 @@ class ReportController extends Controller
     }
 
     /**
+     * Return invoice report entries for the authenticated user.
+     *
+     * Allows optional filtering by invoice status.
+     *
      * @OA\Get(
      *     path="/api/v1/reports/invoices",
      *     summary="Invoice report",

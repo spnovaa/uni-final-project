@@ -26,6 +26,10 @@ class PlanController extends Controller
     }
 
     /**
+     * List active subscription plans.
+     *
+     * Delegates to the plan service which may serve this list from cache.
+     *
      * @OA\Get(
      *     path="/api/v1/plans",
      *     summary="List subscription plans",
@@ -47,6 +51,11 @@ class PlanController extends Controller
     }
 
     /**
+     * Create a subscription plan.
+     *
+     * Validates the request, persists the plan in the database, records an audit entry,
+     * and returns the created plan resource (201).
+     *
      * @OA\Post(
      *     path="/api/v1/plans",
      *     summary="Create a subscription plan",
