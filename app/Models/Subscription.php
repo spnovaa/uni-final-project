@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Class Subscription.
+ */
 class Subscription extends Model
 {
     use HasFactory;
@@ -27,11 +30,19 @@ class Subscription extends Model
         'canceled_at' => 'datetime',
     ];
 
+    /**
+     * User.
+     * @return BelongsTo
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * Plan.
+     * @return BelongsTo
+     */
     public function plan(): BelongsTo
     {
         return $this->belongsTo(SubscriptionPlan::class, 'plan_id');

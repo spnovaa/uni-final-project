@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * Class Wallet.
+ */
 class Wallet extends Model
 {
     use HasFactory;
@@ -21,11 +24,19 @@ class Wallet extends Model
         'balance' => 'decimal:2',
     ];
 
+    /**
+     * User.
+     * @return BelongsTo
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * Transactions.
+     * @return HasMany
+     */
     public function transactions(): HasMany
     {
         return $this->hasMany(WalletTransaction::class);

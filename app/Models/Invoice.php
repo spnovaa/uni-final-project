@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * Class Invoice.
+ */
 class Invoice extends Model
 {
     use HasFactory;
@@ -31,11 +34,19 @@ class Invoice extends Model
         'paid_at' => 'datetime',
     ];
 
+    /**
+     * User.
+     * @return BelongsTo
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * Items.
+     * @return HasMany
+     */
     public function items(): HasMany
     {
         return $this->hasMany(InvoiceItem::class);

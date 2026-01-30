@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Class WalletTransaction.
+ */
 class WalletTransaction extends Model
 {
     use HasFactory;
@@ -25,6 +28,10 @@ class WalletTransaction extends Model
         'meta' => 'array',
     ];
 
+    /**
+     * Wallet.
+     * @return BelongsTo
+     */
     public function wallet(): BelongsTo
     {
         return $this->belongsTo(Wallet::class);

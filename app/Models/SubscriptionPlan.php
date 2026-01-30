@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * Class SubscriptionPlan.
+ */
 class SubscriptionPlan extends Model
 {
     use HasFactory;
@@ -28,6 +31,10 @@ class SubscriptionPlan extends Model
         'features' => 'array',
     ];
 
+    /**
+     * Subscriptions.
+     * @return HasMany
+     */
     public function subscriptions(): HasMany
     {
         return $this->hasMany(Subscription::class, 'plan_id');

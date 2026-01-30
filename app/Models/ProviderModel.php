@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Class ProviderModel.
+ */
 class ProviderModel extends Model
 {
     protected $fillable = [
@@ -20,6 +23,10 @@ class ProviderModel extends Model
         'pricing_config' => 'array',
     ];
 
+    /**
+     * Provider.
+     * @return BelongsTo
+     */
     public function provider(): BelongsTo
     {
         return $this->belongsTo(Provider::class);
