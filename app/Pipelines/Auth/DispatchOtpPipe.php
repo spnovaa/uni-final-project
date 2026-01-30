@@ -7,12 +7,15 @@ use App\Jobs\SendOtpJob;
 use Closure;
 
 /**
- * Auth pipeline step for dispatch otp.
+ * Queue OTP delivery after a challenge has been created.
+ *
+ * This pipe dispatches a `SendOtpJob` so OTP sending is asynchronous and does not block
+ * the HTTP request that starts the OTP flow.
  */
 class DispatchOtpPipe
 {
     /**
-     * Process the OTP context and continue the pipeline.
+     * Dispatch the OTP sending job when a code is available on the context.
      * @param OtpContext $context
      * @param Closure $next
      * @return mixed

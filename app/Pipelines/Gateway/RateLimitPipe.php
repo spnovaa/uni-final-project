@@ -8,12 +8,15 @@ use Closure;
 use Illuminate\Support\Facades\RateLimiter;
 
 /**
- * Gateway pipeline step for rate limit.
+ * Enforce per-API-key rate limiting for gateway requests.
+ *
+ * Uses Laravel's RateLimiter with a key derived from the API key ID and returns an
+ * OpenAI-style `rate_limit_error` when the configured per-minute limit is exceeded.
  */
 class RateLimitPipe
 {
     /**
-     * Process the gateway context and continue the pipeline.
+     * Apply rate limiting and short-circuit with a 429 response when exceeded.
      * @param GatewayRequestContext $context
      * @param Closure $next
      * @return mixed

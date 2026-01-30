@@ -8,7 +8,10 @@ use App\Domains\Gateway\Services\UsageMeteringService;
 use Closure;
 
 /**
- * Gateway pipeline step for estimate usage.
+ * Estimate usage and cost for the request before sending it to the provider.
+ *
+ * This pipe uses the tokenizer-based estimator to approximate token/non-token usage,
+ * then converts those metrics into billable usage records using provider model pricing.
  */
 class EstimateUsagePipe
 {
@@ -25,7 +28,7 @@ class EstimateUsagePipe
     }
 
     /**
-     * Process the gateway context and continue the pipeline.
+     * Compute estimated usage metrics and the estimated total cost for pre-checks.
      * @param GatewayRequestContext $context
      * @param Closure $next
      * @return mixed

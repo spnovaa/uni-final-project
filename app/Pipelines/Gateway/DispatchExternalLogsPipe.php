@@ -7,7 +7,10 @@ use App\Domains\Gateway\Services\GatewayLogService;
 use Closure;
 
 /**
- * Gateway pipeline step for dispatch external logs.
+ * Dispatch request/usage logs to an external log sink asynchronously.
+ *
+ * The gateway persists minimal DB logs for reporting, but external log shipping is queued
+ * so the request latency does not depend on third-party logging services.
  */
 class DispatchExternalLogsPipe
 {
@@ -21,7 +24,7 @@ class DispatchExternalLogsPipe
     }
 
     /**
-     * Process the gateway context and continue the pipeline.
+     * Queue an external log dispatch job for this gateway request.
      * @param GatewayRequestContext $context
      * @param Closure $next
      * @return mixed

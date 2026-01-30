@@ -7,12 +7,17 @@ use App\Domains\Gateway\Support\OpenAiErrorResponder;
 use Closure;
 
 /**
- * Gateway pipeline step for enforce ip allowlist.
+ * Enforce API key IP allowlisting for gateway requests.
+ *
+ * If the API key has `allowed_ips` configured, this pipe checks the request IP and
+ * blocks the request with an OpenAI-style authorization error when the IP is not allowed.
  */
 class EnforceIpAllowlistPipe
 {
     /**
-     * Process the gateway context and continue the pipeline.
+     * Validate the caller IP against the API key allowlist (if configured).
+     *
+     * On mismatch, sets an OpenAI-compatible error response and stops the pipeline.
      * @param GatewayRequestContext $context
      * @param Closure $next
      * @return mixed

@@ -9,7 +9,14 @@ use App\Repositories\Billing\WalletRepositoryInterface;
 use Closure;
 
 /**
- * Gateway pipeline step for check subscription or wallet.
+ * Enforce billing preconditions before calling an upstream AI provider.
+ *
+ * This pipe checks:
+ * - The API key is linked to a user.
+ * - The user has an active subscription with included credits, OR
+ * - The user has sufficient wallet balance for the estimated cost.
+ *
+ * On failure, it returns OpenAI-style 401/402 errors without making a provider request.
  */
 class CheckSubscriptionOrWalletPipe
 {
@@ -26,7 +33,7 @@ class CheckSubscriptionOrWalletPipe
     }
 
     /**
-     * Process the gateway context and continue the pipeline.
+     * Validate subscription/wallet eligibility for this request and short-circuit on failure.
      * @param GatewayRequestContext $context
      * @param Closure $next
      * @return mixed

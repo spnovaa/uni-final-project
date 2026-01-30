@@ -8,12 +8,15 @@ use App\Models\UsageRecord;
 use Closure;
 
 /**
- * Gateway pipeline step for persist logs.
+ * Persist gateway request metadata and usage records to the database.
+ *
+ * When enabled via `gateway.persist_logs`, this pipe writes a `gateway_requests` row and
+ * the associated `usage_records` so reporting, invoices, and audits can be generated later.
  */
 class PersistLogsPipe
 {
     /**
-     * Process the gateway context and continue the pipeline.
+     * Store gateway request and usage records in the database (if enabled).
      * @param GatewayRequestContext $context
      * @param Closure $next
      * @return mixed

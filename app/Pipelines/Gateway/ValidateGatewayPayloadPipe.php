@@ -8,12 +8,18 @@ use Closure;
 use Illuminate\Support\Facades\Validator;
 
 /**
- * Gateway pipeline step for validate gateway payload.
+ * Validate basic request payload structure for OpenAI-compatible gateway endpoints.
+ *
+ * This pipe performs light validation (required fields per endpoint) so the gateway can
+ * fail fast with OpenAI-style `invalid_request_error` responses before any provider call.
  */
 class ValidateGatewayPayloadPipe
 {
     /**
-     * Process the gateway context and continue the pipeline.
+     * Validate payload fields for the current endpoint and short-circuit on invalid input.
+     *
+     * - Uses endpoint-specific rules for required fields (e.g. `messages` for chat).
+     * - Validates multipart requirements such as `file` for audio transcriptions.
      * @param GatewayRequestContext $context
      * @param Closure $next
      * @return mixed
@@ -47,7 +53,7 @@ class ValidateGatewayPayloadPipe
     }
 
     /**
-     * Rules for endpoint.
+     * Build the validation rules for a given OpenAI-compatible endpoint.
      * @param string $endpoint
      * @return array
      */

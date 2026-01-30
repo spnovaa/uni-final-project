@@ -8,7 +8,11 @@ use App\Domains\Gateway\Services\UsageMeteringService;
 use Closure;
 
 /**
- * Gateway pipeline step for meter usage.
+ * Convert provider response usage information into billable usage records.
+ *
+ * This pipe attempts to extract real usage from the upstream provider response (when the
+ * adapter supports it). When the provider does not return usage, it falls back to the
+ * tokenizer-based estimate computed earlier in the pipeline.
  */
 class MeterUsagePipe
 {
@@ -22,7 +26,7 @@ class MeterUsagePipe
     }
 
     /**
-     * Process the gateway context and continue the pipeline.
+     * Extract actual usage (if available), merge it with estimates, and build usage records.
      * @param GatewayRequestContext $context
      * @param Closure $next
      * @return mixed
@@ -45,7 +49,7 @@ class MeterUsagePipe
     }
 
     /**
-     * Merge usage.
+     * Merge actual and estimated usage metrics, preferring actual values when present.
      * @param ?UsageMetrics $actual
      * @param ?UsageMetrics $estimated
      * @return ?UsageMetrics

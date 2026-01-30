@@ -9,7 +9,11 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /**
- * Auth pipeline step for generate otp.
+ * Generate and persist a new OTP challenge.
+ *
+ * This pipe generates a random numeric code, stores a hashed version in the database with an
+ * expiration time, and attaches the plaintext code to the context so it can be delivered to
+ * the user by a later pipeline step.
  */
 class GenerateOtpPipe
 {
@@ -23,7 +27,7 @@ class GenerateOtpPipe
     }
 
     /**
-     * Process the OTP context and continue the pipeline.
+     * Create a new OTP challenge record and attach it to the context.
      * @param OtpContext $context
      * @param Closure $next
      * @return mixed
@@ -49,7 +53,7 @@ class GenerateOtpPipe
     }
 
     /**
-     * Generate code.
+     * Generate a random numeric OTP code of a given length.
      * @param int $length
      * @return string
      */
