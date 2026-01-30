@@ -7,8 +7,17 @@ use App\Domains\Gateway\Support\OpenAiErrorResponder;
 use Closure;
 use Illuminate\Support\Facades\Validator;
 
+/**
+ * Gateway pipeline step for validate gateway payload.
+ */
 class ValidateGatewayPayloadPipe
 {
+    /**
+     * Process the gateway context and continue the pipeline.
+     * @param GatewayRequestContext $context
+     * @param Closure $next
+     * @return mixed
+     */
     public function handle(GatewayRequestContext $context, Closure $next)
     {
         $rules = $this->rulesForEndpoint($context->endpoint);
@@ -37,6 +46,11 @@ class ValidateGatewayPayloadPipe
         return $next($context);
     }
 
+    /**
+     * Rules for endpoint.
+     * @param string $endpoint
+     * @return array
+     */
     private function rulesForEndpoint(string $endpoint): array
     {
         $baseRules = [

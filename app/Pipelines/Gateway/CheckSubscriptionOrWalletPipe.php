@@ -8,14 +8,29 @@ use App\Repositories\Billing\SubscriptionRepositoryInterface;
 use App\Repositories\Billing\WalletRepositoryInterface;
 use Closure;
 
+/**
+ * Gateway pipeline step for check subscription or wallet.
+ */
 class CheckSubscriptionOrWalletPipe
 {
+    /**
+     * Create a new instance.
+     * @param SubscriptionRepositoryInterface $subscriptions
+     * @param WalletRepositoryInterface $wallets
+     * @return void
+     */
     public function __construct(
         private readonly SubscriptionRepositoryInterface $subscriptions,
         private readonly WalletRepositoryInterface $wallets
     ) {
     }
 
+    /**
+     * Process the gateway context and continue the pipeline.
+     * @param GatewayRequestContext $context
+     * @param Closure $next
+     * @return mixed
+     */
     public function handle(GatewayRequestContext $context, Closure $next)
     {
         if (! config('gateway.require_wallet', true)) {
