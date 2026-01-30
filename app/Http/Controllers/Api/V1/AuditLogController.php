@@ -7,8 +7,16 @@ use App\Http\Resources\Audit\AuditLogResource;
 use App\Services\Audit\AuditLogServiceInterface;
 use Illuminate\Http\Request;
 
+/**
+ * API controller for audit log endpoints.
+ */
 class AuditLogController extends Controller
 {
+    /**
+     * Create a new instance.
+     * @param AuditLogServiceInterface $logs
+     * @return void
+     */
     public function __construct(private readonly AuditLogServiceInterface $logs)
     {
     }

@@ -9,8 +9,17 @@ use App\Services\Audit\AuditLogServiceInterface;
 use App\Services\Gateway\ProviderModel\ProviderModelServiceInterface;
 use Illuminate\Http\Request;
 
+/**
+ * API controller for provider model endpoints.
+ */
 class ProviderModelController extends Controller
 {
+    /**
+     * Create a new instance.
+     * @param ProviderModelServiceInterface $models
+     * @param AuditLogServiceInterface $audit
+     * @return void
+     */
     public function __construct(
         private readonly ProviderModelServiceInterface $models,
         private readonly AuditLogServiceInterface $audit

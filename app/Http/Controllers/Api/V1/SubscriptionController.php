@@ -9,8 +9,17 @@ use App\Services\Billing\Subscription\SubscriptionServiceInterface;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * API controller for subscription endpoints.
+ */
 class SubscriptionController extends Controller
 {
+    /**
+     * Create a new instance.
+     * @param SubscriptionServiceInterface $subscriptions
+     * @param PlanServiceInterface $plans
+     * @return void
+     */
     public function __construct(
         private readonly SubscriptionServiceInterface $subscriptions,
         private readonly PlanServiceInterface $plans

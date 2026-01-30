@@ -9,8 +9,16 @@ use App\Services\Billing\Wallet\WalletServiceInterface;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * API controller for wallet endpoints.
+ */
 class WalletController extends Controller
 {
+    /**
+     * Create a new instance.
+     * @param WalletServiceInterface $wallets
+     * @return void
+     */
     public function __construct(private readonly WalletServiceInterface $wallets)
     {
     }

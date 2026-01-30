@@ -10,8 +10,16 @@ use App\Services\Billing\Invoice\InvoiceServiceInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * API controller for invoice endpoints.
+ */
 class InvoiceController extends Controller
 {
+    /**
+     * Create a new instance.
+     * @param InvoiceServiceInterface $invoices
+     * @return void
+     */
     public function __construct(private readonly InvoiceServiceInterface $invoices)
     {
     }
