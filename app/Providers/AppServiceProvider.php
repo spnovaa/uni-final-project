@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use PDO;
 
+/**
+ * Class AppServiceProvider.
+ */
 class AppServiceProvider extends ServiceProvider
 {
     /**
