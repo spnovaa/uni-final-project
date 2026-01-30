@@ -12,7 +12,11 @@ use Illuminate\Support\ServiceProvider;
 use PDO;
 
 /**
- * Class AppServiceProvider.
+ * Application service provider for binding interfaces and configuring infrastructure.
+ *
+ * - Binds repository/service interfaces to concrete implementations.
+ * - Configures SQL Server connection defaults for Windows deployments.
+ * - Registers API rate limits and JSON resource behavior.
  */
 class AppServiceProvider extends ServiceProvider
 {
