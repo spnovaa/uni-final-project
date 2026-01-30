@@ -6,12 +6,12 @@ use App\Models\Provider;
 use Illuminate\Support\Collection;
 
 /**
- * Persistence layer for provider.
+ * Repository for querying and persisting Provider records.
  */
 class ProviderRepository implements ProviderRepositoryInterface
 {
     /**
-     * List Providers.
+     * List configured providers.
      * @return Collection
      */
     public function list(): Collection
@@ -20,7 +20,7 @@ class ProviderRepository implements ProviderRepositoryInterface
     }
 
     /**
-     * Create Provider.
+     * Create a new provider record.
      * @param array $data
      * @return Provider
      */
@@ -30,7 +30,7 @@ class ProviderRepository implements ProviderRepositoryInterface
     }
 
     /**
-     * Find.
+     * Find a provider by ID.
      * @param int $id
      * @return ?Provider
      */

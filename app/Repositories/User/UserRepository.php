@@ -5,12 +5,12 @@ namespace App\Repositories\User;
 use App\Models\User;
 
 /**
- * Persistence layer for user.
+ * Repository for querying and persisting User records.
  */
 class UserRepository implements UserRepositoryInterface
 {
     /**
-     * Find.
+     * Find a user by ID.
      * @param int $id
      * @return ?User
      */
@@ -20,7 +20,7 @@ class UserRepository implements UserRepositoryInterface
     }
 
     /**
-     * Find by email.
+     * Find a user by email address.
      * @param string $email
      * @return ?User
      */
@@ -30,7 +30,7 @@ class UserRepository implements UserRepositoryInterface
     }
 
     /**
-     * Find by phone.
+     * Find a user by phone number.
      * @param string $phone
      * @return ?User
      */
@@ -40,7 +40,7 @@ class UserRepository implements UserRepositoryInterface
     }
 
     /**
-     * Create User.
+     * Create a new user record.
      * @param array $data
      * @return User
      */
@@ -50,7 +50,7 @@ class UserRepository implements UserRepositoryInterface
     }
 
     /**
-     * Save.
+     * Persist changes to an existing user model.
      * @param User $user
      * @return User
      */

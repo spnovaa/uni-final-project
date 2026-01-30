@@ -7,19 +7,19 @@ use App\Models\WalletTransaction;
 use Illuminate\Support\Collection;
 
 /**
- * Persistence layer for wallet.
+ * Repository contract for querying and persisting Wallet and WalletTransaction records.
  */
 interface WalletRepositoryInterface
 {
     /**
-     * Find by user id.
+     * Find a user's wallet by user ID.
      * @param int $userId
      * @return ?Wallet
      */
     public function findByUserId(int $userId): ?Wallet;
 
     /**
-     * Create for user.
+     * Create a new wallet for a user.
      * @param int $userId
      * @param string $currency
      * @return Wallet
@@ -27,14 +27,14 @@ interface WalletRepositoryInterface
     public function createForUser(int $userId, string $currency): Wallet;
 
     /**
-     * Save.
+     * Persist changes to a wallet model.
      * @param Wallet $wallet
      * @return Wallet
      */
     public function save(Wallet $wallet): Wallet;
 
     /**
-     * Add transaction.
+     * Create and attach a wallet ledger transaction to the wallet.
      * @param Wallet $wallet
      * @param string $type
      * @param float $amount
@@ -55,7 +55,7 @@ interface WalletRepositoryInterface
     ): WalletTransaction;
 
     /**
-     * List transactions.
+     * List recent wallet transactions for a wallet.
      * @param Wallet $wallet
      * @param int $limit
      * @return Collection

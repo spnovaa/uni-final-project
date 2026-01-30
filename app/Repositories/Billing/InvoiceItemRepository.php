@@ -7,12 +7,14 @@ use App\Models\InvoiceItem;
 use Illuminate\Support\Collection;
 
 /**
- * Persistence layer for invoice item.
+ * Repository for creating InvoiceItem records.
  */
 class InvoiceItemRepository implements InvoiceItemRepositoryInterface
 {
     /**
-     * Create many.
+     * Create multiple invoice items for an invoice.
+     *
+     * Each item is inserted as a row and returned as a collection.
      * @param Invoice $invoice
      * @param array $items
      * @return Collection
