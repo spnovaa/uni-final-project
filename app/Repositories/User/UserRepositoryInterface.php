@@ -31,7 +31,7 @@ interface UserRepositoryInterface
     public function findByPhone(string $phone): ?User;
 
     /**
-     * Create.
+     * Create User.
      * @param array $data
      * @return User
      */

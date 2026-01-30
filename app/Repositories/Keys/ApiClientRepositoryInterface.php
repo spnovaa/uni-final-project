@@ -18,7 +18,7 @@ interface ApiClientRepositoryInterface
     public function listByUser(int $userId): Collection;
 
     /**
-     * Create.
+     * Create API client.
      * @param array $data
      * @return ApiClient
      */

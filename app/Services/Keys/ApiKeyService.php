@@ -30,7 +30,7 @@ class ApiKeyService implements ApiKeyServiceInterface
     }
 
     /**
-     * List.
+     * List API keys.
      * @param ApiClient $client
      * @return Collection
      */
@@ -40,7 +40,7 @@ class ApiKeyService implements ApiKeyServiceInterface
     }
 
     /**
-     * Create.
+     * Create API key.
      * @param ApiClient $client
      * @param array $scopes
      * @param ?int $rateLimit
@@ -65,7 +65,7 @@ class ApiKeyService implements ApiKeyServiceInterface
     }
 
     /**
-     * Revoke.
+     * Revoke API key.
      * @param ApiKey $apiKey
      * @return ApiKey
      */
@@ -81,7 +81,7 @@ class ApiKeyService implements ApiKeyServiceInterface
     }
 
     /**
-     * Rotate.
+     * Rotate API key and return a new secret.
      * @param ApiKey $apiKey
      * @return array
      */

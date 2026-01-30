@@ -32,7 +32,7 @@ class GatewayController extends Controller
     }
 
     /**
-     * Responses.
+     * Handle OpenAI-compatible responses requests.
      * @param Request $request
      * @return mixed
      */
@@ -42,7 +42,7 @@ class GatewayController extends Controller
     }
 
     /**
-     * Embeddings.
+     * Handle OpenAI-compatible embeddings requests.
      * @param Request $request
      * @return mixed
      */

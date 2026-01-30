@@ -41,7 +41,7 @@ class ProviderModelService implements ProviderModelServiceInterface
     }
 
     /**
-     * Create.
+     * Create Provider model.
      * @param array $data
      * @return ProviderModel
      */

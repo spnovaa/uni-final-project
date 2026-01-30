@@ -17,7 +17,7 @@ interface PlanServiceInterface
     public function listActive(): Collection;
 
     /**
-     * Create.
+     * Create Plan.
      * @param array $data
      * @return SubscriptionPlan
      */

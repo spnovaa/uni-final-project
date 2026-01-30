@@ -23,7 +23,7 @@ class AuditLogService implements AuditLogServiceInterface
     }
 
     /**
-     * Record.
+     * Record Audit log.
      * @param ?User $actor
      * @param string $action
      * @param ?Model $target
@@ -47,7 +47,7 @@ class AuditLogService implements AuditLogServiceInterface
     }
 
     /**
-     * List.
+     * List Audit logs.
      * @param array $filters
      * @param int $limit
      * @return Collection

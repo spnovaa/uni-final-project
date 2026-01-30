@@ -12,7 +12,7 @@ use Illuminate\Support\Collection;
 interface InvoiceServiceInterface
 {
     /**
-     * List.
+     * List Invoices.
      * @param User $user
      * @param int $limit
      * @return Collection

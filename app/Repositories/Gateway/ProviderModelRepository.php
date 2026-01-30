@@ -24,7 +24,7 @@ class ProviderModelRepository implements ProviderModelRepositoryInterface
     }
 
     /**
-     * Create.
+     * Create Provider model.
      * @param array $data
      * @return ProviderModel
      */

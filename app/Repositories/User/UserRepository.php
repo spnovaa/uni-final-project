@@ -40,7 +40,7 @@ class UserRepository implements UserRepositoryInterface
     }
 
     /**
-     * Create.
+     * Create User.
      * @param array $data
      * @return User
      */

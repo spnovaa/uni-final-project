@@ -27,7 +27,7 @@ interface InvoiceRepositoryInterface
     public function findForUser(int $userId, int $invoiceId): ?Invoice;
 
     /**
-     * Create.
+     * Create Invoice.
      * @param array $data
      * @return Invoice
      */

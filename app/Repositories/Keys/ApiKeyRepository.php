@@ -24,7 +24,7 @@ class ApiKeyRepository implements ApiKeyRepositoryInterface
     }
 
     /**
-     * Create.
+     * Create API key.
      * @param array $data
      * @return ApiKey
      */

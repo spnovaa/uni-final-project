@@ -11,7 +11,7 @@ use Illuminate\Support\Collection;
 class ProviderRepository implements ProviderRepositoryInterface
 {
     /**
-     * List.
+     * List Providers.
      * @return Collection
      */
     public function list(): Collection
@@ -20,7 +20,7 @@ class ProviderRepository implements ProviderRepositoryInterface
     }
 
     /**
-     * Create.
+     * Create Provider.
      * @param array $data
      * @return Provider
      */

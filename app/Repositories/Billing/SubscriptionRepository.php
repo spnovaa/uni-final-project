@@ -10,7 +10,7 @@ use App\Models\Subscription;
 class SubscriptionRepository implements SubscriptionRepositoryInterface
 {
     /**
-     * Create.
+     * Create Subscription.
      * @param array $data
      * @return Subscription
      */
