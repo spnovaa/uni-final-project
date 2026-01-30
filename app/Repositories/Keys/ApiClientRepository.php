@@ -6,12 +6,12 @@ use App\Models\ApiClient;
 use Illuminate\Support\Collection;
 
 /**
- * Persistence layer for api client.
+ * Repository for querying and persisting ApiClient records.
  */
 class ApiClientRepository implements ApiClientRepositoryInterface
 {
     /**
-     * List by user.
+     * List API clients owned by a user.
      * @param int $userId
      * @return Collection
      */
@@ -24,7 +24,7 @@ class ApiClientRepository implements ApiClientRepositoryInterface
     }
 
     /**
-     * Create API client.
+     * Create a new API client record.
      * @param array $data
      * @return ApiClient
      */
@@ -34,7 +34,7 @@ class ApiClientRepository implements ApiClientRepositoryInterface
     }
 
     /**
-     * Find.
+     * Find an API client by ID.
      * @param int $id
      * @return ?ApiClient
      */

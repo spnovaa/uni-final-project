@@ -6,12 +6,16 @@ use App\Models\User;
 use Illuminate\Support\Collection;
 
 /**
- * Service layer for reporting.
+ * Reporting service contract.
+ *
+ * Exposes aggregated views of billing data (usage, wallet ledger, invoices).
  */
 interface ReportingServiceInterface
 {
     /**
      * Usage report.
+     *
+     * Implementations should aggregate usage within a date range and support grouping.
      * @param User $user
      * @param string $from
      * @param string $to
@@ -22,6 +26,8 @@ interface ReportingServiceInterface
 
     /**
      * Wallet ledger.
+     *
+     * Implementations should return wallet transactions within a date range.
      * @param User $user
      * @param string $from
      * @param string $to
@@ -31,6 +37,8 @@ interface ReportingServiceInterface
 
     /**
      * Invoices report.
+     *
+     * Implementations should return invoices and support filtering by status.
      * @param User $user
      * @param ?string $status
      * @return Collection

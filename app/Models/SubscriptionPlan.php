@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * Class SubscriptionPlan.
+ * Eloquent model representing a subscription plan.
+ *
+ * Plans define pricing, billing period, included credits, rate limits, and feature flags.
  */
 class SubscriptionPlan extends Model
 {

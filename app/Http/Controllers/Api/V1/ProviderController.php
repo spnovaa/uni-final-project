@@ -26,6 +26,10 @@ class ProviderController extends Controller
     }
 
     /**
+     * List configured AI providers.
+     *
+     * Providers are stored in the database and may be cached for performance.
+     *
      * @OA\Get(
      *     path="/api/v1/providers",
      *     summary="List AI providers",
@@ -47,6 +51,11 @@ class ProviderController extends Controller
     }
 
     /**
+     * Create an AI provider configuration.
+     *
+     * Validates input, stores the provider in the database, records an audit log, and returns
+     * the created provider resource (201).
+     *
      * @OA\Post(
      *     path="/api/v1/providers",
      *     summary="Create an AI provider",

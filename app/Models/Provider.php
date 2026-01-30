@@ -6,7 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * Class Provider.
+ * Eloquent model representing an upstream AI provider configuration.
+ *
+ * Stores base URL, type, status, and encrypted connection config used by provider adapters.
  */
 class Provider extends Model
 {

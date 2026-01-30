@@ -6,7 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Class RoutingRule.
+ * Eloquent model representing a routing rule for provider/model selection.
+ *
+ * Routing rules can be used to implement strategies such as default/fallback routing based on
+ * API key scopes or request attributes.
  */
 class RoutingRule extends Model
 {
@@ -22,7 +25,7 @@ class RoutingRule extends Model
     ];
 
     /**
-     * Provider model.
+     * Get the provider model relationship.
      * @return BelongsTo
      */
     public function providerModel(): BelongsTo

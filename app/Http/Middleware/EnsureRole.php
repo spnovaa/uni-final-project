@@ -7,12 +7,16 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Class EnsureRole.
+ * Authorize a request by requiring the authenticated user to have at least one role.
+ *
+ * Used on admin endpoints to restrict access without hard-coding user IDs.
  */
 class EnsureRole
 {
     /**
-     * Handle the request.
+     * Allow the request when the user has any of the required roles.
+     *
+     * Aborts with 401 if unauthenticated and 403 if the user lacks the required role.
      * @param Request $request
      * @param Closure $next
      * @param mixed $roles

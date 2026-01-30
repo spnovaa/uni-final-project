@@ -5,12 +5,15 @@ namespace App\Domains\Gateway\Support;
 use Illuminate\Http\JsonResponse;
 
 /**
- * Class OpenAiErrorResponder.
+ * Helper for building OpenAI-compatible error responses.
+ *
+ * Centralizes error shapes and HTTP status codes so gateway middleware/pipes can return consistent
+ * responses that match the OpenAI API error format.
  */
 class OpenAiErrorResponder
 {
     /**
-     * Invalid request.
+     * Build an OpenAI-style `invalid_request_error` response.
      * @param string $message
      * @param ?string $param
      * @param ?string $code
@@ -30,7 +33,7 @@ class OpenAiErrorResponder
     }
 
     /**
-     * Authentication error.
+     * Build an OpenAI-style `authentication_error` response (401).
      * @param string $message
      * @param ?string $code
      * @return JsonResponse
@@ -48,7 +51,7 @@ class OpenAiErrorResponder
     }
 
     /**
-     * Authorization error.
+     * Build an OpenAI-style permission error response (403).
      * @param string $message
      * @param ?string $code
      * @return JsonResponse
@@ -66,7 +69,7 @@ class OpenAiErrorResponder
     }
 
     /**
-     * Server error.
+     * Build an OpenAI-style server error response (defaults to 502).
      * @param string $message
      * @param ?string $code
      * @param int $status
@@ -85,7 +88,7 @@ class OpenAiErrorResponder
     }
 
     /**
-     * Rate limit error.
+     * Build an OpenAI-style rate limit error response (429).
      * @param string $message
      * @param ?string $code
      * @return JsonResponse
@@ -103,7 +106,7 @@ class OpenAiErrorResponder
     }
 
     /**
-     * Payment required.
+     * Build an OpenAI-style insufficient quota/payment required response (402).
      * @param string $message
      * @param ?string $code
      * @return JsonResponse

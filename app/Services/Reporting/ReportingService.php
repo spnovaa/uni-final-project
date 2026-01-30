@@ -10,12 +10,16 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Service layer for reporting.
+ * Reporting service for usage, wallet ledger, and invoices.
+ *
+ * Provides aggregated queries over billing tables so controllers return consistent report shapes.
  */
 class ReportingService implements ReportingServiceInterface
 {
     /**
      * Usage report.
+     *
+     * Aggregates usage records within a date range and groups by day, API key, or provider.
      * @param User $user
      * @param string $from
      * @param string $to
@@ -71,6 +75,8 @@ class ReportingService implements ReportingServiceInterface
 
     /**
      * Wallet ledger.
+     *
+     * Returns wallet transactions for the authenticated user within a date range.
      * @param User $user
      * @param string $from
      * @param string $to
@@ -92,6 +98,8 @@ class ReportingService implements ReportingServiceInterface
 
     /**
      * Invoices report.
+     *
+     * Returns invoices for a user and optionally filters by invoice status.
      * @param User $user
      * @param ?string $status
      * @return Collection

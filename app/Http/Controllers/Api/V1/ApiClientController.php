@@ -22,7 +22,9 @@ class ApiClientController extends Controller
     }
 
     /**
-     * List API clients.
+     * List API clients for the authenticated user.
+     *
+     * Returns a JSON resource collection.
      * @param Request $request
      * @return mixed
      */
@@ -34,7 +36,9 @@ class ApiClientController extends Controller
     }
 
     /**
-     * Create a new API client.
+     * Create a new API client for the authenticated user.
+     *
+     * Validates input and returns the created client as a JSON resource (201).
      * @param Request $request
      * @return mixed
      */

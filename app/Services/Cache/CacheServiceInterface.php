@@ -5,7 +5,10 @@ namespace App\Services\Cache;
 use Closure;
 
 /**
- * Service layer for cache.
+ * Cache abstraction used by application services (cache-aside strategy).
+ *
+ * Provides a small, stable surface for reading/writing cached values and building
+ * namespaced keys without coupling business logic to a specific cache client.
  */
 interface CacheServiceInterface
 {

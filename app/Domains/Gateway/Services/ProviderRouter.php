@@ -8,7 +8,10 @@ use App\Services\Cache\CacheServiceInterface;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Class ProviderRouter.
+ * Resolve routing decisions for provider/model selection.
+ *
+ * This service resolves a requested provider+model into an active ProviderModel record and
+ * supports a simple routing rule mechanism (extensible for advanced strategies).
  */
 class ProviderRouter
 {
@@ -22,7 +25,9 @@ class ProviderRouter
     }
 
     /**
-     * Resolve provider model.
+     * Resolve an active ProviderModel for a given provider name and model key.
+     *
+     * Uses cache-aside to avoid repeated database lookups during high traffic.
      * @param ?string $providerName
      * @param ?string $modelKey
      * @return ?ProviderModel
@@ -56,7 +61,10 @@ class ProviderRouter
     }
 
     /**
-     * Resolve routing rule.
+     * Resolve the active routing rule (currently global).
+     *
+     * The current implementation returns the first active rule; it can be expanded to use
+     * `modelKey` or other request attributes.
      * @param ?string $modelKey
      * @return ?RoutingRule
      */

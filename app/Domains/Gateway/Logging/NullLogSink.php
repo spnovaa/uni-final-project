@@ -3,12 +3,12 @@
 namespace App\Domains\Gateway\Logging;
 
 /**
- * Class NullLogSink.
+ * No-op log sink used when external logging is disabled.
  */
 class NullLogSink implements LogSinkInterface
 {
     /**
-     * Send.
+     * Ignore the payload.
      * @param array $payload
      * @return void
      */

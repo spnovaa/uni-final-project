@@ -6,12 +6,12 @@ use App\Models\ApiKey;
 use Illuminate\Support\Collection;
 
 /**
- * Persistence layer for api key.
+ * Repository for querying and persisting ApiKey records.
  */
 class ApiKeyRepository implements ApiKeyRepositoryInterface
 {
     /**
-     * List by client.
+     * List API keys for a given API client.
      * @param int $clientId
      * @return Collection
      */
@@ -24,7 +24,7 @@ class ApiKeyRepository implements ApiKeyRepositoryInterface
     }
 
     /**
-     * Create API key.
+     * Create a new API key record.
      * @param array $data
      * @return ApiKey
      */
@@ -34,7 +34,7 @@ class ApiKeyRepository implements ApiKeyRepositoryInterface
     }
 
     /**
-     * Find.
+     * Find an API key by ID.
      * @param int $id
      * @return ?ApiKey
      */
@@ -44,7 +44,7 @@ class ApiKeyRepository implements ApiKeyRepositoryInterface
     }
 
     /**
-     * Save.
+     * Persist changes to an API key model.
      * @param ApiKey $apiKey
      * @return ApiKey
      */

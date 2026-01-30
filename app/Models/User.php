@@ -13,7 +13,10 @@ use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 
 /**
- * Class User.
+ * Eloquent model representing an application user.
+ *
+ * Users can authenticate via Sanctum (OTP flow), own API clients/keys, have a wallet/subscription,
+ * and are billed for gateway usage.
  */
 class User extends Authenticatable
 {

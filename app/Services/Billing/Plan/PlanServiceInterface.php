@@ -6,25 +6,27 @@ use App\Models\SubscriptionPlan;
 use Illuminate\Support\Collection;
 
 /**
- * Service layer for plan.
+ * Subscription plan service contract.
+ *
+ * Plans define pricing, included credits, and features for subscriptions.
  */
 interface PlanServiceInterface
 {
     /**
-     * List active.
+     * List active plans (implementations may use caching).
      * @return Collection
      */
     public function listActive(): Collection;
 
     /**
-     * Create Plan.
+     * Create a subscription plan.
      * @param array $data
      * @return SubscriptionPlan
      */
     public function create(array $data): SubscriptionPlan;
 
     /**
-     * Find or fail.
+     * Find a plan by ID or throw when not found.
      * @param int $id
      * @return SubscriptionPlan
      */

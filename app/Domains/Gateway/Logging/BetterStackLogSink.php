@@ -5,12 +5,14 @@ namespace App\Domains\Gateway\Logging;
 use Illuminate\Support\Facades\Http;
 
 /**
- * Class BetterStackLogSink.
+ * Better Stack log sink.
+ *
+ * Sends structured log payloads to Better Stack ingestion using the configured host and source token.
  */
 class BetterStackLogSink implements LogSinkInterface
 {
     /**
-     * Send.
+     * Send a log payload to Better Stack.
      * @param array $payload
      * @return void
      */

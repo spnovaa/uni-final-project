@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * Class ApiClient.
+ * Eloquent model representing an API client (a container for API keys).
+ *
+ * API clients group multiple keys under a single user for better organization and reporting.
  */
 class ApiClient extends Model
 {

@@ -6,12 +6,16 @@ use App\Domains\Gateway\DTOs\GatewayRequestContext;
 use Closure;
 
 /**
- * Gateway pipeline step for normalize provider response.
+ * Normalize the provider response into an OpenAI-compatible JSON payload.
+ *
+ * Provider adapters may already return OpenAI-shaped arrays. This pipe copies the raw
+ * provider response body into `normalizedResponse` so downstream steps can meter usage,
+ * persist logs, and build the final HTTP response consistently.
  */
 class NormalizeProviderResponsePipe
 {
     /**
-     * Process the gateway context and continue the pipeline.
+     * Set `normalizedResponse` when the provider response is JSON-like.
      * @param GatewayRequestContext $context
      * @param Closure $next
      * @return mixed

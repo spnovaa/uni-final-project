@@ -9,7 +9,9 @@ use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
 
 /**
- * Service layer for plan.
+ * Subscription plan service with cache-aside reads.
+ *
+ * Plans are stored in the database and cached for fast listing; writes invalidate cached lists.
  */
 class PlanService implements PlanServiceInterface
 {
@@ -27,7 +29,7 @@ class PlanService implements PlanServiceInterface
     }
 
     /**
-     * List active.
+     * List active plans, served from cache when available.
      * @return Collection
      */
     public function listActive(): Collection
@@ -41,7 +43,7 @@ class PlanService implements PlanServiceInterface
     }
 
     /**
-     * Create Plan.
+     * Create a plan and invalidate cached plan lists.
      * @param array $data
      * @return SubscriptionPlan
      */
@@ -54,7 +56,7 @@ class PlanService implements PlanServiceInterface
     }
 
     /**
-     * Find or fail.
+     * Find a plan by ID or throw a validation exception.
      * @param int $id
      * @return SubscriptionPlan
      */

@@ -27,6 +27,10 @@ class ProviderModelController extends Controller
     }
 
     /**
+     * List configured models for a provider.
+     *
+     * Provider model metadata (capabilities/pricing/status) is stored in the DB and may be cached.
+     *
      * @OA\Get(
      *     path="/api/v1/providers/{provider}/models",
      *     summary="List models for a provider",
@@ -56,6 +60,11 @@ class ProviderModelController extends Controller
     }
 
     /**
+     * Create a model entry for a provider.
+     *
+     * Validates input, persists pricing/capabilities configuration, records an audit log, and
+     * returns the created provider model resource (201).
+     *
      * @OA\Post(
      *     path="/api/v1/providers/{provider}/models",
      *     summary="Create a model for a provider",

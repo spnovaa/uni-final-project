@@ -25,6 +25,10 @@ class InvoiceController extends Controller
     }
 
     /**
+     * List invoices for the authenticated user.
+     *
+     * Enforces a max page size for performance.
+     *
      * @OA\Get(
      *     path="/api/v1/invoices",
      *     summary="List invoices",
@@ -47,6 +51,10 @@ class InvoiceController extends Controller
     }
 
     /**
+     * Get a single invoice (with items) owned by the authenticated user.
+     *
+     * Uses 404 instead of 403 to avoid leaking the existence of other users' invoices.
+     *
      * @OA\Get(
      *     path="/api/v1/invoices/{invoice}",
      *     summary="Get invoice details",
@@ -70,6 +78,11 @@ class InvoiceController extends Controller
     }
 
     /**
+     * Download an invoice PDF or queue generation when missing.
+     *
+     * If the PDF file does not exist on disk yet, this endpoint dispatches a background job and
+     * returns 202 so the caller can retry later.
+     *
      * @OA\Get(
      *     path="/api/v1/invoices/{invoice}/pdf",
      *     summary="Download invoice PDF (signed URL)",

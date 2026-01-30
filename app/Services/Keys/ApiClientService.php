@@ -9,7 +9,10 @@ use App\Services\Audit\AuditLogServiceInterface;
 use Illuminate\Support\Collection;
 
 /**
- * Service layer for api client.
+ * Manage API clients (logical groupings for API keys).
+ *
+ * API clients belong to a user and are used to issue/revoke multiple API keys while keeping
+ * reporting and access management organized.
  */
 class ApiClientService implements ApiClientServiceInterface
 {
@@ -26,7 +29,7 @@ class ApiClientService implements ApiClientServiceInterface
     }
 
     /**
-     * List API clients.
+     * List API clients owned by a user.
      * @param User $user
      * @return Collection
      */
@@ -36,7 +39,7 @@ class ApiClientService implements ApiClientServiceInterface
     }
 
     /**
-     * Create API client.
+     * Create a new API client and record an audit entry.
      * @param User $user
      * @param string $name
      * @return ApiClient

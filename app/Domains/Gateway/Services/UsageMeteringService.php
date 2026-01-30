@@ -6,12 +6,17 @@ use App\Domains\Gateway\DTOs\UsageMetrics;
 use App\Models\ProviderModel;
 
 /**
- * Service layer for usage metering.
+ * Convert usage metrics into billable usage records.
+ *
+ * Uses `ProviderModel.pricing_config` to compute per-metric unit costs and totals for:
+ * - input tokens, output tokens,
+ * - images,
+ * - audio seconds, and audio characters.
  */
 class UsageMeteringService
 {
     /**
-     * Build usage records.
+     * Build billable usage records from usage metrics and provider model pricing.
      * @param ?UsageMetrics $usage
      * @param ?ProviderModel $providerModel
      * @return array

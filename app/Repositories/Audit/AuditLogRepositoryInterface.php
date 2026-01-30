@@ -6,19 +6,19 @@ use App\Models\AuditLog;
 use Illuminate\Support\Collection;
 
 /**
- * Persistence layer for audit log.
+ * Repository contract for querying and persisting AuditLog records.
  */
 interface AuditLogRepositoryInterface
 {
     /**
-     * Create Audit log.
+     * Create an audit log entry.
      * @param array $data
      * @return AuditLog
      */
     public function create(array $data): AuditLog;
 
     /**
-     * List Audit logs.
+     * List audit logs with optional filters and a maximum limit.
      * @param array $filters
      * @param int $limit
      * @return Collection

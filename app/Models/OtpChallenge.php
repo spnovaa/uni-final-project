@@ -5,7 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class OtpChallenge.
+ * Eloquent model representing an OTP challenge record.
+ *
+ * Stores hashed OTP code, destination/channel, expiry, and attempt counters for verification.
  */
 class OtpChallenge extends Model
 {

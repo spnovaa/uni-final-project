@@ -6,7 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Class UsageRecord.
+ * Eloquent model representing a billable usage record.
+ *
+ * Usage records capture per-request quantities and costs for metrics such as tokens, images,
+ * and audio, and are used for billing and reporting.
  */
 class UsageRecord extends Model
 {
@@ -25,7 +28,7 @@ class UsageRecord extends Model
     ];
 
     /**
-     * Gateway request.
+     * Get the gateway request relationship.
      * @return BelongsTo
      */
     public function gatewayRequest(): BelongsTo

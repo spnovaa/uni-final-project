@@ -9,7 +9,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 /**
- * Service layer for audit log.
+ * Audit logging service.
+ *
+ * Records security-relevant events (key creation/revocation, subscription changes, etc.)
+ * and provides filtered access for admin/reporting endpoints.
  */
 class AuditLogService implements AuditLogServiceInterface
 {
@@ -23,7 +26,7 @@ class AuditLogService implements AuditLogServiceInterface
     }
 
     /**
-     * Record Audit log.
+     * Record an audit log entry for an action (optionally against a target model).
      * @param ?User $actor
      * @param string $action
      * @param ?Model $target
@@ -47,7 +50,7 @@ class AuditLogService implements AuditLogServiceInterface
     }
 
     /**
-     * List Audit logs.
+     * List audit logs with optional filters and a maximum limit.
      * @param array $filters
      * @param int $limit
      * @return Collection

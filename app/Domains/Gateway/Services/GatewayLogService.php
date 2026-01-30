@@ -7,7 +7,10 @@ use App\Jobs\DispatchGatewayLogJob;
 use Illuminate\Support\Arr;
 
 /**
- * Service layer for gateway log.
+ * Build and dispatch structured gateway logs to external sinks.
+ *
+ * This service builds a log payload from the gateway context, redacts sensitive fields,
+ * truncates large payloads, and dispatches a queued job that sends the log to the selected sink.
  */
 class GatewayLogService
 {
@@ -22,7 +25,9 @@ class GatewayLogService
     ];
 
     /**
-     * Dispatch.
+     * Dispatch an external log job for this gateway request (best effort).
+     *
+     * No log is sent when `gateway.log_sink` is `none` or empty.
      * @param GatewayRequestContext $context
      * @return void
      */
@@ -39,7 +44,9 @@ class GatewayLogService
     }
 
     /**
-     * Build payload.
+     * Build a sanitized log payload from the gateway context.
+     *
+     * Includes request metadata, redacted payload, response summary, and usage metrics.
      * @param GatewayRequestContext $context
      * @return array
      */
@@ -71,7 +78,7 @@ class GatewayLogService
     }
 
     /**
-     * Summarize files.
+     * Summarize uploaded files without including their full contents.
      * @param array $files
      * @return array
      */
@@ -92,7 +99,9 @@ class GatewayLogService
     }
 
     /**
-     * Summarize response.
+     * Summarize the provider response for logging.
+     *
+     * Binary responses are replaced with a size summary to avoid logging raw bytes.
      * @param mixed $body
      * @param bool $isBinary
      * @return array|string|null
@@ -110,7 +119,7 @@ class GatewayLogService
     }
 
     /**
-     * Usage array.
+     * Convert UsageMetrics into a simple array suitable for JSON logging.
      * @param ?\App\Domains\Gateway\DTOs\UsageMetrics $usage
      * @return ?array
      */
@@ -131,7 +140,7 @@ class GatewayLogService
     }
 
     /**
-     * Redact.
+     * Redact sensitive values by key name in nested arrays.
      * @param mixed $value
      * @return mixed
      */
@@ -155,7 +164,7 @@ class GatewayLogService
     }
 
     /**
-     * Is sensitive key.
+     * Check whether a key name is considered sensitive for logging.
      * @param string $key
      * @return bool
      */
@@ -173,7 +182,9 @@ class GatewayLogService
     }
 
     /**
-     * Truncate.
+     * Truncate the payload when its JSON encoding exceeds the configured byte limit.
+     *
+     * This avoids sending extremely large payloads to external logging services.
      * @param mixed $payload
      * @return mixed
      */

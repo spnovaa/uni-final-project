@@ -24,6 +24,8 @@ class WalletController extends Controller
     }
 
     /**
+     * Get the authenticated user's wallet (creates it on first access).
+     *
      * @OA\Get(
      *     path="/api/v1/wallet",
      *     summary="Get current wallet balance",
@@ -46,6 +48,11 @@ class WalletController extends Controller
     }
 
     /**
+     * Top up wallet balance for the authenticated user.
+     *
+     * This is a manual top-up endpoint (no payment gateway integration). It creates a wallet
+     * transaction and returns both wallet and transaction resources.
+     *
      * @OA\Post(
      *     path="/api/v1/wallet/topup",
      *     summary="Top up wallet balance",
@@ -92,6 +99,10 @@ class WalletController extends Controller
     }
 
     /**
+     * List wallet transactions for the authenticated user.
+     *
+     * Enforces a limit in the service layer.
+     *
      * @OA\Get(
      *     path="/api/v1/wallet/transactions",
      *     summary="List wallet transactions",

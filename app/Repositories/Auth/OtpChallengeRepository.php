@@ -6,12 +6,12 @@ use App\Models\OtpChallenge;
 use Carbon\CarbonInterface;
 
 /**
- * Persistence layer for otp challenge.
+ * Repository for querying and persisting OTP challenge records.
  */
 class OtpChallengeRepository implements OtpChallengeRepositoryInterface
 {
     /**
-     * Create challenge.
+     * Create a new OTP challenge record with a hashed code and expiry.
      * @param ?int $userId
      * @param string $channel
      * @param string $destination
@@ -37,7 +37,7 @@ class OtpChallengeRepository implements OtpChallengeRepositoryInterface
     }
 
     /**
-     * Latest for destination.
+     * Get the most recent OTP challenge for a destination (and optional channel).
      * @param string $destination
      * @param ?string $channel
      * @return ?OtpChallenge
@@ -56,7 +56,7 @@ class OtpChallengeRepository implements OtpChallengeRepositoryInterface
     }
 
     /**
-     * Increment attempts.
+     * Increment the attempts counter for a challenge and return the refreshed model.
      * @param OtpChallenge $challenge
      * @return OtpChallenge
      */

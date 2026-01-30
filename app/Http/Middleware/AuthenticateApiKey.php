@@ -10,12 +10,18 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 /**
- * Class AuthenticateApiKey.
+ * Authenticate OpenAI-compatible gateway requests using a project API key.
+ *
+ * This middleware:
+ * - Extracts the API key token from `Authorization: Bearer ...` or `X-API-Key`.
+ * - Validates the token against the stored hashed secret (prefix + HMAC).
+ * - Enforces revoked/expired keys, client/user status, and IP allowlisting.
+ * - Attaches the resolved ApiKey model to the request for the gateway pipeline to consume.
  */
 class AuthenticateApiKey
 {
     /**
-     * Handle the request.
+     * Authenticate the request and short-circuit with OpenAI-style errors when invalid.
      * @param Request $request
      * @param Closure $next
      * @return mixed
@@ -72,7 +78,7 @@ class AuthenticateApiKey
     }
 
     /**
-     * Extract token.
+     * Extract the API key token from supported headers.
      * @param Request $request
      * @return ?string
      */
@@ -92,7 +98,9 @@ class AuthenticateApiKey
     }
 
     /**
-     * Extract prefix.
+     * Extract the stored lookup prefix from a raw API key token.
+     *
+     * The prefix allows fast DB lookup before verifying the full token hash.
      * @param string $token
      * @return string
      */
@@ -104,7 +112,9 @@ class AuthenticateApiKey
     }
 
     /**
-     * Hash token.
+     * Hash a token for comparison against the stored secret hash.
+     *
+     * Uses HMAC with the application key so plaintext secrets are never stored.
      * @param string $token
      * @return string
      */

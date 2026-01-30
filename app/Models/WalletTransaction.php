@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Class WalletTransaction.
+ * Eloquent model representing a wallet ledger transaction.
+ *
+ * Transactions record wallet credits/debits with reasons and optional references/metadata.
  */
 class WalletTransaction extends Model
 {

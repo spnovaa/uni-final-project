@@ -8,7 +8,12 @@ use App\Domains\Gateway\Services\ProviderRouter;
 use Closure;
 
 /**
- * Gateway pipeline step for select provider.
+ * Resolve the provider configuration and provider model for the incoming request.
+ *
+ * This pipe:
+ * - Resolves the requested `provider` and `model` into a `ProviderModel` (when possible).
+ * - Loads the provider configuration from the registry.
+ * - Falls back to `gateway.default_provider` when no provider is specified.
  */
 class SelectProviderPipe
 {
@@ -25,7 +30,7 @@ class SelectProviderPipe
     }
 
     /**
-     * Process the gateway context and continue the pipeline.
+     * Populate the context with provider config and resolved provider model.
      * @param GatewayRequestContext $context
      * @param Closure $next
      * @return mixed

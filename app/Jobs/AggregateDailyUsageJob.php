@@ -12,7 +12,10 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Queued job for aggregate daily usage.
+ * Aggregate per-request usage records into daily rollups.
+ *
+ * This job groups `usage_records` by date/user/key/provider/model/metric and upserts
+ * `daily_usage_rollups` rows. Rollups make reporting and invoice generation faster at scale.
  */
 class AggregateDailyUsageJob implements ShouldQueue
 {
@@ -20,6 +23,8 @@ class AggregateDailyUsageJob implements ShouldQueue
 
     /**
      * Create a new instance.
+     *
+     * If no date is provided, the job aggregates the previous day.
      * @param ?string $date
      * @return void
      */
@@ -28,7 +33,7 @@ class AggregateDailyUsageJob implements ShouldQueue
     }
 
     /**
-     * Handle the queued job.
+     * Query usage records for the target day, aggregate them, and upsert rollup rows.
      * @return void
      */
     public function handle(): void

@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * Class Wallet.
+ * Eloquent model representing a user's wallet balance.
+ *
+ * Wallets track the current balance and have many ledger transactions.
  */
 class Wallet extends Model
 {

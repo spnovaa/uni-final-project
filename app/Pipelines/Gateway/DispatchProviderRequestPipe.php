@@ -12,7 +12,11 @@ use RuntimeException;
 use Throwable;
 
 /**
- * Gateway pipeline step for dispatch provider request.
+ * Dispatch the gateway request to the selected upstream provider via an adapter.
+ *
+ * This pipe resolves the correct provider adapter, builds a request DTO from the incoming
+ * OpenAI-compatible payload, performs the HTTP request, and stores the raw provider response
+ * on the context for later normalization and billing.
  */
 class DispatchProviderRequestPipe
 {
@@ -26,7 +30,10 @@ class DispatchProviderRequestPipe
     }
 
     /**
-     * Process the gateway context and continue the pipeline.
+     * Resolve the provider adapter, send the request, and capture the provider response.
+     *
+     * - RuntimeException: provider does not support the requested endpoint (400).
+     * - Other exceptions: treated as upstream provider failures (502).
      * @param GatewayRequestContext $context
      * @param Closure $next
      * @return mixed

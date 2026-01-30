@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
- * Class Permission.
+ * Eloquent model representing a permission in the RBAC system.
  */
 class Permission extends Model
 {

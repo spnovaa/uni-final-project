@@ -9,7 +9,12 @@ use Closure;
 use Illuminate\Validation\ValidationException;
 
 /**
- * Gateway pipeline step for charge usage.
+ * Debit the user's wallet for the actual usage cost of the request.
+ *
+ * This pipe sums the built usage records, skips charging when total cost is zero, and
+ * bypasses wallet charging when the user has an active subscription with included credits.
+ *
+ * If the wallet has insufficient funds, it returns an OpenAI-style 402 response.
  */
 class ChargeUsagePipe
 {
@@ -23,7 +28,7 @@ class ChargeUsagePipe
     }
 
     /**
-     * Process the gateway context and continue the pipeline.
+     * Charge the request cost against the user's wallet when applicable.
      * @param GatewayRequestContext $context
      * @param Closure $next
      * @return mixed

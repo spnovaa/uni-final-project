@@ -9,7 +9,10 @@ use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
 
 /**
- * Service layer for provider.
+ * Provider configuration service with cache-aside reads.
+ *
+ * Providers (OpenAI-compatible or native) are stored in the database. This service caches
+ * provider lists and per-provider config for fast routing in the gateway pipeline.
  */
 class ProviderService implements ProviderServiceInterface
 {
@@ -27,7 +30,7 @@ class ProviderService implements ProviderServiceInterface
     }
 
     /**
-     * List Providers.
+     * List providers, served from cache when available.
      * @return Collection
      */
     public function list(): Collection
@@ -41,7 +44,9 @@ class ProviderService implements ProviderServiceInterface
     }
 
     /**
-     * Create Provider.
+     * Create a provider and invalidate cached provider lists/config.
+     *
+     * Persists sensitive connection settings (API key/timeout) in `config_encrypted`.
      * @param array $data
      * @return Provider
      */
@@ -68,7 +73,7 @@ class ProviderService implements ProviderServiceInterface
     }
 
     /**
-     * Find or fail.
+     * Find a provider by ID or throw a validation exception when missing.
      * @param int $id
      * @return Provider
      */

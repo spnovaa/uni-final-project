@@ -5,12 +5,12 @@ namespace App\Repositories\Billing;
 use App\Models\Subscription;
 
 /**
- * Persistence layer for subscription.
+ * Repository for querying and persisting Subscription records.
  */
 class SubscriptionRepository implements SubscriptionRepositoryInterface
 {
     /**
-     * Create Subscription.
+     * Create a new subscription record.
      * @param array $data
      * @return Subscription
      */
@@ -20,7 +20,7 @@ class SubscriptionRepository implements SubscriptionRepositoryInterface
     }
 
     /**
-     * Current for user.
+     * Get the current (most recent active) subscription for a user, if any.
      * @param int $userId
      * @return ?Subscription
      */
@@ -35,7 +35,7 @@ class SubscriptionRepository implements SubscriptionRepositoryInterface
     }
 
     /**
-     * Save.
+     * Persist changes to a subscription model.
      * @param Subscription $subscription
      * @return Subscription
      */

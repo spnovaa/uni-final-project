@@ -6,7 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Class ApiKey.
+ * Eloquent model representing an API key used to authenticate gateway requests.
+ *
+ * Stores only a hashed secret (`key_hash`) plus a lookup prefix (`key_prefix`) for fast matching.
  */
 class ApiKey extends Model
 {

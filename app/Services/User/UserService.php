@@ -10,7 +10,11 @@ use Illuminate\Support\Str;
 use App\Services\Cache\CacheServiceInterface;
 
 /**
- * Service layer for user.
+ * User profile service with cache-aside and profile image storage.
+ *
+ * Responsibilities:
+ * - Read the authenticated user's profile (optionally from cache).
+ * - Update profile fields and profile image, invalidating cached profile data on write.
  */
 class UserService implements UserServiceInterface
 {
@@ -28,7 +32,9 @@ class UserService implements UserServiceInterface
     }
 
     /**
-     * Get profile.
+     * Get the latest user profile information.
+     *
+     * Uses cache-aside: reads from cache first and falls back to the repository when missing.
      * @param User $user
      * @return User
      */
@@ -44,7 +50,9 @@ class UserService implements UserServiceInterface
     }
 
     /**
-     * Update profile.
+     * Update user profile fields and optionally replace the profile image.
+     *
+     * After persisting changes, invalidates the cached profile entry so the next read is fresh.
      * @param User $user
      * @param array $data
      * @param ?UploadedFile $profileImage
@@ -67,7 +75,7 @@ class UserService implements UserServiceInterface
     }
 
     /**
-     * Cache key.
+     * Build the cache key used for storing a user's profile.
      * @param int $userId
      * @return string
      */
@@ -77,7 +85,9 @@ class UserService implements UserServiceInterface
     }
 
     /**
-     * Store profile image.
+     * Store a new profile image and delete the previous one if present.
+     *
+     * Files are stored on the `public` disk under a per-user folder.
      * @param User $user
      * @param UploadedFile $profileImage
      * @return string

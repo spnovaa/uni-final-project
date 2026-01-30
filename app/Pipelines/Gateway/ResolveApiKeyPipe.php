@@ -7,12 +7,18 @@ use App\Domains\Gateway\Support\OpenAiErrorResponder;
 use Closure;
 
 /**
- * Gateway pipeline step for resolve api key.
+ * Resolve the authenticated API key and attach it to the gateway context.
+ *
+ * This pipe expects `AuthenticateApiKey` middleware to have already set the API key
+ * on the request attributes. If it is missing, the pipe short-circuits the pipeline
+ * with an OpenAI-style authentication error.
  */
 class ResolveApiKeyPipe
 {
     /**
-     * Process the gateway context and continue the pipeline.
+     * Read the API key from the request and store it on the context.
+     *
+     * On missing key, sets an OpenAI-compatible error response and stops the pipeline.
      * @param GatewayRequestContext $context
      * @param Closure $next
      * @return mixed

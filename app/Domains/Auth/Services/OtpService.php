@@ -11,7 +11,10 @@ use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\Hash;
 
 /**
- * Service layer for otp.
+ * OTP domain service implementing start + verify flows.
+ *
+ * - `start()` runs a pipeline that throttles requests, creates an OTP challenge record, and queues delivery.
+ * - `verify()` validates the provided code against the latest challenge and returns/creates a user.
  */
 class OtpService implements OtpServiceInterface
 {
@@ -28,7 +31,10 @@ class OtpService implements OtpServiceInterface
     }
 
     /**
-     * Start.
+     * Start an OTP challenge by running the OTP pipeline.
+     *
+     * The pipeline applies throttling, persists a challenge with a hashed code, and dispatches
+     * a queued job to deliver the OTP.
      * @param string $destination
      * @param string $channel
      * @param ?string $ip
@@ -49,7 +55,10 @@ class OtpService implements OtpServiceInterface
     }
 
     /**
-     * Verify.
+     * Verify an OTP code against the latest challenge for the destination/channel.
+     *
+     * Enforces expiration and max-attempts policies. On success, resolves the user (or creates one)
+     * and returns a structured result array consumed by the controller.
      * @param string $destination
      * @param string $code
      * @param ?string $channel
@@ -109,7 +118,7 @@ class OtpService implements OtpServiceInterface
     }
 
     /**
-     * Resolve user.
+     * Resolve a user by destination based on the channel (email/phone).
      * @param string $destination
      * @param string $channel
      * @return ?User
@@ -128,7 +137,9 @@ class OtpService implements OtpServiceInterface
     }
 
     /**
-     * Create user.
+     * Create a new user when OTP verification succeeds for an unknown destination.
+     *
+     * For SMS-based signups, a placeholder email is generated.
      * @param string $destination
      * @param string $channel
      * @return User

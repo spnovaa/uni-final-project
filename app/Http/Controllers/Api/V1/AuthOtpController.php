@@ -25,6 +25,9 @@ class AuthOtpController extends Controller
 
     /**
      * Start an OTP challenge.
+     *
+     * Validates input, triggers OTP pipeline (throttle + challenge creation + job dispatch),
+     * and returns a simple status response.
      * @param Request $request
      * @return mixed
      */
@@ -65,6 +68,8 @@ class AuthOtpController extends Controller
 
     /**
      * Verify an OTP challenge and issue an access token.
+     *
+     * On success, issues a Sanctum token and returns the authenticated user resource.
      * @param Request $request
      * @return mixed
      */

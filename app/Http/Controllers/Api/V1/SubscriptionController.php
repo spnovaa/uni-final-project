@@ -27,6 +27,11 @@ class SubscriptionController extends Controller
     }
 
     /**
+     * Subscribe the authenticated user to a plan.
+     *
+     * Validates the plan, delegates creation to the subscription service (which may debit the
+     * wallet depending on the plan), and returns the created subscription resource (201).
+     *
      * @OA\Post(
      *     path="/api/v1/subscriptions",
      *     summary="Create a subscription for the current user",
@@ -62,6 +67,10 @@ class SubscriptionController extends Controller
     }
 
     /**
+     * Get the current active subscription for the authenticated user.
+     *
+     * Returns 404 when no active subscription exists.
+     *
      * @OA\Get(
      *     path="/api/v1/subscriptions/current",
      *     summary="Get current active subscription",
@@ -89,6 +98,10 @@ class SubscriptionController extends Controller
     }
 
     /**
+     * Cancel the current active subscription for the authenticated user.
+     *
+     * Returns 404 when no active subscription exists.
+     *
      * @OA\Post(
      *     path="/api/v1/subscriptions/cancel",
      *     summary="Cancel current subscription",

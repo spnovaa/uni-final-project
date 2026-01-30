@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * Class Invoice.
+ * Eloquent model representing a billable invoice.
+ *
+ * Invoices contain totals and status fields and have many invoice items.
  */
 class Invoice extends Model
 {

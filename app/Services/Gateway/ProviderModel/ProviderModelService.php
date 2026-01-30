@@ -8,7 +8,10 @@ use App\Services\Cache\CacheServiceInterface;
 use Illuminate\Support\Collection;
 
 /**
- * Service layer for provider model.
+ * Provider model configuration service with cache-aside reads.
+ *
+ * Provider models represent billable model keys (pricing/capabilities) per provider. This service
+ * caches model lists and invalidates caches when models are created/updated.
  */
 class ProviderModelService implements ProviderModelServiceInterface
 {
@@ -26,7 +29,7 @@ class ProviderModelService implements ProviderModelServiceInterface
     }
 
     /**
-     * List by provider.
+     * List models for a provider, served from cache when available.
      * @param int $providerId
      * @return Collection
      */
@@ -41,7 +44,11 @@ class ProviderModelService implements ProviderModelServiceInterface
     }
 
     /**
-     * Create Provider model.
+     * Create a provider model and invalidate related caches.
+     *
+     * Invalidates:
+     * - The provider's model list cache.
+     * - The per-model lookup cache used by routing.
      * @param array $data
      * @return ProviderModel
      */

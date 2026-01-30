@@ -7,12 +7,15 @@ use Closure;
 use Illuminate\Support\Facades\RateLimiter;
 
 /**
- * Auth pipeline step for throttle otp.
+ * Throttle OTP challenge creation to prevent abuse.
+ *
+ * Uses Laravel RateLimiter keyed by channel + destination + caller IP. On too many attempts,
+ * this pipe sets a 429 error on the context and stops the pipeline.
  */
 class ThrottleOtpPipe
 {
     /**
-     * Process the OTP context and continue the pipeline.
+     * Apply per-minute throttling for OTP challenge creation.
      * @param OtpContext $context
      * @param Closure $next
      * @return mixed
@@ -32,7 +35,7 @@ class ThrottleOtpPipe
     }
 
     /**
-     * Rate limit key.
+     * Build a rate limit key for an OTP request.
      * @param OtpContext $context
      * @return string
      */

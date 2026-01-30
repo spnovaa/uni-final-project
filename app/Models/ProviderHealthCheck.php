@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Class ProviderHealthCheck.
+ * Eloquent model representing a provider health check result.
+ *
+ * Used for monitoring provider availability and latency over time.
  */
 class ProviderHealthCheck extends Model
 {

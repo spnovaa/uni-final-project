@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
- * Class Role.
+ * Eloquent model representing a role in the RBAC system.
  */
 class Role extends Model
 {

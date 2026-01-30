@@ -6,12 +6,12 @@ use App\Models\SubscriptionPlan;
 use Illuminate\Support\Collection;
 
 /**
- * Persistence layer for plan.
+ * Repository for querying and persisting SubscriptionPlan records.
  */
 class PlanRepository implements PlanRepositoryInterface
 {
     /**
-     * List active.
+     * List active subscription plans.
      * @return Collection
      */
     public function listActive(): Collection
@@ -23,7 +23,7 @@ class PlanRepository implements PlanRepositoryInterface
     }
 
     /**
-     * Create Plan.
+     * Create a subscription plan record.
      * @param array $data
      * @return SubscriptionPlan
      */
@@ -33,7 +33,7 @@ class PlanRepository implements PlanRepositoryInterface
     }
 
     /**
-     * Find.
+     * Find a subscription plan by ID.
      * @param int $id
      * @return ?SubscriptionPlan
      */

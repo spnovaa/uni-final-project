@@ -7,7 +7,12 @@ use Illuminate\Support\Facades\Schema;
 use App\Services\Cache\CacheServiceInterface;
 
 /**
- * Class ProviderRegistry.
+ * Provider configuration registry.
+ *
+ * Resolves provider connection settings from:
+ * - `config/gateway.php` defaults, and
+ * - the `providers` database table (when present),
+ * and caches the resolved configuration for fast gateway routing.
  */
 class ProviderRegistry
 {
@@ -21,7 +26,9 @@ class ProviderRegistry
     }
 
     /**
-     * Get provider config.
+     * Resolve a provider's configuration (base URL, API key, timeout, etc).
+     *
+     * Uses cache-aside when the `providers` table exists; otherwise falls back to config values.
      * @param ?string $providerName
      * @return array
      */

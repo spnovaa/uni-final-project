@@ -6,12 +6,12 @@ use App\Models\Invoice;
 use Illuminate\Support\Collection;
 
 /**
- * Persistence layer for invoice.
+ * Repository for querying and persisting Invoice records.
  */
 class InvoiceRepository implements InvoiceRepositoryInterface
 {
     /**
-     * List by user.
+     * List invoices owned by a user.
      * @param int $userId
      * @param int $limit
      * @return Collection
@@ -27,7 +27,7 @@ class InvoiceRepository implements InvoiceRepositoryInterface
     }
 
     /**
-     * Find for user.
+     * Find an invoice by ID, scoping to a user.
      * @param int $userId
      * @param int $invoiceId
      * @return ?Invoice
@@ -41,7 +41,7 @@ class InvoiceRepository implements InvoiceRepositoryInterface
     }
 
     /**
-     * Create Invoice.
+     * Create a new invoice record.
      * @param array $data
      * @return Invoice
      */
@@ -51,7 +51,7 @@ class InvoiceRepository implements InvoiceRepositoryInterface
     }
 
     /**
-     * Save.
+     * Persist changes to an invoice model.
      * @param Invoice $invoice
      * @return Invoice
      */
