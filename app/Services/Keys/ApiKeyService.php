@@ -10,8 +10,18 @@ use App\Services\Audit\AuditLogServiceInterface;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
 
+/**
+ * Service layer for api key.
+ */
 class ApiKeyService implements ApiKeyServiceInterface
 {
+    /**
+     * Create a new instance.
+     * @param ApiKeyRepositoryInterface $keys
+     * @param GeneratorService $generator
+     * @param AuditLogServiceInterface $audit
+     * @return void
+     */
     public function __construct(
         private readonly ApiKeyRepositoryInterface $keys,
         private readonly GeneratorService $generator,
@@ -19,11 +29,25 @@ class ApiKeyService implements ApiKeyServiceInterface
     ) {
     }
 
+    /**
+     * List.
+     * @param ApiClient $client
+     * @return Collection
+     */
     public function list(ApiClient $client): Collection
     {
         return $this->keys->listByClient($client->id);
     }
 
+    /**
+     * Create.
+     * @param ApiClient $client
+     * @param array $scopes
+     * @param ?int $rateLimit
+     * @param ?array $allowedIps
+     * @param ?CarbonImmutable $expiresAt
+     * @return array
+     */
     public function create(
         ApiClient $client,
         array $scopes = [],
@@ -40,6 +64,11 @@ class ApiKeyService implements ApiKeyServiceInterface
         return $result;
     }
 
+    /**
+     * Revoke.
+     * @param ApiKey $apiKey
+     * @return ApiKey
+     */
     public function revoke(ApiKey $apiKey): ApiKey
     {
         $key = $this->generator->revoke($apiKey);
@@ -51,6 +80,11 @@ class ApiKeyService implements ApiKeyServiceInterface
         return $key;
     }
 
+    /**
+     * Rotate.
+     * @param ApiKey $apiKey
+     * @return array
+     */
     public function rotate(ApiKey $apiKey): array
     {
         $result = $this->generator->rotate($apiKey);

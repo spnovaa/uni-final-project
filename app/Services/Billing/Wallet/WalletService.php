@@ -10,12 +10,26 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Service layer for wallet.
+ */
 class WalletService implements WalletServiceInterface
 {
+    /**
+     * Create a new instance.
+     * @param WalletRepositoryInterface $wallets
+     * @return void
+     */
     public function __construct(private readonly WalletRepositoryInterface $wallets)
     {
     }
 
+    /**
+     * Get or create.
+     * @param User $user
+     * @param ?string $currency
+     * @return Wallet
+     */
     public function getOrCreate(User $user, ?string $currency = null): Wallet
     {
         $wallet = $this->wallets->findByUserId($user->id);
@@ -30,6 +44,14 @@ class WalletService implements WalletServiceInterface
         );
     }
 
+    /**
+     * Topup.
+     * @param User $user
+     * @param float $amount
+     * @param ?string $reason
+     * @param ?array $meta
+     * @return WalletTransaction
+     */
     public function topup(User $user, float $amount, ?string $reason = null, ?array $meta = null): WalletTransaction
     {
         if ($amount <= 0) {
@@ -55,6 +77,15 @@ class WalletService implements WalletServiceInterface
         });
     }
 
+    /**
+     * Debit.
+     * @param User $user
+     * @param float $amount
+     * @param string $reason
+     * @param ?array $meta
+     * @param bool $allowNegative
+     * @return WalletTransaction
+     */
     public function debit(
         User $user,
         float $amount,
@@ -93,6 +124,12 @@ class WalletService implements WalletServiceInterface
         });
     }
 
+    /**
+     * Transactions.
+     * @param User $user
+     * @param int $limit
+     * @return Collection
+     */
     public function transactions(User $user, int $limit = 50): Collection
     {
         $wallet = $this->getOrCreate($user);

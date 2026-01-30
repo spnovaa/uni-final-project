@@ -8,8 +8,17 @@ use App\Services\Cache\CacheServiceInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Service layer for plan.
+ */
 class PlanService implements PlanServiceInterface
 {
+    /**
+     * Create a new instance.
+     * @param PlanRepositoryInterface $plans
+     * @param CacheServiceInterface $cache
+     * @return void
+     */
     public function __construct(
         private readonly PlanRepositoryInterface $plans,
         private readonly CacheServiceInterface $cache,
@@ -17,6 +26,10 @@ class PlanService implements PlanServiceInterface
     {
     }
 
+    /**
+     * List active.
+     * @return Collection
+     */
     public function listActive(): Collection
     {
         $ttl = $this->cache->ttl('plans', 300);
@@ -27,6 +40,11 @@ class PlanService implements PlanServiceInterface
         });
     }
 
+    /**
+     * Create.
+     * @param array $data
+     * @return SubscriptionPlan
+     */
     public function create(array $data): SubscriptionPlan
     {
         $plan = $this->plans->create($data);
@@ -35,6 +53,11 @@ class PlanService implements PlanServiceInterface
         return $plan;
     }
 
+    /**
+     * Find or fail.
+     * @param int $id
+     * @return SubscriptionPlan
+     */
     public function findOrFail(int $id): SubscriptionPlan
     {
         $plan = $this->plans->find($id);

@@ -7,10 +7,27 @@ use App\Models\ApiKey;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
 
+/**
+ * Service layer for api key.
+ */
 interface ApiKeyServiceInterface
 {
+    /**
+     * List.
+     * @param ApiClient $client
+     * @return Collection
+     */
     public function list(ApiClient $client): Collection;
 
+    /**
+     * Create.
+     * @param ApiClient $client
+     * @param array $scopes
+     * @param ?int $rateLimit
+     * @param ?array $allowedIps
+     * @param ?CarbonImmutable $expiresAt
+     * @return array
+     */
     public function create(
         ApiClient $client,
         array $scopes = [],
@@ -19,7 +36,17 @@ interface ApiKeyServiceInterface
         ?CarbonImmutable $expiresAt = null
     ): array;
 
+    /**
+     * Revoke.
+     * @param ApiKey $apiKey
+     * @return ApiKey
+     */
     public function revoke(ApiKey $apiKey): ApiKey;
 
+    /**
+     * Rotate.
+     * @param ApiKey $apiKey
+     * @return array
+     */
     public function rotate(ApiKey $apiKey): array;
 }

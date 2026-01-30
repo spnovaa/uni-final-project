@@ -12,8 +12,18 @@ use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Service layer for subscription.
+ */
 class SubscriptionService implements SubscriptionServiceInterface
 {
+    /**
+     * Create a new instance.
+     * @param SubscriptionRepositoryInterface $subscriptions
+     * @param WalletServiceInterface $wallets
+     * @param AuditLogServiceInterface $audit
+     * @return void
+     */
     public function __construct(
         private readonly SubscriptionRepositoryInterface $subscriptions,
         private readonly WalletServiceInterface $wallets,
@@ -21,6 +31,12 @@ class SubscriptionService implements SubscriptionServiceInterface
     ) {
     }
 
+    /**
+     * Subscribe.
+     * @param User $user
+     * @param SubscriptionPlan $plan
+     * @return Subscription
+     */
     public function subscribe(User $user, SubscriptionPlan $plan): Subscription
     {
         $current = $this->subscriptions->currentForUser($user->id);
@@ -62,11 +78,21 @@ class SubscriptionService implements SubscriptionServiceInterface
         });
     }
 
+    /**
+     * Current.
+     * @param User $user
+     * @return ?Subscription
+     */
     public function current(User $user): ?Subscription
     {
         return $this->subscriptions->currentForUser($user->id);
     }
 
+    /**
+     * Cancel.
+     * @param User $user
+     * @return ?Subscription
+     */
     public function cancel(User $user): ?Subscription
     {
         $subscription = $this->subscriptions->currentForUser($user->id);
