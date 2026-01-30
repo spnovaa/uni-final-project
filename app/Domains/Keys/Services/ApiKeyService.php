@@ -9,7 +9,10 @@ use Carbon\CarbonImmutable;
 use Illuminate\Support\Str;
 
 /**
- * Service layer for api key.
+ * Generate, hash, and persist API keys for authenticating gateway requests.
+ *
+ * This domain service is responsible for creating the plaintext API key only once and storing
+ * only a hashed representation in the database (plus a prefix to allow fast lookup).
  */
 class ApiKeyService
 {
@@ -23,7 +26,9 @@ class ApiKeyService
     }
 
     /**
-     * Create API key.
+     * Create and persist a new API key, returning the plaintext secret once.
+     *
+     * The returned `api_key` must be shown to the user immediately; it cannot be recovered later.
      * @param ApiClient $client
      * @param array $scopes
      * @param ?int $rateLimit
@@ -53,7 +58,7 @@ class ApiKeyService
     }
 
     /**
-     * Revoke API key.
+     * Revoke an API key by setting its `revoked_at` timestamp.
      * @param ApiKey $apiKey
      * @return ApiKey
      */
@@ -69,6 +74,8 @@ class ApiKeyService
 
     /**
      * Rotate API key and return a new secret.
+     *
+     * Rotation revokes the old key and creates a new key with the same configuration.
      * @param ApiKey $apiKey
      * @return array
      */
@@ -86,7 +93,7 @@ class ApiKeyService
     }
 
     /**
-     * Generate raw key.
+     * Generate a new random API key token using the `gk_` prefix.
      * @return string
      */
     private function generateRawKey(): string
@@ -95,7 +102,9 @@ class ApiKeyService
     }
 
     /**
-     * Extract prefix.
+     * Extract the lookup prefix from the plaintext key.
+     *
+     * The prefix is stored separately to avoid scanning all keys when authenticating.
      * @param string $rawKey
      * @return string
      */
@@ -107,7 +116,7 @@ class ApiKeyService
     }
 
     /**
-     * Hash token.
+     * Hash the plaintext token for storage/comparison.
      * @param string $token
      * @return string
      */

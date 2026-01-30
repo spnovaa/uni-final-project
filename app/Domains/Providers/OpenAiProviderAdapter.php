@@ -11,7 +11,10 @@ use Illuminate\Support\Str;
 use RuntimeException;
 
 /**
- * Class OpenAiProviderAdapter.
+ * Adapter for OpenAI-compatible upstream providers.
+ *
+ * This adapter forwards OpenAI-style requests to an upstream provider that implements the
+ * same API surface (OpenAI, Groq, OpenRouter, etc.), and returns a ProviderResponse wrapper.
  */
 class OpenAiProviderAdapter implements ProviderAdapterInterface
 {
@@ -25,7 +28,7 @@ class OpenAiProviderAdapter implements ProviderAdapterInterface
     ];
 
     /**
-     * Supports.
+     * Return true when the endpoint is supported by the OpenAI-compatible adapter.
      * @param string $endpoint
      * @param ?string $model
      * @return bool
@@ -36,7 +39,10 @@ class OpenAiProviderAdapter implements ProviderAdapterInterface
     }
 
     /**
-     * Send.
+     * Send the request to an OpenAI-compatible upstream provider.
+     *
+     * Handles both JSON responses and binary responses (e.g. audio speech). For audio
+     * transcription, it performs a multipart upload with the provided file.
      * @param GatewayRequestDto $request
      * @return ProviderResponse
      */
@@ -108,7 +114,9 @@ class OpenAiProviderAdapter implements ProviderAdapterInterface
     }
 
     /**
-     * Extract usage.
+     * Extract usage metrics from a typical OpenAI-style response body.
+     *
+     * Supports token usage fields (prompt/completion/total) and image count (from `data`).
      * @param ProviderResponse $response
      * @return ?UsageMetrics
      */
@@ -150,7 +158,7 @@ class OpenAiProviderAdapter implements ProviderAdapterInterface
     }
 
     /**
-     * Extract file.
+     * Extract the first uploaded file from a multipart request.
      * @param array $files
      * @return ?UploadedFile
      */

@@ -8,7 +8,11 @@ use Illuminate\Pipeline\Pipeline;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 /**
- * Service layer for gateway.
+ * OpenAI-compatible gateway orchestrator.
+ *
+ * This service executes the gateway pipeline which validates requests, resolves provider/model,
+ * estimates and meters usage, enforces billing rules, dispatches the provider request, persists
+ * logs, charges wallet usage, and finally returns a properly shaped HTTP response.
  */
 class GatewayService
 {
@@ -43,7 +47,10 @@ class GatewayService
     }
 
     /**
-     * Build response.
+     * Build the final HTTP response from the populated gateway context.
+     *
+     * Handles both JSON responses and binary payloads (e.g. audio), and ensures empty upstream
+     * responses are converted into a gateway error.
      * @param GatewayRequestContext $context
      * @return SymfonyResponse
      */

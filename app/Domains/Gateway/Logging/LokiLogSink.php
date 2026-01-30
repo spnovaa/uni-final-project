@@ -5,12 +5,14 @@ namespace App\Domains\Gateway\Logging;
 use Illuminate\Support\Facades\Http;
 
 /**
- * Class LokiLogSink.
+ * Grafana Loki log sink.
+ *
+ * Sends JSON log payloads to a Loki `push_url` using the `/loki/api/v1/push` format.
  */
 class LokiLogSink implements LogSinkInterface
 {
     /**
-     * Send.
+     * Send a log payload to Loki as a single log line with labels.
      * @param array $payload
      * @return void
      */
@@ -59,7 +61,7 @@ class LokiLogSink implements LogSinkInterface
     }
 
     /**
-     * Now nano.
+     * Get the current timestamp in nanoseconds as required by Loki.
      * @return string
      */
     private function nowNano(): string

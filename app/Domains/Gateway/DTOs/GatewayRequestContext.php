@@ -35,6 +35,9 @@ class GatewayRequestContext
 
     /**
      * Create a new instance.
+     *
+     * Initializes a unique request ID, captures the start time for latency tracking, and extracts
+     * `provider` and `model` from the payload for routing.
      * @param Request $request
      * @param string $endpoint
      * @param array $payload
@@ -54,7 +57,7 @@ class GatewayRequestContext
     }
 
     /**
-     * Latency ms.
+     * Compute elapsed time in milliseconds since the context was created.
      * @return int
      */
     public function latencyMs(): int

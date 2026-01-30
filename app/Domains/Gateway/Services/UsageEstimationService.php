@@ -8,12 +8,22 @@ use Danny50610\BpeTokeniser\EncodingFactory;
 use InvalidArgumentException;
 
 /**
- * Service layer for usage estimation.
+ * Usage estimator for billing and pre-flight wallet checks.
+ *
+ * This service estimates token usage (via a BPE tokenizer) and non-token metrics (images/audio)
+ * from OpenAI-compatible request payloads. Estimates are used to block requests early when the
+ * wallet balance is insufficient and as a fallback when providers do not return usage.
  */
 class UsageEstimationService
 {
     /**
-     * Estimate.
+     * Estimate usage metrics for the current gateway request context.
+     *
+     * The estimation strategy is endpoint-specific:
+     * - Chat/Responses: tokenize input text and use `max_*tokens` for output estimate.
+     * - Embeddings: tokenize input text.
+     * - Images: count images and tokenize prompt (if needed for pricing).
+     * - Audio: estimate characters or duration (seconds) for non-token billing.
      * @param GatewayRequestContext $context
      * @return UsageMetrics
      */
@@ -88,6 +98,9 @@ class UsageEstimationService
 
     /**
      * Resolve encoding.
+     *
+     * Tries to select an encoding based on the requested model; falls back to a configured default
+     * encoding when the model is unknown to the tokenizer library.
      * @param ?string $model
      * @return mixed
      */

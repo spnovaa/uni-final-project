@@ -5,12 +5,15 @@ namespace App\Domains\Gateway\Logging;
 use InvalidArgumentException;
 
 /**
- * Class LogSinkManager.
+ * Resolve log sink implementations by name.
+ *
+ * This manager enables switching between external log services by changing a single config value
+ * (`gateway.log_sink`) without touching the gateway pipeline code.
  */
 class LogSinkManager
 {
     /**
-     * Resolve.
+     * Resolve the sink implementation for the given name (or from config when null).
      * @param ?string $name
      * @return LogSinkInterface
      */

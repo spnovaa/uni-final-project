@@ -10,7 +10,11 @@ use Illuminate\Support\Str;
 use RuntimeException;
 
 /**
- * Class GeminiProviderAdapter.
+ * Adapter for Google Gemini native API.
+ *
+ * This adapter calls Gemini's `generateContent` / `embedContent` endpoints using the provider's
+ * standard request/response format, then maps the result into OpenAI-compatible shapes so the
+ * gateway API surface remains unchanged.
  */
 class GeminiProviderAdapter implements ProviderAdapterInterface
 {
@@ -21,7 +25,7 @@ class GeminiProviderAdapter implements ProviderAdapterInterface
     ];
 
     /**
-     * Supports.
+     * Return true when the endpoint is supported by the Gemini adapter.
      * @param string $endpoint
      * @param ?string $model
      * @return bool
@@ -32,7 +36,9 @@ class GeminiProviderAdapter implements ProviderAdapterInterface
     }
 
     /**
-     * Send.
+     * Send the request to Gemini and map the response into an OpenAI-compatible shape.
+     *
+     * Uses the `x-goog-api-key` header and provider config values for base URL and timeout.
      * @param GatewayRequestDto $request
      * @return ProviderResponse
      */
@@ -92,7 +98,10 @@ class GeminiProviderAdapter implements ProviderAdapterInterface
     }
 
     /**
-     * Extract usage.
+     * Extract usage metrics from the mapped response body.
+     *
+     * The gateway normalizes Gemini responses into OpenAI-style `usage` arrays; this method reads
+     * those values and returns a UsageMetrics DTO for billing.
      * @param ProviderResponse $response
      * @return ?UsageMetrics
      */
@@ -102,6 +111,20 @@ class GeminiProviderAdapter implements ProviderAdapterInterface
             return null;
         }
 
+        $usage = $response->body['usage'] ?? null;
+        if (is_array($usage)) {
+            $promptTokens = $usage['prompt_tokens'] ?? $usage['input_tokens'] ?? null;
+            $completionTokens = $usage['completion_tokens'] ?? $usage['output_tokens'] ?? null;
+            $totalTokens = $usage['total_tokens'] ?? null;
+
+            return new UsageMetrics(
+                $promptTokens,
+                $completionTokens,
+                $totalTokens
+            );
+        }
+
+        // Backward-compatible support if a raw Gemini response is provided.
         $usage = $response->body['usageMetadata'] ?? null;
         if (! is_array($usage)) {
             return null;
