@@ -5,8 +5,17 @@ namespace App\Domains\Gateway\Services;
 use App\Domains\Gateway\DTOs\UsageMetrics;
 use App\Models\ProviderModel;
 
+/**
+ * Service layer for usage metering.
+ */
 class UsageMeteringService
 {
+    /**
+     * Build usage records.
+     * @param ?UsageMetrics $usage
+     * @param ?ProviderModel $providerModel
+     * @return array
+     */
     public function buildUsageRecords(?UsageMetrics $usage, ?ProviderModel $providerModel = null): array
     {
         if (! $usage) {

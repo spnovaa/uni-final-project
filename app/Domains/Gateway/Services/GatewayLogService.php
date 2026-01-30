@@ -6,6 +6,9 @@ use App\Domains\Gateway\DTOs\GatewayRequestContext;
 use App\Jobs\DispatchGatewayLogJob;
 use Illuminate\Support\Arr;
 
+/**
+ * Service layer for gateway log.
+ */
 class GatewayLogService
 {
     private const REDACT_KEYS = [
@@ -18,6 +21,11 @@ class GatewayLogService
         'access_token',
     ];
 
+    /**
+     * Dispatch.
+     * @param GatewayRequestContext $context
+     * @return void
+     */
     public function dispatch(GatewayRequestContext $context): void
     {
         $sink = config('gateway.log_sink');
@@ -30,6 +38,11 @@ class GatewayLogService
         DispatchGatewayLogJob::dispatch($sink, $payload);
     }
 
+    /**
+     * Build payload.
+     * @param GatewayRequestContext $context
+     * @return array
+     */
     private function buildPayload(GatewayRequestContext $context): array
     {
         $apiKey = $context->apiKey;
@@ -57,6 +70,11 @@ class GatewayLogService
         return Arr::where($payload, fn ($value) => $value !== null);
     }
 
+    /**
+     * Summarize files.
+     * @param array $files
+     * @return array
+     */
     private function summarizeFiles(array $files): array
     {
         $summary = [];
@@ -73,6 +91,12 @@ class GatewayLogService
         return $summary;
     }
 
+    /**
+     * Summarize response.
+     * @param mixed $body
+     * @param bool $isBinary
+     * @return array|string|null
+     */
     private function summarizeResponse(mixed $body, bool $isBinary): array|string|null
     {
         if ($isBinary) {
@@ -85,6 +109,11 @@ class GatewayLogService
         return $body;
     }
 
+    /**
+     * Usage array.
+     * @param ?\App\Domains\Gateway\DTOs\UsageMetrics $usage
+     * @return ?array
+     */
     private function usageArray(?\App\Domains\Gateway\DTOs\UsageMetrics $usage): ?array
     {
         if (! $usage) {
@@ -101,6 +130,11 @@ class GatewayLogService
         ];
     }
 
+    /**
+     * Redact.
+     * @param mixed $value
+     * @return mixed
+     */
     private function redact(mixed $value): mixed
     {
         if (is_array($value)) {
@@ -120,6 +154,11 @@ class GatewayLogService
         return $value;
     }
 
+    /**
+     * Is sensitive key.
+     * @param string $key
+     * @return bool
+     */
     private function isSensitiveKey(string $key): bool
     {
         $key = strtolower($key);
@@ -133,6 +172,11 @@ class GatewayLogService
         return false;
     }
 
+    /**
+     * Truncate.
+     * @param mixed $payload
+     * @return mixed
+     */
     private function truncate(mixed $payload): mixed
     {
         $maxBytes = (int) config('gateway.log_payload_max_bytes', 20000);

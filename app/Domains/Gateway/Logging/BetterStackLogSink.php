@@ -4,8 +4,16 @@ namespace App\Domains\Gateway\Logging;
 
 use Illuminate\Support\Facades\Http;
 
+/**
+ * Class BetterStackLogSink.
+ */
 class BetterStackLogSink implements LogSinkInterface
 {
+    /**
+     * Send.
+     * @param array $payload
+     * @return void
+     */
     public function send(array $payload): void
     {
         $config = config('gateway.log_sinks.betterstack', []);

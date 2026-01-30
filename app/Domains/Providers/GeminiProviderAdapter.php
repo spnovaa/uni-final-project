@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use RuntimeException;
 
+/**
+ * Class GeminiProviderAdapter.
+ */
 class GeminiProviderAdapter implements ProviderAdapterInterface
 {
     private const ENDPOINT_MAP = [
@@ -17,11 +20,22 @@ class GeminiProviderAdapter implements ProviderAdapterInterface
         'embeddings' => 'embedContent',
     ];
 
+    /**
+     * Supports.
+     * @param string $endpoint
+     * @param ?string $model
+     * @return bool
+     */
     public function supports(string $endpoint, ?string $model): bool
     {
         return array_key_exists($endpoint, self::ENDPOINT_MAP);
     }
 
+    /**
+     * Send.
+     * @param GatewayRequestDto $request
+     * @return ProviderResponse
+     */
     public function send(GatewayRequestDto $request): ProviderResponse
     {
         $config = $request->providerConfig
@@ -77,6 +91,11 @@ class GeminiProviderAdapter implements ProviderAdapterInterface
         );
     }
 
+    /**
+     * Extract usage.
+     * @param ProviderResponse $response
+     * @return ?UsageMetrics
+     */
     public function extractUsage(ProviderResponse $response): ?UsageMetrics
     {
         if (! is_array($response->body)) {
@@ -95,6 +114,12 @@ class GeminiProviderAdapter implements ProviderAdapterInterface
         );
     }
 
+    /**
+     * Build generate content request.
+     * @param string $endpoint
+     * @param array $payload
+     * @return array
+     */
     private function buildGenerateContentRequest(string $endpoint, array $payload): array
     {
         $contents = [];
@@ -130,6 +155,13 @@ class GeminiProviderAdapter implements ProviderAdapterInterface
         return $request;
     }
 
+    /**
+     * Build embeddings request.
+     * @param string $baseUrl
+     * @param string $model
+     * @param array $payload
+     * @return array
+     */
     private function buildEmbeddingsRequest(string $baseUrl, string $model, array $payload): array
     {
         $input = $payload['input'] ?? '';
@@ -165,6 +197,11 @@ class GeminiProviderAdapter implements ProviderAdapterInterface
         ];
     }
 
+    /**
+     * Build contents from messages.
+     * @param array $messages
+     * @return array
+     */
     private function buildContentsFromMessages(array $messages): array
     {
         $contents = [];
@@ -196,6 +233,11 @@ class GeminiProviderAdapter implements ProviderAdapterInterface
         return [$contents, $systemParts];
     }
 
+    /**
+     * Build contents from input.
+     * @param mixed $input
+     * @return array
+     */
     private function buildContentsFromInput(mixed $input): array
     {
         $parts = $this->extractParts($input);
@@ -212,6 +254,11 @@ class GeminiProviderAdapter implements ProviderAdapterInterface
         ];
     }
 
+    /**
+     * Extract parts.
+     * @param mixed $content
+     * @return array
+     */
     private function extractParts(mixed $content): array
     {
         if (is_string($content)) {
@@ -250,6 +297,11 @@ class GeminiProviderAdapter implements ProviderAdapterInterface
         return [['text' => (string) $content]];
     }
 
+    /**
+     * Build generation config.
+     * @param array $payload
+     * @return array
+     */
     private function buildGenerationConfig(array $payload): array
     {
         $config = [];
@@ -269,6 +321,12 @@ class GeminiProviderAdapter implements ProviderAdapterInterface
         return $config;
     }
 
+    /**
+     * Map chat response.
+     * @param array $body
+     * @param string $model
+     * @return array
+     */
     private function mapChatResponse(array $body, string $model): array
     {
         $choices = [];
@@ -306,6 +364,12 @@ class GeminiProviderAdapter implements ProviderAdapterInterface
         return $response;
     }
 
+    /**
+     * Map responses response.
+     * @param array $body
+     * @param string $model
+     * @return array
+     */
     private function mapResponsesResponse(array $body, string $model): array
     {
         $output = [];
@@ -347,6 +411,12 @@ class GeminiProviderAdapter implements ProviderAdapterInterface
         return $response;
     }
 
+    /**
+     * Map embeddings response.
+     * @param array $body
+     * @param string $model
+     * @return array
+     */
     private function mapEmbeddingsResponse(array $body, string $model): array
     {
         $embeddings = [];
@@ -383,6 +453,11 @@ class GeminiProviderAdapter implements ProviderAdapterInterface
         return $response;
     }
 
+    /**
+     * Extract usage metadata.
+     * @param array $body
+     * @return ?array
+     */
     private function extractUsageMetadata(array $body): ?array
     {
         $usage = $body['usageMetadata'] ?? null;
@@ -405,6 +480,11 @@ class GeminiProviderAdapter implements ProviderAdapterInterface
         ];
     }
 
+    /**
+     * Extract text from parts.
+     * @param array $parts
+     * @return string
+     */
     private function extractTextFromParts(array $parts): string
     {
         $texts = [];
@@ -417,6 +497,11 @@ class GeminiProviderAdapter implements ProviderAdapterInterface
         return trim(implode(' ', $texts));
     }
 
+    /**
+     * Map finish reason.
+     * @param ?string $reason
+     * @return ?string
+     */
     private function mapFinishReason(?string $reason): ?string
     {
         if (! $reason) {
@@ -431,6 +516,12 @@ class GeminiProviderAdapter implements ProviderAdapterInterface
         };
     }
 
+    /**
+     * Map error response.
+     * @param array $body
+     * @param int $status
+     * @return array
+     */
     private function mapErrorResponse(array $body, int $status): array
     {
         $message = $body['error']['message'] ?? $body['message'] ?? 'Upstream provider error.';

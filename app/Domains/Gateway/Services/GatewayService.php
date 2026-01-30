@@ -7,8 +7,16 @@ use App\Domains\Gateway\DTOs\ProviderResponse;
 use Illuminate\Pipeline\Pipeline;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
+/**
+ * Service layer for gateway.
+ */
 class GatewayService
 {
+    /**
+     * Run the OpenAI-compatible gateway pipeline.
+     * @param GatewayRequestContext $context
+     * @return SymfonyResponse
+     */
     public function handle(GatewayRequestContext $context): SymfonyResponse
     {
         $context = app(Pipeline::class)
@@ -34,6 +42,11 @@ class GatewayService
         return $this->buildResponse($context);
     }
 
+    /**
+     * Build response.
+     * @param GatewayRequestContext $context
+     * @return SymfonyResponse
+     */
     private function buildResponse(GatewayRequestContext $context): SymfonyResponse
     {
         $response = $context->providerResponse;

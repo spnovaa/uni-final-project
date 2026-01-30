@@ -7,8 +7,16 @@ use App\Domains\Gateway\DTOs\UsageMetrics;
 use Danny50610\BpeTokeniser\EncodingFactory;
 use InvalidArgumentException;
 
+/**
+ * Service layer for usage estimation.
+ */
 class UsageEstimationService
 {
+    /**
+     * Estimate.
+     * @param GatewayRequestContext $context
+     * @return UsageMetrics
+     */
     public function estimate(GatewayRequestContext $context): UsageMetrics
     {
         $promptTokens = 0;
@@ -61,6 +69,12 @@ class UsageEstimationService
         );
     }
 
+    /**
+     * Estimate tokens.
+     * @param string $text
+     * @param ?string $model
+     * @return int
+     */
     private function estimateTokens(string $text, ?string $model = null): int
     {
         if ($text === '') {
@@ -72,6 +86,11 @@ class UsageEstimationService
         return count($encoding->encode($text));
     }
 
+    /**
+     * Resolve encoding.
+     * @param ?string $model
+     * @return mixed
+     */
     private function resolveEncoding(?string $model = null)
     {
         $defaultEncoding = config('gateway.tokenizer_default_encoding', 'cl100k_base');
@@ -87,6 +106,11 @@ class UsageEstimationService
         return EncodingFactory::createByEncodingName($defaultEncoding);
     }
 
+    /**
+     * Extract chat text.
+     * @param array $payload
+     * @return string
+     */
     private function extractChatText(array $payload): string
     {
         $messages = $payload['messages'] ?? [];
@@ -117,6 +141,11 @@ class UsageEstimationService
         return implode(' ', $parts);
     }
 
+    /**
+     * Extract responses text.
+     * @param array $payload
+     * @return string
+     */
     private function extractResponsesText(array $payload): string
     {
         $input = $payload['input'] ?? null;
@@ -132,6 +161,11 @@ class UsageEstimationService
         return '';
     }
 
+    /**
+     * Extract embeddings text.
+     * @param array $payload
+     * @return string
+     */
     private function extractEmbeddingsText(array $payload): string
     {
         $input = $payload['input'] ?? null;
@@ -154,6 +188,11 @@ class UsageEstimationService
         return '';
     }
 
+    /**
+     * Extract text from array.
+     * @param array $input
+     * @return string
+     */
     private function extractTextFromArray(array $input): string
     {
         $parts = [];
@@ -186,6 +225,11 @@ class UsageEstimationService
         return implode(' ', array_filter($parts));
     }
 
+    /**
+     * Extract max output tokens.
+     * @param array $payload
+     * @return int
+     */
     private function extractMaxOutputTokens(array $payload): int
     {
         $keys = ['max_output_tokens', 'max_completion_tokens', 'max_tokens'];
@@ -198,6 +242,11 @@ class UsageEstimationService
         return 0;
     }
 
+    /**
+     * Extract image count.
+     * @param array $payload
+     * @return int
+     */
     private function extractImageCount(array $payload): int
     {
         $candidates = ['n', 'num_images', 'batch_size'];
@@ -210,11 +259,21 @@ class UsageEstimationService
         return 1;
     }
 
+    /**
+     * Estimate characters.
+     * @param string $text
+     * @return int
+     */
     private function estimateCharacters(string $text): int
     {
         return mb_strlen($text, 'UTF-8');
     }
 
+    /**
+     * Estimate audio seconds.
+     * @param GatewayRequestContext $context
+     * @return ?float
+     */
     private function estimateAudioSeconds(GatewayRequestContext $context): ?float
     {
         if (isset($context->payload['duration_seconds']) && is_numeric($context->payload['duration_seconds'])) {
@@ -232,6 +291,11 @@ class UsageEstimationService
         return round($bytes / $bytesPerSecond, 2);
     }
 
+    /**
+     * Extract file size.
+     * @param array $files
+     * @return ?int
+     */
     private function extractFileSize(array $files): ?int
     {
         foreach ($files as $file) {

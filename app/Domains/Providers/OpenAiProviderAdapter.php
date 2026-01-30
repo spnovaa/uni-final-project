@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use RuntimeException;
 
+/**
+ * Class OpenAiProviderAdapter.
+ */
 class OpenAiProviderAdapter implements ProviderAdapterInterface
 {
     private const ENDPOINT_MAP = [
@@ -21,11 +24,22 @@ class OpenAiProviderAdapter implements ProviderAdapterInterface
         'audio.speech' => '/audio/speech',
     ];
 
+    /**
+     * Supports.
+     * @param string $endpoint
+     * @param ?string $model
+     * @return bool
+     */
     public function supports(string $endpoint, ?string $model): bool
     {
         return array_key_exists($endpoint, self::ENDPOINT_MAP);
     }
 
+    /**
+     * Send.
+     * @param GatewayRequestDto $request
+     * @return ProviderResponse
+     */
     public function send(GatewayRequestDto $request): ProviderResponse
     {
         $config = $request->providerConfig
@@ -93,6 +107,11 @@ class OpenAiProviderAdapter implements ProviderAdapterInterface
         );
     }
 
+    /**
+     * Extract usage.
+     * @param ProviderResponse $response
+     * @return ?UsageMetrics
+     */
     public function extractUsage(ProviderResponse $response): ?UsageMetrics
     {
         if (! is_array($response->body)) {
@@ -130,6 +149,11 @@ class OpenAiProviderAdapter implements ProviderAdapterInterface
         );
     }
 
+    /**
+     * Extract file.
+     * @param array $files
+     * @return ?UploadedFile
+     */
     private function extractFile(array $files): ?UploadedFile
     {
         foreach ($files as $file) {

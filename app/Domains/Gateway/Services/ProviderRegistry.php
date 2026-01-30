@@ -6,12 +6,25 @@ use App\Models\Provider;
 use Illuminate\Support\Facades\Schema;
 use App\Services\Cache\CacheServiceInterface;
 
+/**
+ * Class ProviderRegistry.
+ */
 class ProviderRegistry
 {
+    /**
+     * Create a new instance.
+     * @param CacheServiceInterface $cache
+     * @return void
+     */
     public function __construct(private readonly CacheServiceInterface $cache)
     {
     }
 
+    /**
+     * Get provider config.
+     * @param ?string $providerName
+     * @return array
+     */
     public function getProviderConfig(?string $providerName = null): array
     {
         $providerName = $providerName ?: config('gateway.default_provider');
