@@ -15,7 +15,10 @@ use Illuminate\Support\Facades\Http;
 use Throwable;
 
 /**
- * Queued job for provider health check.
+ * Perform basic health checks for configured upstream providers.
+ *
+ * This job pings each active provider (or one provider when `providerId` is provided),
+ * measures latency, and records the result in `provider_health_checks` for monitoring.
  */
 class ProviderHealthCheckJob implements ShouldQueue
 {
@@ -31,7 +34,7 @@ class ProviderHealthCheckJob implements ShouldQueue
     }
 
     /**
-     * Handle the queued job.
+     * Ping provider endpoints and record availability and latency.
      * @param ProviderRegistry $registry
      * @return void
      */
@@ -85,7 +88,7 @@ class ProviderHealthCheckJob implements ShouldQueue
     }
 
     /**
-     * Record.
+     * Persist a provider health check result row.
      * @param Provider $provider
      * @param string $status
      * @param ?int $latency

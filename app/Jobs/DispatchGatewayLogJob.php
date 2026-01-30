@@ -12,7 +12,9 @@ use Throwable;
 use Illuminate\Support\Facades\Log;
 
 /**
- * Queued job for dispatch gateway log.
+ * Deliver a gateway log payload to a configured external log sink.
+ *
+ * This job is best-effort: failures are logged as warnings and do not affect API responses.
  */
 class DispatchGatewayLogJob implements ShouldQueue
 {
@@ -31,7 +33,9 @@ class DispatchGatewayLogJob implements ShouldQueue
     }
 
     /**
-     * Handle the queued job.
+     * Send the log payload to the selected sink.
+     *
+     * Any exception is caught and logged to avoid breaking the queue worker.
      * @param LogSinkManager $manager
      * @return void
      */

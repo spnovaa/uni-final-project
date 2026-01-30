@@ -10,7 +10,10 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
 /**
- * Queued job for send otp.
+ * Send an OTP code to the requested destination.
+ *
+ * This project currently implements OTP delivery as a stub (logs the event). Replace the
+ * implementation with an SMS/email provider integration in production.
  */
 class SendOtpJob implements ShouldQueue
 {
@@ -31,7 +34,7 @@ class SendOtpJob implements ShouldQueue
     }
 
     /**
-     * Handle the queued job.
+     * Perform OTP delivery (currently a log-only stub).
      * @return void
      */
     public function handle(): void

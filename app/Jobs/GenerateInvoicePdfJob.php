@@ -11,7 +11,9 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
 /**
- * Queued job for generate invoice pdf.
+ * Generate and persist a PDF representation of an invoice.
+ *
+ * The HTTP endpoint can enqueue this job when an invoice PDF is requested but not yet generated.
  */
 class GenerateInvoicePdfJob implements ShouldQueue
 {
@@ -27,7 +29,7 @@ class GenerateInvoicePdfJob implements ShouldQueue
     }
 
     /**
-     * Handle the queued job.
+     * Load the invoice and delegate PDF generation to the invoice service.
      * @param InvoiceServiceInterface $invoices
      * @return void
      */

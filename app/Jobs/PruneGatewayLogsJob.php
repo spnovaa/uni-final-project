@@ -12,14 +12,17 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
 /**
- * Queued job for prune gateway logs.
+ * Prune old gateway request logs and audit logs based on configured retention.
+ *
+ * This job keeps the database size under control by deleting log rows older than
+ * `gateway.log_retention_days` and `gateway.audit_retention_days`.
  */
 class PruneGatewayLogsJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * Handle the queued job.
+     * Delete records past the configured retention windows.
      * @return void
      */
     public function handle(): void
