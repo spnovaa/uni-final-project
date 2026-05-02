@@ -1,0 +1,222 @@
+%======================================================================
+%  پایان‌نامه کارشناسی — دانشگاه صنعتی امیرکبیر
+%  طراحی و پیاده‌سازی سامانه‌ی واسط برای یکپارچه‌سازی سرویس‌های هوش مصنوعی
+%  دانشجو: مصطفی رحمتی — شماره دانشجویی: 9931069
+%======================================================================
+%  نحوه‌ی کامپایل:
+%    xelatex thesis.tex
+%    bibtex  thesis
+%    xelatex thesis.tex
+%    xelatex thesis.tex
+%  فونت مورد نیاز: Vazirmatn  (نصب از https://github.com/rastikerdar/vazirmatn)
+%======================================================================
+
+\documentclass[12pt, a4paper, openany]{book}
+
+%----------------------------------------------------------------------
+% بسته‌های اصلی (باید قبل از xepersian بارگذاری شوند)
+%----------------------------------------------------------------------
+\usepackage[top=3cm, bottom=2.5cm, right=3.5cm, left=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{setspace}
+\usepackage{fancyhdr}
+\usepackage{emptypage}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{pifont}
+\usepackage{tabularx}
+\usepackage{rotating}
+\usepackage{mdframed}
+\usepackage[numbers,sort&compress]{natbib}
+
+% hyperref باید قبل از xepersian بارگذاری شود
+\usepackage[
+  colorlinks=true,
+  linkcolor=black,
+  citecolor=black,
+  urlcolor=blue,
+  unicode=true,
+  bookmarks=true,
+  bookmarksnumbered=true
+]{hyperref}
+
+%----------------------------------------------------------------------
+% فونت و پشتیبانی از فارسی — xepersian باید آخرین بسته باشد
+%----------------------------------------------------------------------
+\usepackage{fontspec}
+\usepackage{xepersian}
+
+\settextfont[
+  Scale          = 1.1,
+  BoldFont       = Vazirmatn Bold,
+  ItalicFont     = Vazirmatn Light,
+]{Vazirmatn}
+
+\setlatinfont[
+  Scale          = 1.0,
+  BoldFont       = Times New Roman Bold,
+  ItalicFont     = Times New Roman Italic,
+]{Times New Roman}
+
+\setmonofont[Scale=0.9]{Courier New}
+
+%----------------------------------------------------------------------
+% تنظیمات عمومی فارسی
+%----------------------------------------------------------------------
+\SepMark{-}                         % جدا‌کننده‌ی شماره‌ی فصل/بخش
+
+%----------------------------------------------------------------------
+% فاصله‌ی بین خطوط
+%----------------------------------------------------------------------
+\onehalfspacing
+
+%----------------------------------------------------------------------
+% تنظیمات سرصفحه و پاصفحه
+%----------------------------------------------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[R]{\small\nouppercase{\rightmark}}
+\fancyhead[L]{\small\nouppercase{\leftmark}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+%----------------------------------------------------------------------
+% تنظیمات نام‌گذاری فارسی
+%----------------------------------------------------------------------
+\renewcommand{\chaptername}{فصل}
+\renewcommand{\contentsname}{فهرست مطالب}
+\renewcommand{\listfigurename}{فهرست شکل‌ها}
+\renewcommand{\listtablename}{فهرست جداول}
+\renewcommand{\bibname}{مراجع}
+\renewcommand{\appendixname}{پیوست}
+\renewcommand{\figurename}{شکل}
+\renewcommand{\tablename}{جدول}
+\renewcommand{\indexname}{نمایه}
+
+%----------------------------------------------------------------------
+% تنظیمات قطعه‌ی کد (listings)
+%----------------------------------------------------------------------
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.97,0.97,0.97}
+\definecolor{codeblue}{rgb}{0.0,0.3,0.7}
+
+\lstdefinestyle{phpstyle}{
+  backgroundcolor   = \color{backcolour},
+  commentstyle      = \color{codegray}\itshape,
+  keywordstyle      = \color{codeblue}\bfseries,
+  numberstyle       = \tiny\color{codegray},
+  stringstyle       = \color{codepurple},
+  basicstyle        = \ttfamily\footnotesize,
+  breakatwhitespace = false,
+  breaklines        = true,
+  captionpos        = b,
+  keepspaces        = true,
+  numbers           = left,
+  numbersep         = 5pt,
+  showspaces        = false,
+  showstringspaces  = false,
+  showtabs          = false,
+  tabsize           = 2,
+  frame             = single,
+  rulecolor         = \color{gray!40},
+  language          = PHP
+}
+
+\lstdefinestyle{jsonStyle}{
+  backgroundcolor   = \color{backcolour},
+  basicstyle        = \ttfamily\footnotesize,
+  breaklines        = true,
+  captionpos        = b,
+  numbers           = left,
+  numberstyle       = \tiny\color{codegray},
+  numbersep         = 5pt,
+  frame             = single,
+  rulecolor         = \color{gray!40},
+}
+
+\lstset{style=phpstyle}
+
+%----------------------------------------------------------------------
+% دستورات کمکی
+%----------------------------------------------------------------------
+\newcommand{\lr}[1]{\textLR{#1}}           % متن لاتین درون پاراگراف فارسی
+\newcommand{\code}[1]{\texttt{\lr{#1}}}    % کد یک‌خطی
+\newcommand{\term}[2]{#1\footnote{\lr{#2}}} % اصطلاح فارسی با پاورقی انگلیسی
+
+%======================================================================
+\begin{document}
+%======================================================================
+
+%----------------------------------------------------------------------
+% صفحات مقدماتی (شماره‌گذاری با حروف ابجد / حروف لاتین کوچک)
+%----------------------------------------------------------------------
+\frontmatter
+
+%----------------------------------------------------------------------
+% صفحه‌ی عنوان
+%----------------------------------------------------------------------
+\input{chapters/titlepage}
+
+%----------------------------------------------------------------------
+% تقدیم
+%----------------------------------------------------------------------
+\input{chapters/dedication}
+
+%----------------------------------------------------------------------
+% سپاسگزاری
+%----------------------------------------------------------------------
+\input{chapters/acknowledgement}
+
+%----------------------------------------------------------------------
+% چکیده
+%----------------------------------------------------------------------
+\input{chapters/abstract}
+
+%----------------------------------------------------------------------
+% فهرست‌ها
+%----------------------------------------------------------------------
+\tableofcontents
+\listoffigures
+\listoftables
+
+%----------------------------------------------------------------------
+% بخش اصلی (شماره‌گذاری عددی)
+%----------------------------------------------------------------------
+\mainmatter
+
+\input{chapters/ch1_intro}
+\input{chapters/ch2_related_work}
+\input{chapters/ch3_design}
+\input{chapters/ch4_implementation}
+\input{chapters/ch5_evaluation}
+\input{chapters/ch6_conclusion}
+
+%----------------------------------------------------------------------
+% مراجع
+%----------------------------------------------------------------------
+\backmatter
+\bibliographystyle{unsrtnat}
+\bibliography{references}
+
+%----------------------------------------------------------------------
+% پیوست‌ها
+%----------------------------------------------------------------------
+\appendix
+\input{chapters/appendix_a}
+
+%======================================================================
+\end{document}
+%======================================================================

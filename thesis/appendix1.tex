@@ -1,0 +1,1020 @@
+%======================================================================
+% پیوست الف: مستندات API
+%======================================================================
+\chapter{مستندات \lr{API}}
+\label{app:api}
+
+در این پیوست، قرارداد بیرونی سامانه به‌صورت منظم مستند شده است. فهرست مسیرها
+مستقیماً از فایل مسیرها، کنترلرها، منبع‌های پاسخ و آزمون‌های خودکار پروژه
+استخراج شده است؛ بنابراین این پیوست نه یک توصیف آرمانی، بلکه شرحی از
+رفتار واقعی نسخه‌ی پیاده‌سازی‌شده است.
+
+\section{قراردادهای مشترک}
+
+\subsection*{احراز هویت و سربرگ‌ها}
+مسیرهای کاربری و مدیریتی مانند \code{/me}، \code{/wallet}،
+\code{/plans} و \code{/reports} از توکن \lr{Sanctum} کاربر استفاده
+می‌کنند و قالب رایج سربرگ آن‌ها
+\code{Authorization: Bearer <SANCTUM\_TOKEN>} است. مسیرهای هوش مصنوعی از
+کلید پروژه استفاده می‌کنند و دو قالب
+\code{Authorization: Bearer <API\_KEY>} و \code{X-API-Key: <API\_KEY>} را
+می‌پذیرند. همچنین مسیر \code{GET /api/v1/invoices/\{invoice\}/pdf} بر
+پایه‌ی پیوند امضاشده عمل می‌کند و معمولاً از فیلد \code{pdf\_url} در پاسخ
+فاکتور به‌دست می‌آید.
+
+\subsection*{نحوه‌ی بازگشت \lr{Resource Collection}}
+در این پروژه \code{JsonResource::withoutWrapping()} فعال شده است؛ بنابراین
+پاسخ‌های مجموعه‌ای با لفافه‌ی \code{data} برگردانده نمی‌شوند و مستقیماً به
+صورت آرایه‌ی \lr{JSON} در خروجی قرار می‌گیرند.
+
+\subsection*{الگوی خطا در مسیرهای عمومی}
+مسیرهای عمومی و مدیریتی خطاها را معمولاً با یک فیلد ساده‌ی \code{message}
+بازمی‌گردانند.
+
+\begin{latin}
+\begin{lstlisting}[style=jsonStyle]
+{
+  "message": "The name field is required."
+}
+\end{lstlisting}
+\end{latin}
+
+\listingcaption{نمونه خطا در مسیرهای عمومی}
+
+\subsection*{الگوی خطا در مسیرهای هوش مصنوعی}
+درگاه هوش مصنوعی برای سازگاری بیرونی، خطاها را در قالبی مشابه \lr{OpenAI}
+بازمی‌گرداند.
+
+\begin{latin}
+\begin{lstlisting}[style=jsonStyle]
+{
+  "error": {
+    "message": "Provider and model are required.",
+    "type": "invalid_request_error",
+    "param": "provider",
+    "code": null
+  }
+}
+\end{lstlisting}
+\end{latin}
+
+\listingcaption{نمونه خطا در مسیرهای هوش مصنوعي}
+
+\section{نقاط پایانی احراز هویت}
+
+\subsection{\lr{POST /api/v1/auth/otp/start}}
+\textbf{کارکرد.} آغاز فرایند احراز هویت با ارسال رمز یک‌بارمصرف.
+
+\textbf{احراز هویت.} نیاز ندارد.
+
+\textbf{ساختار درخواست.} بدنه‌ی درخواست شامل دو فیلد اجباری
+\code{channel} و \code{destination} است. مقدار \code{channel} فقط می‌تواند
+\code{email} یا \code{sms} باشد.
+
+\textbf{ساختار پاسخ موفق.} یک شیء ساده با فیلد \code{status} که در حالت
+موفق مقدار آن \code{sent} است.
+
+\begin{latin}
+\begin{lstlisting}[style=jsonStyle]
+POST /api/v1/auth/otp/start
+Content-Type: application/json
+
+{
+  "channel": "email",
+  "destination": "user@example.com"
+}
+\end{lstlisting}
+\end{latin}
+
+\listingcaption{نمونه درخواست \code{OTP Start}}
+
+\begin{latin}
+\begin{lstlisting}[style=jsonStyle]
+{
+  "status": "sent"
+}
+\end{lstlisting}
+\end{latin}
+
+\listingcaption{نمونه پاسخ \code{OTP Start}}
+
+\subsection{\lr{POST /api/v1/auth/otp/verify}}
+\textbf{کارکرد.} تأیید رمز یک‌بارمصرف و صدور توکن دسترسی داشبورد.
+
+\textbf{احراز هویت.} نیاز ندارد.
+
+\textbf{ساختار درخواست.} فیلدهای اجباری \code{destination} و \code{code}
+و فیلد اختیاری \code{channel} دریافت می‌شوند.
+
+\textbf{ساختار پاسخ موفق.} شیئی شامل \code{token}، \code{token\_type}
+و \code{user}. شیء \code{user} دارای فیلدهای \code{id}، \code{name}،
+\code{email}، \code{phone}، \code{status}، \code{profile\_image\_url}،
+\code{created\_at} و \code{updated\_at} است.
+
+\begin{latin}
+\begin{lstlisting}[style=jsonStyle]
+POST /api/v1/auth/otp/verify
+Content-Type: application/json
+
+{
+  "destination": "user@example.com",
+  "code": "123456",
+  "channel": "email"
+}
+\end{lstlisting}
+\end{latin}
+
+\listingcaption{نمونه درخواست \code{OTP Verify}}
+
+\begin{latin}
+\begin{lstlisting}[style=jsonStyle]
+{
+  "token": "1|wQy0fP4...sanctum-token",
+  "token_type": "Bearer",
+  "user": {
+    "id": 10,
+    "name": "User Example",
+    "email": "user@example.com",
+    "phone": null,
+    "status": "active",
+    "profile_image_url": null,
+    "created_at": "2026-01-29T08:00:00.000000Z",
+    "updated_at": "2026-01-29T08:00:00.000000Z"
+  }
+}
+\end{lstlisting}
+\end{latin}
+
+\listingcaption{نمونه پاسخ \code{OTP Verify}}
+
+\section{نقاط پایانی کاربر}
+
+\subsection{\lr{GET /api/v1/me}}
+\textbf{کارکرد.} دریافت پروفایل کاربر جاری.
+
+\textbf{احراز هویت.} توکن \lr{Sanctum}.
+
+\textbf{ساختار درخواست.} این مسیر بدنه ندارد.
+
+\textbf{ساختار پاسخ موفق.} پاسخ این مسیر یک شیء کاربر است.
+فیلدهای اصلی آن \code{id}، \code{name}، \code{email}، \code{phone}،
+\code{status}، \code{profile\_image\_url}، \code{created\_at} و
+\code{updated\_at} هستند.
+
+\subsection{\lr{PATCH /api/v1/me}}
+\textbf{کارکرد.} به‌روزرسانی پروفایل کاربر.
+
+\textbf{احراز هویت.} توکن \lr{Sanctum}.
+
+\textbf{ساختار درخواست.} فیلدهای \code{name}، \code{email} و \code{phone}
+اختیاری هستند. در صورت ارسال تصویر، فیلد \code{profile\_image} باید به‌صورت
+فایل تصویری و در قالب \lr{multipart/form-data} ارسال شود.
+
+\textbf{ساختار پاسخ موفق.} همان ساختار مسیر \code{GET /api/v1/me} با
+مقادیر به‌روزشده.
+
+\section{نقاط پایانی کلیدهای \lr{API}}
+
+\subsection{\lr{GET /api/v1/api-clients}}
+\textbf{کارکرد.} دریافت فهرست مشتریان \lr{API} متعلق به کاربر جاری.
+
+\textbf{احراز هویت.} توکن \lr{Sanctum}.
+
+\textbf{ساختار درخواست.} این مسیر بدنه ندارد.
+
+\textbf{ساختار پاسخ موفق.} آرایه‌ای از اشیا با فیلدهای \code{id}،
+\code{name}، \code{status}، \code{created\_at} و \code{updated\_at}.
+
+\subsection{\lr{POST /api/v1/api-clients}}
+\textbf{کارکرد.} ایجاد مشتری \lr{API} جدید.
+
+\textbf{احراز هویت.} توکن \lr{Sanctum}.
+
+\textbf{ساختار درخواست.} تنها فیلد اجباری این مسیر \code{name} است.
+
+\textbf{ساختار پاسخ موفق.} یک شیء از نوع \lr{API Client} با فیلدهای
+\code{id}، \code{name}، \code{status}، \code{created\_at} و
+\code{updated\_at}.
+
+\begin{latin}
+\begin{lstlisting}[style=jsonStyle]
+POST /api/v1/api-clients
+Authorization: Bearer <SANCTUM_TOKEN>
+
+{
+  "name": "Primary Client"
+}
+\end{lstlisting}
+\end{latin}
+
+\listingcaption{نمونه درخواست \code{Create API Client}}
+
+\begin{latin}
+\begin{lstlisting}[style=jsonStyle]
+{
+  "id": 1,
+  "name": "Primary Client",
+  "status": "active",
+  "created_at": "2026-01-29T08:00:00.000000Z",
+  "updated_at": "2026-01-29T08:00:00.000000Z"
+}
+\end{lstlisting}
+\end{latin}
+
+\listingcaption{نمونه پاسخ \code{Create API Client}}
+
+\subsection{\lr{GET /api/v1/api-clients/\{apiClient\}/keys}}
+\textbf{کارکرد.} دریافت فهرست کلیدهای ثبت‌شده برای یک مشتری \lr{API}.
+
+\textbf{احراز هویت.} توکن \lr{Sanctum}.
+
+\textbf{ساختار درخواست.} شناسه‌ی مشتری در مسیر قرار می‌گیرد و بدنه‌ای
+ارسال نمی‌شود.
+
+\textbf{ساختار پاسخ موفق.} پاسخ این مسیر آرایه‌ای از فراداده‌ی کلیدها است.
+هر عضو آرایه معمولاً فیلدهای \code{id}، \code{key\_prefix}،
+\code{scopes}، \code{rate\_limit\_per\_min}، \code{allowed\_ips}،
+\code{expires\_at}، \code{revoked\_at} و \code{created\_at} را دارد.
+مقدار واقعی کلید در این مسیر هرگز برگردانده نمی‌شود.
+
+\subsection{\lr{POST /api/v1/api-clients/\{apiClient\}/keys}}
+\textbf{کارکرد.} ایجاد کلید \lr{API} جدید برای یک مشتری.
+
+\textbf{احراز هویت.} توکن \lr{Sanctum}.
+
+\textbf{ساختار درخواست.} در این مسیر می‌توان آرایه‌ی اختیاری
+\code{scopes} را برای حوزه‌های دسترسی، فیلد
+\code{rate\_limit\_per\_min} را برای تعیین سقف درخواست در دقیقه،
+\code{allowed\_ips} را برای فهرست آدرس‌های مجاز و \code{expires\_at} را
+برای تاریخ انقضای کلید ارسال کرد.
+
+\textbf{ساختار پاسخ موفق.} شیئی شامل \code{api\_key}، \code{key\_prefix}،
+\code{expires\_at} و \code{resource}. فیلد \code{api\_key} فقط یک‌بار
+بازگردانده می‌شود.
+
+\begin{latin}
+\begin{lstlisting}[style=jsonStyle]
+POST /api/v1/api-clients/1/keys
+Authorization: Bearer <SANCTUM_TOKEN>
+
+{
+  "scopes": ["ai:chat", "ai:embeddings"],
+  "rate_limit_per_min": 60,
+  "allowed_ips": ["127.0.0.1"]
+}
+\end{lstlisting}
+\end{latin}
+
+\listingcaption{نمونه درخواست \code{Create API Key}}
+
+\begin{latin}
+\begin{lstlisting}[style=jsonStyle]
+{
+  "api_key": "gk_abcd1234secretvalue",
+  "key_prefix": "abcd1234",
+  "expires_at": null,
+  "resource": {
+    "id": 7,
+    "key_prefix": "abcd1234",
+    "scopes": ["ai:chat", "ai:embeddings"],
+    "rate_limit_per_min": 60,
+    "allowed_ips": ["127.0.0.1"],
+    "expires_at": null,
+    "revoked_at": null,
+    "created_at": "2026-01-29T08:00:00.000000Z"
+  }
+}
+\end{lstlisting}
+\end{latin}
+
+\listingcaption{نمونه پاسخ \code{Create API Key}}
+
+\subsection{\lr{POST /api/v1/api-keys/\{apiKey\}/revoke}}
+\textbf{کارکرد.} لغو کلید \lr{API}.
+
+\textbf{احراز هویت.} توکن \lr{Sanctum}.
+
+\textbf{ساختار درخواست.} این مسیر بدنه ندارد و شناسه‌ی کلید در مسیر ارسال
+می‌شود.
+
+\textbf{ساختار پاسخ موفق.} شیئی با فیلد \code{status} و مقدار \code{revoked}.
+
+\subsection{\lr{POST /api/v1/api-keys/\{apiKey\}/rotate}}
+\textbf{کارکرد.} چرخش کلید \lr{API} و صدور کلید جدید با ابطال کلید پیشین.
+
+\textbf{احراز هویت.} توکن \lr{Sanctum}.
+
+\textbf{ساختار درخواست.} این مسیر بدنه ندارد.
+
+\textbf{ساختار پاسخ موفق.} همانند مسیر ایجاد کلید، شامل \code{api\_key}،
+\code{key\_prefix}، \code{expires\_at} و \code{resource}.
+
+\section{نقاط پایانی هوش مصنوعی}
+
+\subsection{\lr{POST /api/v1/ai/responses}}
+\textbf{کارکرد.} ارسال درخواست در قالب \lr{Responses API} سازگار با
+\lr{OpenAI}.
+
+\textbf{احراز هویت.} کلید پروژه از طریق \code{Authorization} یا
+\code{X-API-Key}.
+
+\textbf{ساختار درخواست.} فیلدهای اجباری \code{provider} و \code{model} و
+حداقل یک ورودی در \code{input}. سایر فیلدهای سازگار با \lr{Responses API}
+به سمت ارائه‌دهنده عبور داده می‌شوند.
+
+\textbf{ساختار پاسخ موفق.} شیئی از نوع \lr{response} شامل فیلدهایی مانند
+\code{id}، \code{object}، \code{model} و \code{output}. در صورت وجود اطلاعات
+مصرف، فیلد \code{usage} نیز بازگردانده می‌شود.
+
+\begin{latin}
+\begin{lstlisting}[style=jsonStyle]
+POST /api/v1/ai/responses
+Authorization: Bearer <API_KEY>
+
+{
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "input": "Hello"
+}
+\end{lstlisting}
+\end{latin}
+
+\listingcaption{نمونه درخواست \code{Responses API}}
+
+\begin{latin}
+\begin{lstlisting}[style=jsonStyle]
+{
+  "id": "resp_test",
+  "object": "response",
+  "model": "gpt-4o-mini",
+  "output": [
+    {
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "output_text",
+          "text": "Hello from responses"
+        }
+      ]
+    }
+  ]
+}
+\end{lstlisting}
+\end{latin}
+
+\listingcaption{نمونه پاسخ \code{Responses API}}
+
+\subsection{\lr{POST /api/v1/ai/chat/completions}}
+\textbf{کارکرد.} ارسال درخواست تکمیل گفتگو.
+
+\textbf{احراز هویت.} کلید پروژه.
+
+\textbf{ساختار درخواست.} فیلدهای اجباری \code{provider}، \code{model} و
+\code{messages}. آرایه‌ی \code{messages} باید حداقل یک پیام در قالب
+\code{role}/\code{content} داشته باشد.
+
+\textbf{ساختار پاسخ موفق.} شیئی از نوع \code{chat.completion} شامل
+\code{id}، \code{object}، \code{created}، \code{model}، \code{choices} و
+\code{usage}. این پاسخ هم برای \lr{OpenAI}-مانندها و هم برای \lr{Gemini}
+پس از نرمال‌سازی به همین شکل برمی‌گردد.
+
+\begin{latin}
+\begin{lstlisting}[style=jsonStyle]
+POST /api/v1/ai/chat/completions
+Authorization: Bearer <API_KEY>
+
+{
+  "provider": "groq",
+  "model": "llama-3.3-70b-versatile",
+  "messages": [
+    {"role": "user", "content": "Hello!"}
+  ]
+}
+\end{lstlisting}
+\end{latin}
+
+\listingcaption{نمونه درخواست \code{Chat Completions}}
+
+\begin{latin}
+\begin{lstlisting}[style=jsonStyle]
+{
+  "id": "chatcmpl_groq",
+  "object": "chat.completion",
+  "created": 1738137600,
+  "model": "llama-3.3-70b-versatile",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Hello from Groq"
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 5,
+    "completion_tokens": 7,
+    "total_tokens": 12
+  }
+}
+\end{lstlisting}
+\end{latin}
+
+\listingcaption{نمونه پاسخ \code{Chat Completions}}
+
+\subsection{\lr{POST /api/v1/ai/embeddings}}
+\textbf{کارکرد.} ارسال درخواست جاسازی متن.
+
+\textbf{احراز هویت.} کلید پروژه.
+
+\textbf{ساختار درخواست.} فیلدهای اجباری \code{provider}، \code{model} و
+\code{input}. مقدار \code{input} می‌تواند رشته یا آرایه‌ای از رشته‌ها باشد.
+
+\textbf{ساختار پاسخ موفق.} شیئی با \code{object=list}، آرایه‌ی \code{data}،
+فیلد \code{model} و در صورت وجود، \code{usage}.
+
+\begin{latin}
+\begin{lstlisting}[style=jsonStyle]
+POST /api/v1/ai/embeddings
+X-API-Key: <API_KEY>
+
+{
+  "provider": "openai",
+  "model": "text-embedding-3-small",
+  "input": "hello"
+}
+\end{lstlisting}
+\end{latin}
+
+\listingcaption{نمونه درخواست \code{Embeddings}}
+
+\begin{latin}
+\begin{lstlisting}[style=jsonStyle]
+{
+  "object": "list",
+  "data": [
+    {
+      "object": "embedding",
+      "index": 0,
+      "embedding": [0.1, 0.2]
+    }
+  ],
+  "model": "text-embedding-3-small",
+  "usage": {
+    "prompt_tokens": 4,
+    "total_tokens": 4
+  }
+}
+\end{lstlisting}
+\end{latin}
+
+\listingcaption{نمونه پاسخ \code{Embeddings}}
+
+\subsection{\lr{POST /api/v1/ai/images/generations}}
+\textbf{کارکرد.} ارسال درخواست تولید تصویر.
+
+\textbf{احراز هویت.} کلید پروژه.
+
+\textbf{ساختار درخواست.} فیلدهای اجباری \code{provider}، \code{model} و
+\code{prompt}. فیلدهای سازگار دیگری مانند \code{n} یا \code{size} نیز
+می‌توانند همراه درخواست عبور داده شوند.
+
+\textbf{ساختار پاسخ موفق.} شیئی شامل زمان ایجاد در \code{created} و آرایه‌ی
+\code{data} که هر عضو آن معمولاً حاوی \code{url} یا داده‌ی تصویر است.
+
+\begin{latin}
+\begin{lstlisting}[style=jsonStyle]
+POST /api/v1/ai/images/generations
+Authorization: Bearer <API_KEY>
+
+{
+  "provider": "openai",
+  "model": "gpt-image-1",
+  "prompt": "A test image"
+}
+\end{lstlisting}
+\end{latin}
+
+\listingcaption{نمونه درخواست \code{Image Generation}}
+
+\begin{latin}
+\begin{lstlisting}[style=jsonStyle]
+{
+  "created": 1738137600,
+  "data": [
+    {
+      "url": "https://example.com/image.png"
+    }
+  ]
+}
+\end{lstlisting}
+\end{latin}
+
+\listingcaption{نمونه پاسخ \code{Image Generation}}
+
+\subsection{\lr{POST /api/v1/ai/audio/transcriptions}}
+\textbf{کارکرد.} ارسال درخواست تبدیل گفتار به متن.
+
+\textbf{احراز هویت.} کلید پروژه.
+
+\textbf{ساختار درخواست.} فیلدهای اجباری \code{provider} و \code{model} به‌همراه
+فایل بارگذاری‌شده در \code{file}. این مسیر باید به‌صورت
+\lr{multipart/form-data} فراخوانی شود. بر اساس منطق درگاه، نبود فیلد
+\code{file} مستقیماً به خطای \lr{invalid\_request\_error} منجر می‌شود.
+
+\textbf{ساختار پاسخ موفق.} در رایج‌ترین حالت شیئی شامل فیلد \code{text} که
+متن رونویسی‌شده را نگه می‌دارد.
+
+\begin{latin}
+\begin{lstlisting}[style=jsonStyle]
+{
+  "text": "hello world"
+}
+\end{lstlisting}
+\end{latin}
+
+\listingcaption{نمونه پاسخ \code{Audio Transcription}}
+
+\subsection{\lr{POST /api/v1/ai/audio/speech}}
+\textbf{کارکرد.} ارسال درخواست تبدیل متن به گفتار.
+
+\textbf{احراز هویت.} کلید پروژه.
+
+\textbf{ساختار درخواست.} فیلدهای اجباری \code{provider}، \code{model}،
+\code{input} و \code{voice}.
+
+\textbf{ساختار پاسخ موفق.} این مسیر معمولاً \lr{JSON} برنمی‌گرداند، بلکه
+پاسخ دودویی صوت به‌همراه \code{Content-Type} مناسب، مانند
+\code{audio/mpeg}، تحویل می‌دهد.
+
+\begin{latin}
+\begin{lstlisting}[style=jsonStyle]
+POST /api/v1/ai/audio/speech
+Authorization: Bearer <API_KEY>
+
+{
+  "provider": "openai",
+  "model": "gpt-4o-mini-tts",
+  "input": "Hello there",
+  "voice": "alloy"
+}
+\end{lstlisting}
+\end{latin}
+
+\listingcaption{نمونه درخواست \code{Audio Speech}}
+
+\begin{latin}
+\begin{lstlisting}[style=jsonStyle]
+HTTP/1.1 200 OK
+Content-Type: audio/mpeg
+
+<binary audio bytes>
+\end{lstlisting}
+\end{latin}
+
+\listingcaption{نمونه پاسخ \code{Audio Speech}}
+
+\section{نقاط پایانی مالی}
+
+\subsection{\lr{GET /api/v1/wallet}}
+\textbf{کارکرد.} مشاهده‌ی موجودی کیف پول.
+
+\textbf{احراز هویت.} توکن \lr{Sanctum}.
+
+\textbf{ساختار درخواست.} این مسیر بدنه ندارد.
+
+\textbf{ساختار پاسخ موفق.} شیئی با فیلدهای \code{id}، \code{balance}،
+\code{currency} و \code{updated\_at}.
+
+\subsection{\lr{POST /api/v1/wallet/topup}}
+\textbf{کارکرد.} افزایش موجودی کیف پول در نسخه‌ی فعلی از مسیر داخلی سامانه.
+
+\textbf{احراز هویت.} توکن \lr{Sanctum}.
+
+\textbf{ساختار درخواست.} فیلد اجباری \code{amount} و فیلد اختیاری
+\code{reason}.
+
+\textbf{ساختار پاسخ موفق.} شیئی شامل دو بخش \code{wallet} و
+\code{transaction}. بخش \code{wallet} موجودی جدید را نشان می‌دهد و بخش
+\code{transaction} شامل \code{id}، \code{type}، \code{amount}، \code{reason}،
+\code{ref\_type}، \code{ref\_id}، \code{meta} و \code{created\_at} است.
+
+\begin{latin}
+\begin{lstlisting}[style=jsonStyle]
+POST /api/v1/wallet/topup
+Authorization: Bearer <SANCTUM_TOKEN>
+
+{
+  "amount": 25.50,
+  "reason": "test_topup"
+}
+\end{lstlisting}
+\end{latin}
+
+\listingcaption{نمونه درخواست \code{Wallet Topup}}
+
+\begin{latin}
+\begin{lstlisting}[style=jsonStyle]
+{
+  "wallet": {
+    "id": 1,
+    "balance": 25.5,
+    "currency": "USD",
+    "updated_at": "2026-01-29T08:00:00.000000Z"
+  },
+  "transaction": {
+    "id": 1,
+    "type": "credit",
+    "amount": 25.5,
+    "reason": "test_topup",
+    "ref_type": null,
+    "ref_id": null,
+    "meta": null,
+    "created_at": "2026-01-29T08:00:00.000000Z"
+  }
+}
+\end{lstlisting}
+\end{latin}
+
+\listingcaption{نمونه پاسخ \code{Wallet Topup}}
+
+\subsection{\lr{GET /api/v1/wallet/transactions}}
+\textbf{کارکرد.} دریافت دفترکل تراکنش‌های کیف پول.
+
+\textbf{احراز هویت.} توکن \lr{Sanctum}.
+
+\textbf{ساختار درخواست.} پارامتر اختیاری \code{limit} در \lr{query string}
+پذیرفته می‌شود.
+
+\textbf{ساختار پاسخ موفق.} آرایه‌ای از اشیای تراکنش با همان ساختار
+\code{transaction} در مسیر افزایش موجودی.
+
+\subsection{\lr{GET /api/v1/plans}}
+\textbf{کارکرد.} مشاهده‌ی لیست طرح‌های اشتراک.
+
+\textbf{احراز هویت.} توکن \lr{Sanctum}.
+
+\textbf{ساختار درخواست.} این مسیر بدنه ندارد.
+
+\textbf{ساختار پاسخ موفق.} آرایه‌ای از اشیا با فیلدهای \code{id}،
+\code{name}، \code{price}، \code{currency}، \code{period}،
+\code{included\_credits}، \code{rate\_limits}، \code{features}،
+\code{status}، \code{created\_at} و \code{updated\_at}.
+
+\subsection{\lr{POST /api/v1/plans}}
+\textbf{کارکرد.} ایجاد طرح اشتراک جدید.
+
+\textbf{احراز هویت.} توکن \lr{Sanctum}.
+
+\textbf{ساختار درخواست.} فیلدهای \code{name}، \code{price} و
+\code{period} اجباری هستند. در کنار آن‌ها، فیلدهای \code{currency}،
+\code{included\_credits}، \code{rate\_limits}، \code{features} و
+\code{status} نیز به‌صورت اختیاری پذیرفته می‌شوند.
+
+\textbf{ساختار پاسخ موفق.} شیء طرح اشتراک با همان فیلدهای مسیر
+\code{GET /api/v1/plans}.
+
+\subsection{\lr{POST /api/v1/subscriptions}}
+\textbf{کارکرد.} خرید اشتراک.
+
+\textbf{احراز هویت.} توکن \lr{Sanctum}.
+
+\textbf{ساختار درخواست.} تنها فیلد اجباری \code{plan\_id} است.
+
+\textbf{ساختار پاسخ موفق.} شیئی شامل \code{id}، \code{status}،
+\code{starts\_at}، \code{ends\_at}، \code{renewal\_at}،
+\code{canceled\_at} و شیء تو در توی \code{plan}.
+
+\begin{latin}
+\begin{lstlisting}[style=jsonStyle]
+POST /api/v1/subscriptions
+Authorization: Bearer <SANCTUM_TOKEN>
+
+{
+  "plan_id": 1
+}
+\end{lstlisting}
+\end{latin}
+
+\listingcaption{نمونه درخواست \code{Create Subscription}}
+
+\begin{latin}
+\begin{lstlisting}[style=jsonStyle]
+{
+  "id": 25,
+  "status": "active",
+  "starts_at": "2026-01-29T08:00:00.000000Z",
+  "ends_at": "2026-02-29T08:00:00.000000Z",
+  "renewal_at": "2026-02-29T08:00:00.000000Z",
+  "canceled_at": null,
+  "plan": {
+    "id": 1,
+    "name": "Starter",
+    "price": 10,
+    "currency": "USD",
+    "period": "monthly",
+    "included_credits": 100,
+    "rate_limits": null,
+    "features": null,
+    "status": "active",
+    "created_at": "2026-01-29T08:00:00.000000Z",
+    "updated_at": "2026-01-29T08:00:00.000000Z"
+  }
+}
+\end{lstlisting}
+\end{latin}
+
+\listingcaption{نمونه پاسخ \code{Create Subscription}}
+
+\subsection{\lr{GET /api/v1/subscriptions/current}}
+\textbf{کارکرد.} دریافت اشتراک فعال کاربر.
+
+\textbf{احراز هویت.} توکن \lr{Sanctum}.
+
+\textbf{ساختار درخواست.} این مسیر بدنه ندارد.
+
+\textbf{ساختار پاسخ موفق.} همان ساختار مسیر \code{POST /api/v1/subscriptions}.
+در صورت نبود اشتراک فعال، خطای \code{404} با پیام
+\code{No active subscription.} برگردانده می‌شود.
+
+\subsection{\lr{POST /api/v1/subscriptions/cancel}}
+\textbf{کارکرد.} لغو اشتراک فعال.
+
+\textbf{احراز هویت.} توکن \lr{Sanctum}.
+
+\textbf{ساختار درخواست.} این مسیر بدنه ندارد.
+
+\textbf{ساختار پاسخ موفق.} همان ساختار منبع اشتراک با \code{status} برابر
+\code{canceled}. در صورت نبود اشتراک فعال، خطای \code{404} بازگردانده
+می‌شود.
+
+\subsection{\lr{GET /api/v1/invoices}}
+\textbf{کارکرد.} مشاهده‌ی لیست فاکتورها.
+
+\textbf{احراز هویت.} توکن \lr{Sanctum}.
+
+\textbf{ساختار درخواست.} پارامتر اختیاری \code{limit} پذیرفته می‌شود.
+
+\textbf{ساختار پاسخ موفق.} آرایه‌ای از خلاصه‌ی فاکتورها با فیلدهای
+\code{id}، \code{number}، \code{status}، \code{currency}، \code{subtotal}،
+\code{tax}، \code{total}، \code{issued\_at}، \code{paid\_at}،
+\code{pdf\_url}، \code{created\_at} و \code{updated\_at}. در مسیر فهرست،
+اقلام ریزفاکتور معمولاً بارگذاری نمی‌شوند.
+
+\subsection{\lr{GET /api/v1/invoices/\{invoice\}}}
+\textbf{کارکرد.} مشاهده‌ی جزئیات یک فاکتور مشخص.
+
+\textbf{احراز هویت.} توکن \lr{Sanctum}.
+
+\textbf{ساختار درخواست.} شناسه‌ی فاکتور در مسیر قرار می‌گیرد.
+
+\textbf{ساختار پاسخ موفق.} شیء فاکتور با همان فیلدهای مسیر فهرست، به‌علاوه‌ی
+آرایه‌ی \code{items}. هر عضو \code{items} شامل \code{id}، \code{type}،
+\code{description}، \code{quantity}، \code{unit\_price}،
+\code{line\_total}، \code{meta} و \code{created\_at} است.
+
+\begin{latin}
+\begin{lstlisting}[style=jsonStyle]
+{
+  "id": 3,
+  "number": "INV-20260129-0003",
+  "status": "issued",
+  "currency": "USD",
+  "subtotal": 10.0,
+  "tax": 0.0,
+  "total": 10.0,
+  "issued_at": "2026-01-29T08:00:00.000000Z",
+  "paid_at": null,
+  "items": [
+    {
+      "id": 11,
+      "type": "usage",
+      "description": "Chat completions usage",
+      "quantity": 1500,
+      "unit_price": 0.0005,
+      "line_total": 0.75,
+      "meta": null,
+      "created_at": "2026-01-29T08:00:00.000000Z"
+    }
+  ],
+  "pdf_url": "https://example.com/api/v1/invoices/3/pdf?...",
+  "created_at": "2026-01-29T08:00:00.000000Z",
+  "updated_at": "2026-01-29T08:00:00.000000Z"
+}
+\end{lstlisting}
+\end{latin}
+
+\listingcaption{نمونه پاسخ \code{Invoice Detail}}
+
+\subsection{\lr{GET /api/v1/invoices/\{invoice\}/pdf}}
+\textbf{کارکرد.} دریافت نسخه‌ی \lr{PDF} فاکتور از طریق پیوند امضاشده.
+
+\textbf{احراز هویت.} به‌طور معمول از طریق امضای پیوند انجام می‌شود، نه
+توکن \lr{Sanctum}.
+
+\textbf{ساختار درخواست.} این مسیر بدنه ندارد و با \lr{signed URL} فراخوانی
+می‌شود.
+
+\textbf{ساختار پاسخ موفق.} اگر فایل آماده باشد، پاسخ دودویی \lr{PDF}
+برمی‌گردد. اگر هنوز فایل ساخته نشده باشد، مسیر با وضعیت \code{202} شیء
+\code{\{"status":"processing"\}} را بازمی‌گرداند و ساخت \lr{PDF} را در
+صف اجرا می‌کند.
+
+\section{نقاط پایانی گزارش‌ها}
+
+\subsection{\lr{GET /api/v1/reports/usage}}
+\textbf{کارکرد.} گزارش مصرف با امکان گروه‌بندی و فیلتر بازه‌ی زمانی.
+
+\textbf{احراز هویت.} توکن \lr{Sanctum}.
+
+\textbf{ساختار درخواست.} پارامترهای اختیاری \code{from}، \code{to} و
+\code{group\_by}. مقدار \code{group\_by} فقط می‌تواند یکی از
+\code{day}، \code{key} یا \code{provider} باشد.
+
+\textbf{ساختار پاسخ موفق.} آرایه‌ای از ردیف‌ها با فیلدهای \code{group\_by}،
+\code{group\_value}، \code{metric}، \code{quantity} و \code{total\_cost}.
+
+\begin{latin}
+\begin{lstlisting}[style=jsonStyle]
+[
+  {
+    "group_by": "day",
+    "group_value": "2026-01-29",
+    "metric": "tokens_in",
+    "quantity": 100,
+    "total_cost": 0.01
+  }
+]
+\end{lstlisting}
+\end{latin}
+
+\listingcaption{نمونه پاسخ \code{Usage Report}}
+
+\subsection{\lr{GET /api/v1/reports/wallet-ledger}}
+\textbf{کارکرد.} دفترکل تراکنش‌های کیف پول در یک بازه‌ی زمانی.
+
+\textbf{احراز هویت.} توکن \lr{Sanctum}.
+
+\textbf{ساختار درخواست.} پارامترهای اختیاری \code{from} و \code{to}.
+
+\textbf{ساختار پاسخ موفق.} آرایه‌ای از اشیای دفترکل با فیلدهای \code{id}،
+\code{type}، \code{amount}، \code{reason}، \code{ref\_type}،
+\code{ref\_id}، \code{meta} و \code{created\_at}.
+
+\subsection{\lr{GET /api/v1/reports/invoices}}
+\textbf{کارکرد.} گزارش تجمیعی فاکتورها و وضعیت آن‌ها.
+
+\textbf{احراز هویت.} توکن \lr{Sanctum}.
+
+\textbf{ساختار درخواست.} پارامتر اختیاری \code{status} که یکی از مقادیر
+\code{draft}، \code{issued}، \code{paid} یا \code{void} را می‌پذیرد.
+
+\textbf{ساختار پاسخ موفق.} آرایه‌ای از خلاصه‌ی فاکتورها با همان ساختار
+مسیر \code{GET /api/v1/invoices}.
+
+\section{نقاط پایانی مدیریت ارائه‌دهندگان}
+
+\subsection{\lr{GET /api/v1/providers}}
+\textbf{کارکرد.} دریافت فهرست ارائه‌دهندگان ثبت‌شده در سامانه.
+
+\textbf{احراز هویت.} توکن \lr{Sanctum}.
+
+\textbf{ساختار درخواست.} این مسیر بدنه ندارد.
+
+\textbf{ساختار پاسخ موفق.} آرایه‌ای از اشیا با فیلدهای \code{id}،
+\code{name}، \code{type}، \code{base\_url}، \code{status}،
+\code{priority}، \code{created\_at} و \code{updated\_at}.
+
+\subsection{\lr{POST /api/v1/providers}}
+\textbf{کارکرد.} ایجاد ارائه‌دهنده‌ی جدید و ثبت پیکربندی اولیه.
+
+\textbf{احراز هویت.} توکن \lr{Sanctum}.
+
+\textbf{ساختار درخواست.} در این مسیر، فیلدهای \code{name} و
+\code{base\_url} اجباری هستند و فیلدهای \code{type}، \code{api\_key}،
+\code{timeout}، \code{status} و \code{priority} می‌توانند به‌صورت
+اختیاری همراه درخواست ارسال شوند.
+
+\textbf{ساختار پاسخ موفق.} یک شیء ارائه‌دهنده با همان فیلدهای مسیر
+\code{GET /api/v1/providers}.
+
+\begin{latin}
+\begin{lstlisting}[style=jsonStyle]
+POST /api/v1/providers
+Authorization: Bearer <SANCTUM_TOKEN>
+
+{
+  "name": "openrouter",
+  "type": "openai_compatible",
+  "base_url": "https://openrouter.ai/api/v1",
+  "api_key": "test-key",
+  "status": "active"
+}
+\end{lstlisting}
+\end{latin}
+
+\listingcaption{نمونه درخواست \code{Create Provider}}
+
+\begin{latin}
+\begin{lstlisting}[style=jsonStyle]
+{
+  "id": 4,
+  "name": "openrouter",
+  "type": "openai_compatible",
+  "base_url": "https://openrouter.ai/api/v1",
+  "status": "active",
+  "priority": 0,
+  "created_at": "2026-01-29T08:00:00.000000Z",
+  "updated_at": "2026-01-29T08:00:00.000000Z"
+}
+\end{lstlisting}
+\end{latin}
+
+\listingcaption{نمونه پاسخ \code{Create Provider}}
+
+\subsection{\lr{GET /api/v1/providers/\{provider\}/models}}
+\textbf{کارکرد.} دریافت مدل‌های ثبت‌شده برای یک ارائه‌دهنده.
+
+\textbf{احراز هویت.} توکن \lr{Sanctum}.
+
+\textbf{ساختار درخواست.} شناسه‌ی عددی ارائه‌دهنده در مسیر قرار می‌گیرد.
+
+\textbf{ساختار پاسخ موفق.} آرایه‌ای از اشیا با فیلدهای \code{id}،
+\code{provider\_id}، \code{model\_key}، \code{capabilities}،
+\code{pricing\_config}، \code{status}، \code{created\_at} و
+\code{updated\_at}.
+
+\subsection{\lr{POST /api/v1/providers/\{provider\}/models}}
+\textbf{کارکرد.} ایجاد یا ثبت مدل جدید برای یک ارائه‌دهنده.
+
+\textbf{احراز هویت.} توکن \lr{Sanctum}.
+
+\textbf{ساختار درخواست.} در این مسیر \code{model\_key} اجباری است.
+فیلدهای \code{capabilities}، \code{pricing\_config} و \code{status}
+به‌صورت اختیاری دریافت می‌شوند.
+
+\textbf{ساختار پاسخ موفق.} یک شیء مدل با همان فیلدهای مسیر فهرست مدل‌ها.
+
+\begin{latin}
+\begin{lstlisting}[style=jsonStyle]
+POST /api/v1/providers/4/models
+Authorization: Bearer <SANCTUM_TOKEN>
+
+{
+  "model_key": "gpt-4o-mini",
+  "capabilities": {
+    "chat": true
+  },
+  "pricing_config": {
+    "input_token": 0.0005,
+    "output_token": 0.001
+  }
+}
+\end{lstlisting}
+\end{latin}
+
+\listingcaption{نمونه درخواست \code{Create Provider Model}}
+
+\begin{latin}
+\begin{lstlisting}[style=jsonStyle]
+{
+  "id": 9,
+  "provider_id": 4,
+  "model_key": "gpt-4o-mini",
+  "capabilities": {
+    "chat": true
+  },
+  "pricing_config": {
+    "input_token": 0.0005,
+    "output_token": 0.001
+  },
+  "status": "active",
+  "created_at": "2026-01-29T08:00:00.000000Z",
+  "updated_at": "2026-01-29T08:00:00.000000Z"
+}
+\end{lstlisting}
+\end{latin}
+
+\listingcaption{نمونه پاسخ \code{Create Provider Model}}
+
+\section{نقاط پایانی ممیزی}
+
+\subsection{\lr{GET /api/v1/audit-logs}}
+\textbf{کارکرد.} دریافت لاگ عملیات حساس برای کاربران دارای نقش مدیر.
+
+\textbf{احراز هویت.} توکن \lr{Sanctum} به‌همراه عبور از میان‌افزار
+\code{role:admin}.
+
+\textbf{ساختار درخواست.} پارامترهای اختیاری \code{actor\_user\_id}،
+\code{action}، \code{target\_type}، \code{target\_id} و \code{limit}.
+
+\textbf{ساختار پاسخ موفق.} آرایه‌ای از اشیای ممیزی با فیلدهای \code{id}،
+\code{actor\_user\_id}، \code{action}، \code{target\_type}،
+\code{target\_id}، \code{meta} و \code{created\_at}.
+
+
+
+
+

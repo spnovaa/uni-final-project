@@ -1,0 +1,102 @@
+%%%  کلاس AUTthesis — پروژه کارشناسی
+%%%  دانشگاه صنعتی امیرکبیر (پلی‌تکنیک تهران)
+%%%  دانشکده مهندسی کامپیوتر
+%%%
+%%%  دانشجو: مصطفی رحمتی — شماره دانشجویی: 9931069
+%%%  عنوان: طراحی و پیاده‌سازی سامانه‌ی واسط برای یکپارچه‌سازی سرویس‌های هوش مصنوعی
+%%%
+%%%  روش کامپایل:
+%%%    xelatex AUTthesis.tex
+%%%    bibtex  AUTthesis
+%%%    xelatex AUTthesis.tex
+%%%    xelatex AUTthesis.tex
+%%%
+%%% !TEX TS-program = XeLaTeX
+
+\documentclass[oneside,bsc,12pt]{AUTthesis}
+
+\input{commands}
+
+\begin{document}
+\baselineskip=.75cm
+\linespread{1.75}
+
+%--------------------------------------------------------------------------
+% صفحه عنوان فارسی + اطلاعات پروژه
+\input{fa_title}
+
+%--------------------------------------------------------------------------
+% فرم تأییدیه (صفحه تعهدنامه)
+\input{taid}
+
+%--------------------------------------------------------------------------
+% تقدیم / نیایش
+% \input{Chant}
+
+%--------------------------------------------------------------------------
+% سپاسگزاری
+% \input{acknowledgement}
+
+%--------------------------------------------------------------------------
+% شماره‌گذاری صفحات مقدماتی با حروف ابجد
+\pagenumbering{alph}
+
+%--------------------------------------------------------------------------
+% فهرست مطالب، فهرست اشکال، فهرست جداول
+\input{TOC-TOF-LOT}
+
+%--------------------------------------------------------------------------
+% فهرست نمادها
+\input{list-of-symbols}
+
+%--------------------------------------------------------------------------
+% شروع متن اصلی با اعداد عربی
+\pagenumbering{arabic}
+\pagestyle{style1}
+
+%--------------------------------------------------------------------------
+% فصل‌ها
+\include{chapter1}
+\include{chapter2}
+\include{chapter3}
+\include{chapter4}
+\include{chapter5}
+\include{chapter6}
+
+%--------------------------------------------------------------------------
+% مراجع و پیوست‌ها
+
+\appendix
+\setLTRbibitems
+\bibliographystyle{plain}
+\bibliography{references}
+
+\makeatletter
+\def\@makechapterhead#1{%
+\thispagestyle{style1}
+\vspace*{20\p@}%
+{\parindent \z@ \mycustomraggedright
+\ifnum \c@secnumdepth >\m@ne
+\if@mainmatter
+\bfseries{\Huge \appendixname}\small\space {\chapternumber\thechapter}
+\par\nobreak
+\vskip 0\p@
+\fi
+\fi
+\interlinepenalty\@M
+\Huge \bfseries #1\par\nobreak
+\vskip 40\p@
+}
+}
+\makeatother
+\renewcommand{\chaptermark}[1]{\markboth{\appendixname~\thechapter: #1}{}}
+
+\include{appendix1}
+
+%--------------------------------------------------------------------------
+% واژه‌نامه‌ها
+\parindent=0pt
+\include{dicfa2en}
+\include{dicen2fa}
+
+\end{document}

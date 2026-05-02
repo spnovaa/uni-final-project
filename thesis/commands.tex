@@ -1,0 +1,250 @@
+% ===================================================================
+% commands.tex — تنظیمات و دستورات کمکی
+% ===================================================================
+
+% --- بسته‌های ریاضی ---
+\usepackage{amssymb,amsmath,amsfonts}
+
+% --- حاشیه‌های صفحه ---
+\usepackage[top=30mm, bottom=30mm, left=25mm, right=30mm]{geometry}
+
+% --- تصاویر و رنگ ---
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{xcolor}
+
+% --- فاصله‌ی عمودی خطوط ---
+\usepackage{setspace}
+
+% --- لینک‌ها ---
+\usepackage[pagebackref=false,hidelinks]{hyperref}
+
+% --- سرصفحه ---
+\usepackage{fancyhdr}
+
+% --- سایر ---
+\usepackage{verbatim}
+
+% --- جداول ---
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{array}
+
+% --- شناور ---
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+
+% --- قطعه‌ی کد ---
+\usepackage{listings}
+
+% ===================================================================
+% فراخوانی xepersian — حتماً آخرین بسته باشد
+% ===================================================================
+\usepackage{xepersian}
+\SepMark{-}
+\let\cleardoublepage\clearpage
+
+% --- فونت‌های فارسی ---
+\settextfont[Scale=1.2]{B Nazanin}
+\setlatintextfont{Times New Roman}
+\renewcommand{\labelitemi}{$\bullet$}
+\setlength{\headheight}{15pt}
+\emergencystretch=2em
+
+% --- فونت اعداد در فرمول ---
+\setdigitfont[Scale=1.1]{Times New Roman}
+
+% --- فونت‌های اضافی ---
+\defpersianfont\nastaliq[Scale=2]{B Nazanin}
+\defpersianfont\chapternumber[Scale=3]{B Nazanin}
+
+% ===================================================================
+% دستورات کمکی اختصاصی این پروژه
+% ===================================================================
+
+% اصطلاح فارسی با پاورقی انگلیسی:  \term{فارسی}{English}
+\newcommand{\term}[2]{#1\RTLfootnote{\lr{#2}}}
+
+% کد یک‌خطی:  \code{text}
+\newcommand{\code}[1]{\texttt{\lr{\detokenize{#1}}}}
+
+% ===================================================================
+% تنظیمات قطعه‌ی کد
+% ===================================================================
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.97,0.97,0.97}
+\definecolor{codeblue}{rgb}{0.0,0.3,0.7}
+
+\lstdefinestyle{phpstyle}{
+  backgroundcolor   = \color{backcolour},
+  commentstyle      = \color{codegray}\itshape,
+  keywordstyle      = \color{codeblue}\bfseries,
+  numberstyle       = \tiny\color{codegray},
+  stringstyle       = \color{codepurple},
+  basicstyle        = \ttfamily\footnotesize,
+  breakatwhitespace = false,
+  breaklines        = true,
+  captionpos        = b,
+  keepspaces        = true,
+  numbers           = left,
+  numbersep         = 5pt,
+  showspaces        = false,
+  showstringspaces  = false,
+  showtabs          = false,
+  tabsize           = 2,
+  frame             = single,
+  rulecolor         = \color{gray!40},
+  language          = PHP
+}
+
+\lstdefinestyle{jsonStyle}{
+  backgroundcolor   = \color{backcolour},
+  basicstyle        = \ttfamily\footnotesize,
+  breaklines        = true,
+  captionpos        = b,
+  numbers           = left,
+  numberstyle       = \tiny\color{codegray},
+  numbersep         = 5pt,
+  frame             = single,
+  rulecolor         = \color{gray!40},
+}
+
+\lstset{style=phpstyle}
+\renewcommand{\lstlistingname}{کد}
+\renewcommand{\lstlistlistingname}{فهرست کدها}
+\makeatletter
+\@addtoreset{lstlisting}{chapter}
+\makeatother
+\renewcommand{\thelstlisting}{\thechapter-\arabic{lstlisting}}
+\newcommand{\listingcaption}[1]{%
+  \refstepcounter{lstlisting}%
+  \par\vspace{4pt}%
+  \begin{center}
+    \small \textbf{\lstlistingname~\thelstlisting:} #1
+  \end{center}
+  \vspace{6pt}%
+}
+
+% ===================================================================
+% تنظیمات تکمیلی
+% ===================================================================
+\renewcommand{\bibname}{منابع و مراجع}
+
+\newcommand\tocheading{\par عنوان\hfill صفحه \par}
+\newcommand\lofheading{\hspace*{.5cm}\figurename\hfill صفحه \par}
+\newcommand\lotheading{\hspace*{.5cm}\tablename\hfill صفحه \par}
+
+% --- دستورهای سفارشی‌سازی صفحات اول فصل‌ها ---
+\makeatletter
+\newcommand\mycustomraggedright{%
+ \if@RTL\raggedleft%
+ \else\raggedright%
+ \fi}
+\def\@makechapterhead#1{%
+\thispagestyle{style1}
+\vspace*{20\p@}%
+{\parindent \z@ \mycustomraggedright
+\ifnum \c@secnumdepth >\m@ne
+\if@mainmatter
+\bfseries{\Huge \@chapapp}\small\space {\chapternumber\thechapter}
+\par\nobreak
+\vskip 0\p@
+\fi
+\fi
+\interlinepenalty\@M 
+\Huge \bfseries #1\par\nobreak
+\vskip 40\p@
+}
+}
+\bidi@patchcmd{\@makechapterhead}{\thechapter}{\tartibi{chapter}}{}{}
+\bidi@patchcmd{\chaptermark}{\thechapter}{\tartibi{chapter}}{}{}
+\makeatother
+
+% --- سبک‌های سرصفحه ---
+\pagestyle{fancy}
+\renewcommand{\chaptermark}[1]{\markboth{\chaptername~\tartibi{chapter}: #1}{}}
+
+\fancypagestyle{style1}{
+\fancyhf{} 
+\fancyfoot[c]{\thepage}
+\fancyhead[R]{\leftmark}
+\renewcommand{\headrulewidth}{1.2pt}
+}
+
+\fancypagestyle{style2}{
+\fancyhf{}
+\fancyhead[R]{چکیده}
+\fancyfoot[C]{\thepage{}}
+\renewcommand{\headrulewidth}{1.2pt}
+}
+
+\fancypagestyle{style3}{
+  \fancyhf{}
+  \fancyhead[R]{فهرست نمادها}
+  \fancyfoot[C]{\thepage}
+  \renewcommand{\headrulewidth}{1.2pt}
+}
+
+\fancypagestyle{style4}{
+  \fancyhf{}
+  \fancyhead[R]{فهرست جداول}
+  \fancyfoot[C]{\thepage}
+  \renewcommand{\headrulewidth}{1.2pt}
+}
+
+\fancypagestyle{style5}{
+  \fancyhf{}
+  \fancyhead[R]{فهرست اشکال}
+  \fancyfoot[C]{\thepage}
+  \renewcommand{\headrulewidth}{1.2pt}
+}
+
+\fancypagestyle{style6}{
+  \fancyhf{}
+  \fancyhead[R]{فهرست مطالب}
+  \fancyfoot[C]{\thepage}
+  \renewcommand{\headrulewidth}{1.2pt}
+}
+
+\fancypagestyle{style7}{
+  \fancyhf{}
+  \fancyhead[R]{نمایه}
+  \fancyfoot[C]{\thepage}
+  \renewcommand{\headrulewidth}{1.2pt}
+}
+
+\fancypagestyle{style8}{
+  \fancyhf{}
+  \fancyhead[R]{منابع و مراجع}
+  \fancyfoot[C]{\thepage}
+  \renewcommand{\headrulewidth}{1.2pt}
+}
+
+\fancypagestyle{style9}{
+  \fancyhf{}
+  \fancyhead[R]{واژه‌نامه‌ی فارسی به انگلیسی}
+  \fancyfoot[C]{\thepage}
+  \renewcommand{\headrulewidth}{1.2pt}
+}
+
+% --- دستور حذف نام لیست از فهرست مطالب ---
+\newcommand*{\BeginNoToc}{%
+  \addtocontents{toc}{%
+    \edef\protect\SavedTocDepth{\protect\the\protect\value{tocdepth}}%
+  }%
+  \addtocontents{toc}{%
+    \protect\setcounter{tocdepth}{-10}%
+  }%
+}
+\newcommand*{\EndNoToc}{%
+  \addtocontents{toc}{%
+    \protect\setcounter{tocdepth}{\protect\SavedTocDepth}%
+  }%
+}
+\newcounter{savepage}
+\renewcommand{\listfigurename}{فهرست اشکال}
+\renewcommand{\listtablename}{فهرست جداول}
