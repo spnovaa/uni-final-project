@@ -4,95 +4,10 @@
 \chapter{مستندات \lr{API}}
 \label{app:api}
 
-این پیوست فهرست نقاط پایانی اصلی سامانه را به همراه نمونه‌ی درخواست و
-پاسخ ارائه می‌دهد. تمامی نقاط پایانی زیر \lr{Base URL} زیر قرار دارند:
-
-\begin{center}
-\code{http://localhost/api/v1}
-\end{center}
-
-درخواست‌های احراز هویت داشبورد با هدر \code{Authorization: Bearer <token>}
-و درخواست‌های سامانه‌ی واسط با هدر \code{Authorization: Bearer <api-key>}
-ارسال می‌شوند.
-
-%----------------------------------------------------------------------
+% TODO: لیست کامل نقاط پایانی، نمونه درخواست و پاسخ در اینجا قرار می‌گیرد.
 \section{نقاط پایانی احراز هویت}
-%----------------------------------------------------------------------
-
-\subsection*{\code{POST /auth/otp/start}}
-درخواست ارسال رمز یک‌بارمصرف. فیلد \code{destination} شماره تلفن یا
-ایمیل و فیلد \code{channel} مقدار \code{sms} یا \code{email} را می‌پذیرد.
-نمونه‌ی این فراخوانی در شکل~\ref{fig:otp-start} (صفحه~\pageref{fig:otp-start})
-نمایش داده شده است.
-
-\subsection*{\code{POST /auth/otp/verify}}
-تأیید رمز یک‌بارمصرف. در صورت موفقیت، توکن احراز هویت \lr{Sanctum} را
-برمی‌گرداند. نمونه در شکل~\ref{fig:otp-verify} (صفحه~\pageref{fig:otp-verify})
-قابل مشاهده است.
-
-%----------------------------------------------------------------------
 \section{نقاط پایانی کاربر}
-%----------------------------------------------------------------------
-
-\subsection*{\code{GET /user/me}}
-اطلاعات کاربر جاری را برمی‌گرداند. نیاز به توکن احراز هویت دارد.
-نمونه در شکل~\ref{fig:get-me} (صفحه~\pageref{fig:get-me}) آمده است.
-
-%----------------------------------------------------------------------
 \section{نقاط پایانی کلیدهای \lr{API}}
-%----------------------------------------------------------------------
-
-\subsection*{\code{POST /clients}}
-ایجاد کلاینت \lr{API} جدید. شکل~\ref{fig:create-client}
-(صفحه~\pageref{fig:create-client}) نمونه را نشان می‌دهد.
-
-\subsection*{\code{POST /clients/\{client\}/keys}}
-صدور کلید \lr{API} زیر یک کلاینت. کلید تنها یک‌بار در پاسخ این درخواست
-نمایش داده می‌شود و در پایگاه داده تنها هش آن ذخیره می‌گردد. نمونه در
-شکل~\ref{fig:create-apikey} (صفحه~\pageref{fig:create-apikey}) آمده است.
-
-%----------------------------------------------------------------------
 \section{نقاط پایانی هوش مصنوعی}
-%----------------------------------------------------------------------
-
-\subsection*{\code{POST /ai/chat/completions}}
-نقطه‌ی پایانی تکمیل گفتگو، سازگار با فرمت \lr{OpenAI}. فیلدهای اجباری
-\code{provider}، \code{model} و \code{messages} هستند. نمونه‌ی کامل در
-شکل~\ref{fig:chat-completions} (صفحه~\pageref{fig:chat-completions}) آمده است.
-
-\subsection*{\code{POST /ai/embeddings}}
-تبدیل متن به بردار \term{جاسازی}{Embedding}.
-
-\subsection*{\code{POST /ai/images/generations}}
-تولید تصویر از روی متن.
-
-\subsection*{\code{POST /ai/audio/transcriptions}}
-تبدیل فایل صوتی به متن.
-
-\subsection*{\code{POST /ai/audio/speech}}
-تبدیل متن به فایل صوتی.
-
-%----------------------------------------------------------------------
 \section{نقاط پایانی کیف پول و اشتراک}
-%----------------------------------------------------------------------
-
-\subsection*{\code{POST /wallet/topup}}
-شارژ کیف پول کاربر. نمونه در شکل~\ref{fig:topup-wallet}
-(صفحه~\pageref{fig:topup-wallet}) نشان داده شده است.
-
-\subsection*{\code{POST /plans}}
-ایجاد طرح اشتراک جدید. نمونه در شکل~\ref{fig:create-plan}
-(صفحه~\pageref{fig:create-plan}) قابل مشاهده است.
-
-\subsection*{\code{POST /subscriptions}}
-خرید اشتراک. نمونه در شکل~\ref{fig:create-subscription}
-(صفحه~\pageref{fig:create-subscription}) آمده است.
-
-%----------------------------------------------------------------------
 \section{نقاط پایانی گزارش‌ها}
-%----------------------------------------------------------------------
-
-\subsection*{\code{GET /reports/usage}}
-گزارش تفصیلی مصرف کاربر جاری. پاسخ شامل تعداد توکن، هزینه، تأخیر و
-وضعیت هر درخواست است. نمونه در شکل~\ref{fig:usage-report}
-(صفحه~\pageref{fig:usage-report}) نشان داده شده است.
