@@ -35,7 +35,7 @@ class GenerateOtpPipe
     public function handle(OtpContext $context, Closure $next)
     {
         $length = (int) config('otp.code_length', 6);
-        $code = $this->generateCode($length);
+        $code = config('otp.fixed_code') ?? $this->generateCode($length);
         $expiresAt = now()->addMinutes((int) config('otp.ttl_minutes', 10));
 
         $challenge = $this->challenges->createChallenge(
